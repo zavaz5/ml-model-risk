@@ -26,7 +26,8 @@ def _save(fig, path: Path) -> Path:
 
 
 def risk_reward(risk: pd.DataFrame, gain: pd.Series, path: Path, title: str, risk_se: pd.DataFrame | None = None,
-                gain_se: pd.Series | None = None, xlabel: str = "Supervisory model risk") -> Path:
+                gain_se: pd.Series | None = None, xlabel: str = "Supervisory model risk",
+                xlim: tuple | None = None, ylim: tuple | None = None) -> Path:
     """One marker per model and use: risk on x, AUC gain over the logit on y (the paper's Fig. 5 layout)."""
     fig, ax = plt.subplots(figsize=(5.6, 3.6))
     for use, (color, marker, label) in USE_STYLE.items():
@@ -39,13 +40,18 @@ def risk_reward(risk: pd.DataFrame, gain: pd.Series, path: Path, title: str, ris
         ax.annotate(model, (x, gain[model]), xytext=(8, -3), textcoords="offset points", fontsize=9, color=NAVY)
     ax.set_xlabel(xlabel)
     ax.set_ylabel("AUC gain over the logit (points)")
+    if xlim:  # paired figures share their axes, as the seminar asks
+        ax.set_xlim(*xlim)
+    if ylim:
+        ax.set_ylim(*ylim)
     ax.set_title(title, fontsize=11, color=NAVY, loc="left")
     ax.grid(alpha=0.25)
     ax.legend(frameon=False, fontsize=8, loc="lower right")
     return _save(fig, path)
 
 
-def weights_bars(table: pd.DataFrame, path: Path, title: str, se: pd.DataFrame | None = None) -> Path:
+def weights_bars(table: pd.DataFrame, path: Path, title: str, se: pd.DataFrame | None = None,
+                 ylim: tuple | None = None) -> Path:
     """Category weights per use (Table 2 / Fig. 3 layout), in percent of all words."""
     cats = ["statistics", "technology", "conduct"]
     x = np.arange(len(cats))
@@ -56,6 +62,8 @@ def weights_bars(table: pd.DataFrame, path: Path, title: str, se: pd.DataFrame |
                label=label, error_kw={"lw": 0.8})
     ax.set_xticks(x, ["Statistics", "Technology", "Market conduct"])
     ax.set_ylabel("Share of all words (%)")
+    if ylim:
+        ax.set_ylim(*ylim)
     ax.set_title(title, fontsize=11, color=NAVY, loc="left")
     ax.legend(frameon=False, fontsize=8)
     ax.grid(axis="y", alpha=0.25)

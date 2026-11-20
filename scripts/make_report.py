@@ -132,15 +132,22 @@ def build_numbers() -> dict:
 def figures(k: dict) -> dict:
     out = {}
     gain_paper = pd.Series({m: P.TABLE7_AUC[m] - P.TABLE7_AUC["Logit"] for m in MODELS5})
-    out["rr_paper"] = plots.risk_reward(pd.DataFrame(P.TABLE6_RISK), gain_paper, FIG / "risk_reward_paper.png",
-                                        "Paper: Table 6 risk and Table 7 gains")
+    # Risk on the normalised scale Σ H̄ Z / (5 Σ H̄), for the paper and for us, on one pair of axes: the level of the
+    # word shares (about half for us, D15) then does not move the points, and the two plots compare directly.
+    rr_xlim, rr_ylim, rr_label = (0.15, 0.85), (-0.6, 6.2), "Supervisory risk, normalised (0.2 lowest, 1 darkest)"
+    paper_tot = pd.Series({u: P.TABLE2[u]["total"] for u in USES})
+    rr_paper = pd.DataFrame(P.TABLE6_RISK) / (5 * paper_tot)
+    out["rr_paper"] = plots.risk_reward(rr_paper, gain_paper, FIG / "risk_reward_paper.png",
+                                        "Paper: Table 6 risk and Table 7 gains", xlabel=rr_label, xlim=rr_xlim, ylim=rr_ylim)
     if k["r13"]:
         t6 = pd.DataFrame(k["r13"]["table6_ours"])
+        our_tot = pd.Series({u: k["nlp"]["table2"][u]["total"] for u in USES})
         a = k["models"]["auc"]
         gain = pd.Series({m: 100 * a[m]["gain"] for m in MODELS5})
         gain_se = pd.Series({m: 196 * a[m]["gain_se"] for m in MODELS5})
-        out["rr_ours"] = plots.risk_reward(t6, gain, FIG / "risk_reward_ours.png",
-                                           "Ours: paper's Z × our weights; our gains (95% CI)", gain_se=gain_se)
+        out["rr_ours"] = plots.risk_reward(t6 / (5 * our_tot), gain, FIG / "risk_reward_ours.png",
+                                           "Ours: paper's Z × our weights; our gains (95% CI)", gain_se=gain_se,
+                                           xlabel=rr_label, xlim=rr_xlim, ylim=rr_ylim)
     if k["nlp"]:
         t2 = pd.DataFrame(k["nlp"]["table2"]).T / 100
         se = None
@@ -148,8 +155,11 @@ def figures(k: dict) -> dict:
         if i3.exists():
             frame = pd.read_csv(i3, index_col=[0, 1])
             se = frame.loc["se"]
-        out["weights_ours"] = plots.weights_bars(t2, FIG / "weights_ours.png", "Ours: our corpus (± bootstrap s.e.)", se)
-        out["weights_paper"] = plots.weights_bars(pd.DataFrame(P.TABLE2).T[CATS] / 100, FIG / "weights_paper.png", "Paper: Table 2")
+        top = 100 * max(max(P.TABLE2[u][c] for u in USES for c in CATS) / 100, float((t2[CATS] + (se[CATS] if se is not None else 0)).max().max()))
+        w_ylim = (0, 1.08 * top)  # the paper's and our bars on the same axis
+        out["weights_ours"] = plots.weights_bars(t2, FIG / "weights_ours.png", "Ours: our corpus (± bootstrap s.e.)", se, ylim=w_ylim)
+        out["weights_paper"] = plots.weights_bars(pd.DataFrame(P.TABLE2).T[CATS] / 100, FIG / "weights_paper.png", "Paper: Table 2",
+                                                  ylim=w_ylim)
     i1 = RES / "improvements" / "models" / "i1_benchmark.csv"
     if i1.exists():
         out["benchmark"] = plots.benchmark(pd.read_csv(i1), FIG / "benchmark.png")

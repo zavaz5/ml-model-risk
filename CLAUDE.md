@@ -16,7 +16,7 @@ Start every session by reading [docs/HANDOFF.md](docs/HANDOFF.md).
 8. **Timing hygiene:** time single-threaded, on an otherwise idle machine, never while parallel jobs run; warm up first; report median and interquartile range; say what was timed.
 9. **Code we can defend:** small functions, docstrings that say why, tests in `tests/`, `pytest -q` green before any commit. Libraries: numpy, pandas, scipy, scikit-learn, xgboost, shap, matplotlib, python-pptx, PyMuPDF, pytest, certifi.
 10. **Git:** commit at milestones; push only after the user confirms. No author names and no Co-Authored-By lines (the team adds names itself). Never commit downloaded data (Kaggle's licence forbids redistribution; regulatory PDFs are third-party): `data/raw/` is ignored, `data/corpus_manifest.csv` records sources and hashes.
-11. **The deck is short:** at most 15 minutes, about 11 main slides (30–40% shorter than the team's 16-slide VPIN deck), English throughout, HSE template.
+11. **The deck follows the seminar's lecture 1:** 15 minutes of talk (problem 2, method 3, results and our reproduction 5, critique 3 including the required slide "how could these results be overfit, and how did the authors and we check?", next steps 2), then 10 minutes of questions. Results slides put the authors' figure next to ours on the same axes and cover every result of the paper, each with our improvement; one slide per result goes to the appendix. At most one equation per slide. English throughout, HSE template.
 
 ## Pipeline (order matters)
 

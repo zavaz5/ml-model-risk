@@ -17,7 +17,7 @@ from pptx import Presentation
 ROOT = Path(__file__).resolve().parents[1]
 DECK = ROOT / "docs" / "presentation.pptx"
 OUT = ROOT / "docs" / "speaker_script.pdf"
-LIMIT_MIN = 20.0  # the 15-minute limit is set aside for now (the team's request)
+LIMIT_MIN = 15.0  # the seminar's limit (lecture 1): 15 minutes of talk, then 10 minutes of questions
 
 CSS = """
 body { font-family: sans-serif; font-size: 10.5pt; line-height: 1.35; color: #222; }

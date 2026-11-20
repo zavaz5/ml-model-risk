@@ -5,8 +5,9 @@ Fig. 4   the darkness-score radar: the paper's (read off its PDF) and ours (the 
 Figs 6-8 SHAP summary plots for RF, XGBoost and the MLP (scripts/reproduce_shap_figures.py)
 Fig. 9   per-document term shares in the paper's layout: the paper's values and ours, separate figures
 
-The paper's numbers and ours are never drawn on the same axes (CLAUDE.md, rule 2), except in Fig. 1,
+The paper's numbers and ours are never drawn in the same panel (CLAUDE.md, rule 2), except in Fig. 1,
 where both series are the literature's numbers (plotted by the paper vs printed in the cited source).
+Paired figures share their axis ranges so they can be read side by side, as the seminar asks.
 """
 from __future__ import annotations
 
@@ -41,6 +42,8 @@ LABEL_POINT = {
     "Babaev et al (2019)": (3, 4.93), "Jones et al (2015b)": (3, 4.34), "Albanesi y Vamossy (2019)": (3, 2.94),
     "Turiel (2019)": (3, -0.06), "Kvamme et al (2018)": (4, 4.84),
 }
+# x-axis ranges of the paper's SHAP figures (Figs. 6-8, read off the PDF): RF and MLP in probability, XGBoost in log-odds.
+PAPER_SHAP_XLIM = {"RF": (-0.08, 0.40), "XGBoost": (-1.7, 3.2), "MLP": (-0.13, 0.62)}
 STATUS_STYLE = {"matches": (GREEN, "matches its source"), "differs": (RED, "source gives another value"),
                 "different_metric": (ORANGE, "source reports another metric")}
 
@@ -99,7 +102,7 @@ def fig4() -> list[Path]:
             radar(ours, "Ours: scores by the I13 rule from measured proxies", FIG / "ours_fig4_radar.png")]
 
 
-def fig9_layout(shares: pd.DataFrame, title: str, path: Path) -> Path:
+def fig9_layout(shares: pd.DataFrame, title: str, path: Path, ylims: dict | None = None) -> Path:
     """Per-document shares by category, one line per document, the average in bold (the paper's Fig. 9 layout)."""
     panels = [("capital", "Regulatory capital"), ("scoring", "Credit scoring"), ("provisions", "Provisioning"),
               ("common", "Common area")]
@@ -113,6 +116,8 @@ def fig9_layout(shares: pd.DataFrame, title: str, path: Path) -> Path:
         ax.set_xticks(range(3), [lab for _, lab in CATS], fontsize=8)
         ax.set_title(name, fontsize=10, color=NAVY, loc="left")
         ax.set_ylabel("% of words", fontsize=8)
+        if ylims:
+            ax.set_ylim(0, ylims[use])
         ax.legend(frameon=False, fontsize=7)
         ax.grid(axis="y", alpha=0.25)
     fig.suptitle(title, fontsize=11, color=NAVY, x=0.02, ha="left")
@@ -126,8 +131,11 @@ def fig9() -> list[Path]:
                                                                              values="share").reset_index()
     paper = paper.rename(columns={"panel": "use"})
     ours = pd.read_csv(RES / "reproduction" / "nlp" / "document_shares.csv")
-    return [fig9_layout(paper, "Paper, Fig. 9 (values read off the PDF; denominator not stated)", FIG / "paper_fig9_layout.png"),
-            fig9_layout(ours, "Ours (share of all words)", FIG / "ours_fig9_layout.png")]
+    cols = [c for c, _ in CATS]
+    ylims = {u: 105 * max(paper.loc[paper["use"] == u, cols].max().max(), ours.loc[ours["use"] == u, cols].max().max())
+             for u in ("capital", "scoring", "provisions", "common")}  # same axes per panel for the paper and us
+    return [fig9_layout(paper, "Paper, Fig. 9 (values read off the PDF; denominator not stated)", FIG / "paper_fig9_layout.png", ylims),
+            fig9_layout(ours, "Ours (share of all words)", FIG / "ours_fig9_layout.png", ylims)]
 
 
 def shap_figures() -> list[Path]:
@@ -144,6 +152,7 @@ def shap_figures() -> list[Path]:
         expl = shap.Explanation(values=d["values"], data=d["features"], feature_names=[short[n] for n in d["names"]])
         plt.figure()
         shap.plots.beeswarm(expl, max_display=10, show=False, plot_size=(5.6, 3.8))
+        plt.xlim(*PAPER_SHAP_XLIM[name])  # the axis range of the paper's figure, so the two can be read side by side
         plt.title(f"Ours, {name} (paper's Fig. {paper_fig}); SHAP in {d['scale']}", fontsize=10, color=NAVY, loc="left")
         path = FIG / f"ours_shap_{name}.png"
         plt.savefig(path, dpi=200, bbox_inches="tight")
