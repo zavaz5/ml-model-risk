@@ -263,9 +263,10 @@ def cart_line() -> str:
         return ""
     h = json.loads(path.read_text())["hypotheses"]
     small = [v["auc"] for key, v in h.items() if key.startswith("H2") and 8 <= v["leaves"] <= 12]
-    return (f"**CART 84.4 vs 80.4:** no depth-7 tree gets there (class weights, entropy, row index, hard labels all fail); a pruned "
-            f"tree of 8–12 leaves ({100 * min(small):.1f}–{100 * max(small):.1f}) or a depth-10 tree ({100 * h['H1 depth 10']['auc']:.1f}) "
-            "does. The paper's tree was most likely not the depth-7 tree it reports.")
+    ours = json.loads((ROOT / "results" / "report" / "key_numbers.json").read_text())["models"]["auc"]["CART"]["auc"]
+    return (f"**CART:** we fit the tree the paper describes (depth 7) and get {100 * ours:.1f}. Its {P.TABLE7_AUC['CART']:.1f} comes "
+            f"only from a pruned tree of 8–12 leaves, as R's rpart builds by default ({100 * min(small):.1f}–{100 * max(small):.1f}), "
+            f"or a depth-10 tree ({100 * h['H1 depth 10']['auc']:.1f}). The difference is in the tree's settings, not in the method.")
 
 
 # ---------------------------------------------------------------- slides
@@ -352,8 +353,9 @@ def build() -> None:
         "order as the paper. Then the orange columns: times are a property of the computer and the software, not of the method. "
         "The paper reports no hardware, library, solver or explainer. Where the software is comparable the times agree (random "
         "forest SHAP); where it is not, they differ (Lasso solver, MLP training and explainer). We do not count that as a failure "
-        "of the idea. CART is the one model whose AUC differs: we tried every reading of the paper's set-up; only a small pruned "
-        "tree (as R's rpart builds) or a depth-10 tree reaches 80.4, so the paper's tree was probably not the depth-7 tree it reports."))
+        "of the idea. CART is the one model whose AUC differs: we fit exactly the depth-7 tree the paper describes and get 84.4. "
+        "We tried every reading of its set-up; only a small pruned tree (what R's rpart builds by default) or a depth-10 tree "
+        "reaches 80.4. So the gap is in the tree's settings, which the paper most likely misreports, not in the method."))
     heading(s, (0.64, 2.25, 6.0, 0.4), "Paper: Tables 7 and 5")
     paper = pd.DataFrame([(mm, f"{P.TABLE7_AUC[mm]:.1f}", f"{P.TABLE5['stability_sd'][mm]:.3f}", f"{P.TABLE5['training_seconds'][mm]:.2f}",
                            f"{P.TABLE5['shap_seconds'][mm]:,}") for mm in MODELS5],
@@ -457,7 +459,8 @@ def build() -> None:
     text(s, (0.64, 2.3, 12.2, 4.8), [
         f"**Matched:** {v['R12']['ours'].split(';')[0]}, XGBoost best; the stability order; every ordering of the text weights, document by document too; the paper's own arithmetic.",
         "**Differs only because of the machine and software:** training and SHAP times (hardware, libraries, solver and explainer are not reported).",
-        "**Differs in substance:** the sentiment check, SHAP mid-ranks and CART's AUC; and the paper contradicts itself on the statistics scores (Tables 5, 6 and Figs. 4, 5).",
+        "**Differs because of the paper's own reporting:** CART's settings are most likely not the ones it states; it contradicts itself on the statistics scores (Tables 5, 6 and Figs. 4, 5).",
+        "**Differs in substance:** the sentiment check and the SHAP mid-ranks: both claims rest on too little data to hold.",
         "**The biggest caveat (exploratory):** a logit with log-transformed inputs comes within a fraction of a point of XGBoost; most of the ML gain is a weak benchmark.",
         "**What is fragile:** \"provisions is the least risky use\" only reflects fewer risk words in provisioning texts; with few loans the ML gain disappears"
         + (f" (German credit: best is {german['best']})." if german else "."),

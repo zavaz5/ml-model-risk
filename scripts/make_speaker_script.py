@@ -87,7 +87,7 @@ def questions(k: dict) -> list[tuple[str, str]]:
               "See the exploratory logit benchmark in the README.")
          + ". This was exploratory, not pre-registered: the paper's logit gets raw, heavy-tailed ratios; a credit scorer would transform them."),
         ("Why is your CART four points better than the paper's?",
-         "We tried every reading of the set-up on validation rows: class weights, entropy, the row index as a feature and "
+         "We fit exactly the tree the paper describes, depth 7. We then tried every other reading of the set-up on validation rows: class weights, entropy, the row index as a feature and "
          "hard-label scoring all leave a depth-7 tree far above 80.4. Only a small pruned tree (8-12 leaves, what R's rpart "
          "builds by default) or a depth-10 tree reaches it. The other four models match the paper, so the data and split are "
          "comparable; the paper's tree was most likely not the depth-7 tree it reports."),
