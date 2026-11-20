@@ -31,6 +31,28 @@ Errata (internal inconsistencies of the paper) are reported separately from verd
 | R12 / I12 | Table 7: AUC 80.0 (logit) to 85.3 (XGBoost); gains 0.2 to 5.3 points (p. 21) | Paired DeLong test of each gain; the use-specific metrics the authors ask for (p. 21): Brier score, expected calibration error (10 bins), calibration slope | Report whether the AUC order and the Brier order agree |
 | R13 / I13 | Table 6 and Fig. 5: supervisory risk per model and use; XGBoost is the most risk-efficient model; provisions is the least risky use (pp. 19–21) | Replace the expert scores Z by a rule: each proxy mapped to [1, 5] by min–max on the log scale across the five models (linear for the AUC spread); a category's Z is the mean of its proxies. Then Monte Carlo (1,000 draws) over weights (I3), stability (I7), timings (I9) and AUC gains (DeLong) | A model is risk-efficient if no other model has both a larger gain and a lower risk (Pareto frontier). Report each model's probability of being on the frontier, per use. "XGBoost is the most risk-efficient" is supported if it is on the frontier in at least 95% of draws for all three uses |
 
+## Addendum: results we had left out, and the paper's remaining risk factors
+
+Written on 20 November 2026 (evening), before any of the checks below was run.
+
+| ID | Paper's result (page) | Our check | Decision rule |
+|---|---|---|---|
+| R1 (revised) | Fig. 1: the plotted gains of 20 papers | Look up every labelled point in its cited source (open-access copies only) and recompute the gain | Reproduced if at least 75% of the points we can verify match their source within 0.15 points; close if at least 50%; otherwise not reproduced. Points without a free copy are reported as unverifiable, not counted |
+| R14 | Fig. 9: each document's share of risk terms, by category (p. 29) | Values read off the vector figure, compared with ours document by document | Levels differ by construction (D15, stop words), so we compare ranks: Spearman correlation across the documents in both, per category. Reproduced if at least 0.7 in all three categories; close if at least 0.4 in two; otherwise not reproduced |
+| R15 | Table 9: the sentiment check with d = 20 (p. 28) | As R5, at d = 20 | As R5 |
+| R16 | Fig. 4: darkness scores by model (p. 19) | Bars read off the vector figure | Reproduced if they equal Table 5's scores; any difference is an erratum |
+
+**Appendix factors (A1–A5).** The paper names 13 risk factors but measures 5; its appendix (pp. 23–25) proposes how to measure the others. We measure every one that public data allow, on the fit and validation rows only (models fitted on the fit rows with the paper's settings):
+
+- **A1 Overfitting:** AUC on the fit rows minus AUC on the validation rows, and the validation AUC at 10%, 25%, 50% and 100% of the fit rows (learning curve).
+- **A2 Dynamic calibration** (the appendix's proxy: features in production): how many of the 20 inputs the fitted model uses (non-zero coefficient, used in a split, or non-zero input weights).
+- **A3 Feature engineering:** change in validation AUC under four preprocessing variants, one at a time: no squared features; winsorising at the training 1st and 99th percentiles; log(1 + x) of every non-negative feature; median imputation that adds the incomplete rows to the training data. The score is the largest absolute change.
+- **A4 Auditability** (the appendix's surrogate idea): a depth-5 regression tree trained on the fit rows to mimic the model's PD; fidelity is the R² between surrogate and model PDs on the validation rows.
+- **A5 Bias** (the appendix's counterfactual idea; age is a protected characteristic under ECOA, with exceptions): shift every validation borrower's age by +10 and −10 years (kept within the observed range) and count how many decisions flip, where a decision rejects the 10% of borrowers with the highest baseline PD.
+- **Not measurable with public data:** third-party providers, cyber risk and privacy need the bank's IT set-up and data inventory. We say so instead of inventing a proxy.
+
+**I14 (extended scorecard).** The rule of I13, with the new proxies added to their categories: statistics = mean of the scores for AUC spread, hyperparameter count, overfitting gap, features used and feature-engineering sensitivity; conduct = mean of the scores for SHAP time, surrogate infidelity (1 − R²) and the age flip rate. Report which models are on the risk-gain frontier for each use, with gains measured on the validation rows.
+
 ## Change log
 
 - **20 November 2026, before I13 was run.** I13 did not say which measurement feeds each category. We use the paper's own proxies as we measure them: statistics = mean of the rule scores for the spread of test AUC and the paper's hyperparameter count; technology = mean of the scores for training time (log scale) and the transparency class; conduct = the score for SHAP time with each library's default explainer (log scale). Gains in the Monte Carlo are redrawn by resampling test rows (paired across models) rather than from independent normal draws, so that the correlation between models' AUCs is kept. Reason: the rule should replace only the expert judgement, not the proxies.
