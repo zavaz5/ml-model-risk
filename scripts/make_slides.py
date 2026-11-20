@@ -245,6 +245,29 @@ def frontier_chart(i13: dict, path: Path) -> Path:
     return path
 
 
+def fig1_points() -> int:
+    """Points plotted in Fig. 1: rows of the source table except the note on the wrong reference."""
+    lit = pd.read_csv(ROOT / "data" / "fig1_sources.csv")
+    return int((lit["status"] != "wrong_reference").sum())
+
+
+def manifest_found() -> int:
+    m = pd.read_csv(ROOT / "data" / "corpus_manifest.csv")
+    return int(m["status"].isin(["found", "substitute"]).sum())
+
+
+def cart_line() -> str:
+    """One bullet on why our CART differs, read from the diagnostic (validation rows only)."""
+    path = ROOT / "results" / "reproduction" / "models" / "cart_diagnostic.json"
+    if not path.exists():
+        return ""
+    h = json.loads(path.read_text())["hypotheses"]
+    small = [v["auc"] for key, v in h.items() if key.startswith("H2") and 8 <= v["leaves"] <= 12]
+    return (f"**CART 84.4 vs 80.4:** no depth-7 tree gets there (class weights, entropy, row index, hard labels all fail); a pruned "
+            f"tree of 8–12 leaves ({100 * min(small):.1f}–{100 * max(small):.1f}) or a depth-10 tree ({100 * h['H1 depth 10']['auc']:.1f}) "
+            "does. The paper's tree was most likely not the depth-7 tree it reports.")
+
+
 # ---------------------------------------------------------------- slides
 def build() -> None:
     BUILD.mkdir(parents=True, exist_ok=True)
@@ -309,14 +332,17 @@ def build() -> None:
         ("Lasso penalty", "–", "5-fold CV AUC on training rows", "–"),
         ("Five proxies (stability, size, time, transparency, SHAP time)", "100 refits on 60–100% subsamples", "–", "Spread of test AUC; seconds"),
         ("Darkness scores Z", "–", "Paper: expert judgement. Ours (I13): a rule", "–"),
-        ("Weights H̄ (phase 2)", "Nothing: share of category terms in all words", "Dictionary of the paper (Table 11)", "36 regulatory documents"),
+        ("Weights H̄ (phase 2)", "Nothing: share of category terms in all words", "Dictionary of the paper (Table 11)",
+         f"{manifest_found()} of the paper's {len(pd.read_csv(ROOT / 'data' / 'corpus_manifest.csv'))} regulatory documents"),
     ], columns=["Step", "Fitted", "Chosen", "Evaluated"])
     table(s, obj, (0.64, 2.35, 12.0, 2.9), widths=[3.4, 3.2, 2.9, 2.5], size=11)
     text(s, (0.64, 5.45, 12.0, 1.5), [
         f"**Data:** Give Me Some Credit (Kaggle). {meta['rows_raw']:,} rows; the {meta['rows']:,} complete cases match the paper's 120,000. "
         f"Default rate {100 * meta['default_rate']:.2f}%. {m['n_features']} features: 10 borrower characteristics and their squares. "
         f"Stratified 80/20 split: {meta['train']:,} / {meta['test']:,} rows.",
-        "**Our improvements** were pre-registered (docs/preregistration.md) and make choices on validation rows only; the test split is locked.",
+        f"**Coverage:** every numbered result of the paper, {len(k['verdicts'])} in all (Tables 2–10, Figs. 1 and 3–9), plus Fig. 1's "
+        f"{fig1_points()} literature points checked in their sources. Improvements were "
+        "pre-registered and make choices on validation rows only; the test split is locked.",
     ], size=13, space=6)
 
     # 4 Reproduction 1
@@ -326,7 +352,8 @@ def build() -> None:
         "order as the paper. Then the orange columns: times are a property of the computer and the software, not of the method. "
         "The paper reports no hardware, library, solver or explainer. Where the software is comparable the times agree (random "
         "forest SHAP); where it is not, they differ (Lasso solver, MLP training and explainer). We do not count that as a failure "
-        "of the idea."))
+        "of the idea. CART is the one model whose AUC differs: we tried every reading of the paper's set-up; only a small pruned "
+        "tree (as R's rpart builds) or a depth-10 tree reaches 80.4, so the paper's tree was probably not the depth-7 tree it reports."))
     heading(s, (0.64, 2.25, 6.0, 0.4), "Paper: Tables 7 and 5")
     paper = pd.DataFrame([(mm, f"{P.TABLE7_AUC[mm]:.1f}", f"{P.TABLE5['stability_sd'][mm]:.3f}", f"{P.TABLE5['training_seconds'][mm]:.2f}",
                            f"{P.TABLE5['shap_seconds'][mm]:,}") for mm in MODELS5],
@@ -346,7 +373,8 @@ def build() -> None:
     text(s, (0.64, 5.15, 6.0, 2.0), [
         f"**AUC:** {v['R12']['ours']}. Gain of {best} over the logit: {100 * a[best]['gain']:+.1f} ± {100 * a[best]['gain_se']:.1f} points (paired DeLong {'p < 0.001' if a[best]['gain_p'] < 0.001 else f"p = {a[best]['gain_p']:.3f}"}).",
         f"**Stability:** {v['R7']['ours'].split(': ')[1]}: Lasso and XGBoost most stable, CART and the MLP least, as in the paper.",
-    ], size=11, space=4)
+        cart_line(),
+    ], size=10, space=4)
     cpu = meta["environment"]["cpu"]
     note_box(s, (6.85, 5.2, 6.2, 1.5), [
         "**Orange columns: machine and software, not method.** The paper reports no hardware, library, solver or explainer; "
@@ -377,16 +405,24 @@ def build() -> None:
     s = slide_with_title(prs, "Reproduction 3: the risk–reward picture", (
         "Reproduction, ~1.5 min. Left: the paper's Table 6 risk against its Table 7 gains. Right: the paper's Z with our weights "
         "and our gains with 95% intervals. Then the errata: recomputing the paper's own numbers shows the MLP's statistics score "
-        "is 5 in Table 5 but 4 in Table 6, and the random forest in Fig. 5 is plotted with a statistics score of 2, not 3. "
-        "Neither changes the ranking."))
+        "is 5 in Table 5 but 4 in Table 6, and the random forest in Figs. 4 and 5 is drawn with a statistics score of 2, not 3. "
+        "Neither changes the ranking. Last line: we looked up every point of the paper's literature figure in its source; "
+        "12 of 20 match, three of those are a different metric (KS) on an AUC axis, and the biggest gain is mis-cited."))
     picture(s, fig["rr_paper"], (0.5, 2.25, 6.1, 3.5))
     if "rr_ours" in fig:
         picture(s, fig["rr_ours"], (6.8, 2.25, 6.1, 3.5))
     err = {e["id"]: e for e in k["errata"]}
-    text(s, (0.64, 5.85, 12.4, 1.3), [
+    lit = pd.read_csv(ROOT / "data" / "fig1_sources.csv")
+    lit = lit[lit["status"] != "wrong_reference"]  # an extra row on the cited reference, not a plotted point
+    n_match = int((lit["status"] == "matches").sum())
+    n_ks = int(lit["metric"].fillna("").str.startswith("KS").sum())
+    text(s, (0.64, 5.8, 12.4, 1.4), [
         f"**With our weights and gains:** {v['R13']['ours']}.",
-        f"**Errata in the paper's own arithmetic:** {err['E1']['what']}; {err['E2']['what']}." if "E2" in err else "",
-    ], size=12, space=4)
+        "**The paper against itself:** three versions of the statistics scores (Table 5: RF 3, MLP 5; Table 6: RF 3, MLP 4; "
+        "Figs. 4 and 5: RF 2, MLP 4). None changes the ranking.",
+        f"**Fig. 1 against its {len(lit)} sources:** {n_match} points match; {n_ks} are KS differences drawn on an AUC axis; the largest "
+        "gain (20 points) is credited to a paper on price formation, not credit.",
+    ], size=11, space=4)
 
     # 8 Improvements 1
     s = slide_with_title(prs, "Improvements 1: how certain are the conclusions?", (

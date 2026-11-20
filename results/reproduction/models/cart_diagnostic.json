@@ -1,21 +1,167 @@
 {
-  "depth": {
-    "3": 0.8139778362212505,
-    "5": 0.8408771193637244,
-    "7": 0.846773656594928,
-    "9": 0.8256990027118265,
-    "11": 0.7637756292500996,
-    "13": 0.6885035840370066,
-    "15": 0.6291040488093685,
-    "20": 0.587939731971859,
-    "25": 0.6011217392982433,
-    "None": 0.6012210696247109
+  "paper": {
+    "auc": 0.804,
+    "ci": [
+      0.797,
+      0.812
+    ],
+    "sd": 0.005
   },
-  "min_samples_leaf_depth7": {
-    "1": 0.846773656594928,
-    "50": 0.8500545021909062,
-    "200": 0.8516534572926797,
-    "1000": 0.8415255024556478
+  "hypotheses": {
+    "H0 depth 7 (ours)": {
+      "auc": 0.846773656594928,
+      "se": 0.005760255041754051,
+      "sd_refits": 0.005308537290924852,
+      "leaves": 121,
+      "depth": 7,
+      "inside_paper_ci": false
+    },
+    "H1 depth 2": {
+      "auc": 0.7754003893514883,
+      "se": 0.006773590969097971,
+      "sd_refits": 0.011983748890267489,
+      "leaves": 4,
+      "depth": 2,
+      "inside_paper_ci": false
+    },
+    "H1 depth 3": {
+      "auc": 0.8139778362212505,
+      "se": 0.006398190437740007,
+      "sd_refits": 0.005926367019411599,
+      "leaves": 8,
+      "depth": 3,
+      "inside_paper_ci": false
+    },
+    "H1 depth 4": {
+      "auc": 0.8286715608921217,
+      "se": 0.00621629261911399,
+      "sd_refits": 0.0061426375917967195,
+      "leaves": 16,
+      "depth": 4,
+      "inside_paper_ci": false
+    },
+    "H1 depth 8": {
+      "auc": 0.837518622347686,
+      "se": 0.006232107790764335,
+      "sd_refits": 0.007131564341941684,
+      "leaves": 218,
+      "depth": 8,
+      "inside_paper_ci": false
+    },
+    "H1 depth 9": {
+      "auc": 0.8256990027118265,
+      "se": 0.006622935713333287,
+      "sd_refits": 0.007221700247181858,
+      "leaves": 349,
+      "depth": 9,
+      "inside_paper_ci": false
+    },
+    "H1 depth 10": {
+      "auc": 0.8051184524585759,
+      "se": 0.007335052362031104,
+      "sd_refits": 0.010762306670299147,
+      "leaves": 526,
+      "depth": 10,
+      "inside_paper_ci": true
+    },
+    "H1 depth 11": {
+      "auc": 0.7637756292500995,
+      "se": 0.008590055374138997,
+      "sd_refits": 0.010530441081020756,
+      "leaves": 770,
+      "depth": 11,
+      "inside_paper_ci": false
+    },
+    "H1 depth 12": {
+      "auc": 0.7208495775453647,
+      "se": 0.009578601822199861,
+      "sd_refits": 0.013582686537031865,
+      "leaves": 1041,
+      "depth": 12,
+      "inside_paper_ci": false
+    },
+    "H2 at most 3 leaves": {
+      "auc": 0.7741955601098431,
+      "se": 0.006749272770017394,
+      "sd_refits": 0.011971222500454235,
+      "leaves": 3,
+      "depth": 2,
+      "inside_paper_ci": false
+    },
+    "H2 at most 4 leaves": {
+      "auc": 0.7879040641140918,
+      "se": 0.006935141612264457,
+      "sd_refits": 0.005188555293960368,
+      "leaves": 4,
+      "depth": 3,
+      "inside_paper_ci": false
+    },
+    "H2 at most 6 leaves": {
+      "auc": 0.789711203550228,
+      "se": 0.006966764042959724,
+      "sd_refits": 0.002982812876469792,
+      "leaves": 6,
+      "depth": 4,
+      "inside_paper_ci": false
+    },
+    "H2 at most 8 leaves": {
+      "auc": 0.79208174392976,
+      "se": 0.006993173892799178,
+      "sd_refits": 0.009469057178086184,
+      "leaves": 8,
+      "depth": 4,
+      "inside_paper_ci": false
+    },
+    "H2 at most 12 leaves": {
+      "auc": 0.8216498299396308,
+      "se": 0.00642464365004035,
+      "sd_refits": 0.004127084485271286,
+      "leaves": 12,
+      "depth": 5,
+      "inside_paper_ci": false
+    },
+    "H2 at most 16 leaves": {
+      "auc": 0.8220964613592081,
+      "se": 0.006429674148008898,
+      "sd_refits": 0.004683183057404288,
+      "leaves": 16,
+      "depth": 6,
+      "inside_paper_ci": false
+    },
+    "H3 depth 7, balanced class weights": {
+      "auc": 0.8333266987804091,
+      "se": 0.006459471335743605,
+      "sd_refits": 0.005309387968824174,
+      "leaves": 104,
+      "depth": 7,
+      "inside_paper_ci": false
+    },
+    "H4 depth 7, entropy": {
+      "auc": 0.8428268216275454,
+      "se": 0.005934026357806216,
+      "sd_refits": 0.0047210419779474206,
+      "leaves": 115,
+      "depth": 7,
+      "inside_paper_ci": false
+    },
+    "H5 depth 7, row index as a feature": {
+      "auc": 0.8485659257214669,
+      "se": 0.005689992222157432,
+      "sd_refits": 0.005646016113688462,
+      "leaves": 113,
+      "depth": 7,
+      "inside_paper_ci": false
+    },
+    "H6 depth 7, hard labels": {
+      "auc": 0.5661849285068096,
+      "se": 0.004778850335518642,
+      "sd_refits": 0.011089543223533858,
+      "leaves": 121,
+      "depth": 7,
+      "inside_paper_ci": false
+    }
   },
-  "depth7_hard_labels": 0.5661849285068097
+  "inside_paper_ci": [
+    "H1 depth 10"
+  ]
 }

@@ -166,6 +166,23 @@ def figures(k: dict) -> dict:
 
 
 # ------------------------------------------------------------------ README
+def cart_explanation(cart: dict) -> str:
+    """The CART diagnostic in one paragraph (shared with the slides)."""
+    h = cart["hypotheses"]
+    small = [v for key, v in h.items() if key.startswith("H2") and 8 <= v["leaves"] <= 12]
+    d10, ours = h["H1 depth 10"], h["H0 depth 7 (ours)"]
+    others = [h["H3 depth 7, balanced class weights"], h["H4 depth 7, entropy"], h["H5 depth 7, row index as a feature"]]
+    return (f"**Why our CART is far above the paper's.** We tried every reading of the paper's set-up we could think of, on the "
+            f"validation rows only. A depth-7 tree scores {100 * ours['auc']:.1f}; balanced class weights, entropy or the file's row "
+            f"index as a feature keep it at {100 * min(o['auc'] for o in others):.1f}–{100 * max(o['auc'] for o in others):.1f}, and "
+            f"scoring by hard labels drops it to {100 * h['H6 depth 7, hard labels']['auc']:.1f}. Only two kinds of tree reach the "
+            f"paper's 80.4: a depth-10 tree ({100 * d10['auc']:.1f}, but its spread over refits, {d10['sd_refits']:.3f}, is twice the "
+            f"paper's 0.005) and a small pruned tree of 8–12 leaves, as R's rpart builds by default "
+            f"({100 * min(v['auc'] for v in small):.1f}–{100 * max(v['auc'] for v in small):.1f}). Since the other four models match the "
+            "paper, the data and split are comparable: the paper's tree was most likely not the depth-7 tree it reports "
+            "(`scripts/diagnose_cart.py`).")
+
+
 def section_models(k: dict) -> str:
     m = k["models"]
     a, px = m["auc"], m["proxies"]
@@ -190,11 +207,7 @@ def section_models(k: dict) -> str:
     cart = _json(RES / "reproduction" / "models" / "cart_diagnostic.json")
     cart_txt = ""
     if cart:
-        d = cart["depth"]
-        cart_txt = (f"\n**Why our CART is far above the paper's.** On the validation rows a depth-7 tree scores {100 * d['7']:.1f}; "
-                    f"depth 3 gives {100 * d['3']:.1f}, depth 11 {100 * d['11']:.1f}, an unpruned tree {100 * d['None']:.1f}; "
-                    f"scoring depth 7 by hard labels gives {100 * cart['depth7_hard_labels']:.1f}. No setting at the paper's depth gives 80.4, "
-                    "so the paper's tree probably differs from what it reports (`scripts/diagnose_cart.py`, validation rows only).\n")
+        cart_txt = "\n" + cart_explanation(cart) + "\n"
     return f"""### Data and setup (ours)
 
 Give Me Some Credit: {meta['rows_raw']:,} rows in `cs-training.csv`, of which {meta['rows']:,} complete cases (the paper: 120,000); default rate {pct(meta['default_rate'], 2)}. {k['models']['n_features']} features (10 characteristics and their squares). Stratified 80/20 split: {meta['train']:,} training and {meta['test']:,} test rows. Lasso penalty chosen by 5-fold CV on the training rows: C = {meta['lasso_c']:g}. Timings on {env['cpu']}, {env['os']}, Python {env['python']}.

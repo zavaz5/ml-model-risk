@@ -81,7 +81,7 @@ Give Me Some Credit: 150,000 rows in `cs-training.csv`, of which 120,269 complet
 | XGBoost | 85.4 ± 0.5 | [84.5, 86.4] | +4.95 ± 0.41 (p < 0.001) |
 | MLP | 82.0 ± 0.6 | [80.8, 83.2] | +1.49 ± 0.27 (p < 0.001) |
 
-**Why our CART is far above the paper's.** On the validation rows a depth-7 tree scores 84.7; depth 3 gives 81.4, depth 11 76.4, an unpruned tree 60.1; scoring depth 7 by hard labels gives 56.6. No setting at the paper's depth gives 80.4, so the paper's tree probably differs from what it reports (`scripts/diagnose_cart.py`, validation rows only).
+**Why our CART is far above the paper's.** We tried every reading of the paper's set-up we could think of, on the validation rows only. A depth-7 tree scores 84.7; balanced class weights, entropy or the file's row index as a feature keep it at 83.3–84.9, and scoring by hard labels drops it to 56.6. Only two kinds of tree reach the paper's 80.4: a depth-10 tree (80.5, but its spread over refits, 0.011, is twice the paper's 0.005) and a small pruned tree of 8–12 leaves, as R's rpart builds by default (79.2–82.2). Since the other four models match the paper, the data and split are comparable: the paper's tree was most likely not the depth-7 tree it reports (`scripts/diagnose_cart.py`).
 
 ### Model-risk proxies (Table 5)
 

@@ -86,6 +86,11 @@ def questions(k: dict) -> list[tuple[str, str]]:
          next((r["finding"] for r in k["improvement_rows"] if r["id"] == "X1"),
               "See the exploratory logit benchmark in the README.")
          + ". This was exploratory, not pre-registered: the paper's logit gets raw, heavy-tailed ratios; a credit scorer would transform them."),
+        ("Why is your CART four points better than the paper's?",
+         "We tried every reading of the set-up on validation rows: class weights, entropy, the row index as a feature and "
+         "hard-label scoring all leave a depth-7 tree far above 80.4. Only a small pruned tree (8-12 leaves, what R's rpart "
+         "builds by default) or a depth-10 tree reaches it. The other four models match the paper, so the data and split are "
+         "comparable; the paper's tree was most likely not the depth-7 tree it reports."),
         ("Why does the paper have three different statistics scores?",
          "Table 5 gives RF 3 and the MLP 5; Table 6 uses RF 3 and MLP 4; Figs. 4 and 5 are drawn with RF 2 and MLP 4. We read "
          "Figs. 4 and 5 off the vector PDF, so this is exact, not eyeballed. No ranking changes."),
