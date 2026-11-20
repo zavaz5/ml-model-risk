@@ -220,6 +220,8 @@ Give Me Some Credit: {meta['rows_raw']:,} rows in `cs-training.csv`, of which {m
 **Ours** (SD over {meta['retrains']} retrains on 60–100% subsamples, bootstrap s.e.; times single-threaded, median of 5 fits after a warm-up; SHAP for {meta['shap_rows']:,} test rows):
 
 {md_table(ours5)}
+
+**Times depend on the machine and the software, not on the method.** The paper reports no hardware, library, solver or explainer. Where the software is comparable, times agree (random-forest SHAP {px['RF']['shap_s']:.0f} s vs the paper's {P.TABLE5['shap_seconds']['RF']} s); where it differs, they do not (the Lasso's saga solver, the MLP's early stopping and its permutation explainer). The verdicts for R9 and R10 below record the different orderings; their cause is the computing set-up.
 """
 
 

@@ -5,7 +5,10 @@ make_report.py) and src/mrisk/paper_numbers.py (the paper's). Paper and ours
 are always in separate panels. Each slide carries speaker notes; the speaker
 script (make_speaker_script.py) is built from them.
 
-The talk is at most 15 minutes: 11 main slides (title to final), backups after.
+The talk is at most 15 minutes: 10 main slides (title to final), backups after.
+At the team's request there is no verdict scorecard slide (the README keeps
+the verdicts); a result that differs from the paper only because of the
+computer and software is marked on the slide that shows it.
 """
 from __future__ import annotations
 
@@ -42,7 +45,6 @@ TEXT = RGBColor(0x22, 0x22, 0x22)
 MUTED = RGBColor(0x59, 0x59, 0x59)
 LIGHT = RGBColor(0xEE, 0xF2, 0xF8)
 WHITE = RGBColor(0xFF, 0xFF, 0xFF)
-VERDICT_FILL = {"reproduced": GREEN, "close": ORANGE, "not reproduced": RED, "not testable": MUTED}
 
 MAIN_ORDER = [
     None,
@@ -51,7 +53,6 @@ MAIN_ORDER = [
     "Reproduction 1: prediction and the model-risk proxies",
     "Reproduction 2: weights from regulatory texts",
     "Reproduction 3: the risk–reward picture",
-    "Reproduction scorecard",
     "Improvements 1: how certain are the conclusions?",
     "Improvements 2: benchmarks, explanations, missing factors",
     "Conclusions and critique",
@@ -170,6 +171,27 @@ def box_shape(slide, box, label, fill, size=13):
     return shp
 
 
+def note_box(slide, box, items, fill=RGBColor(0xFD, 0xEB, 0xD9), edge=ORANGE, size=11):
+    """A shaded call-out: marks what differs from the paper only because of the machine and software."""
+    x, y, w, h = box
+    shp = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(x), Inches(y), Inches(w), Inches(h))
+    shp.adjustments[0] = 0.08
+    shp.fill.solid()
+    shp.fill.fore_color.rgb = fill
+    shp.line.color.rgb = edge
+    shp.line.width = Pt(1.25)
+    tf = shp.text_frame
+    tf.word_wrap = True
+    tf.margin_left = tf.margin_right = Inches(0.12)
+    tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+    for i, item in enumerate(items):
+        p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
+        p.alignment = PP_ALIGN.LEFT
+        p.space_after = Pt(3)
+        _runs(p, item, size, TEXT)
+    return shp
+
+
 def arrow_right(slide, x, y, w=0.4, h=0.32):
     a = slide.shapes.add_shape(MSO_SHAPE.RIGHT_ARROW, Inches(x), Inches(y), Inches(w), Inches(h))
     a.fill.solid()
@@ -252,7 +274,7 @@ def build() -> None:
     text(s, (1.12, 6.0, 8, 1.0), [("Financial Innovation 8:70, 2022 (Banco de España)", {"bullet": False, "size": 14, "color": NAVY}),
                                   ("Nazarov · Doroshenko · Burlakov · Daunov · Sergeev", {"bullet": False, "size": 14, "color": MUTED})])
     s.notes_slide.notes_text_frame.text = (
-        "Timing, 14.5 minutes in all: the paper 2 · objectives 1 · reproduction 6 · improvements 3.5 · conclusions 2. "
+        "Timing, 14 minutes in all: the paper 2 · objectives 1 · reproduction 5.5 · improvements 3.5 · conclusions 2. "
         "Then 10 minutes of questions. Our task for this paper: reproduce every result it lists and propose an improvement for each.")
 
     # 2 The paper
@@ -299,28 +321,40 @@ def build() -> None:
 
     # 4 Reproduction 1
     s = slide_with_title(prs, "Reproduction 1: prediction and the model-risk proxies", (
-        "Reproduction, ~2 min. Left the paper's Table 7 and Table 5, right ours, never mixed. Read across: AUC levels and the "
-        "ranking of models. Say which paper AUCs fall inside our intervals. Stability: our spread of test AUC over 100 refits. "
-        "Training time single-threaded, median of five fits. SHAP time: each library's default explainer, 1,000 test rows."))
+        "Reproduction, ~2.5 min. Left the paper's Table 7 and Table 5, right ours, never mixed. Read across: AUC levels and the "
+        "ranking of models; say which paper AUCs fall inside our intervals. Stability: our spread of test AUC over 100 refits, same "
+        "order as the paper. Then the orange columns: times are a property of the computer and the software, not of the method. "
+        "The paper reports no hardware, library, solver or explainer. Where the software is comparable the times agree (random "
+        "forest SHAP); where it is not, they differ (Lasso solver, MLP training and explainer). We do not count that as a failure "
+        "of the idea."))
     heading(s, (0.64, 2.25, 6.0, 0.4), "Paper: Tables 7 and 5")
     paper = pd.DataFrame([(mm, f"{P.TABLE7_AUC[mm]:.1f}", f"{P.TABLE5['stability_sd'][mm]:.3f}", f"{P.TABLE5['training_seconds'][mm]:.2f}",
                            f"{P.TABLE5['shap_seconds'][mm]:,}") for mm in MODELS5],
                          columns=["Model", "AUC %", "SD of AUC", "Train s", "SHAP s"])
     paper.loc[-1] = ["Logit", f"{P.TABLE7_AUC['Logit']:.1f}", "–", "–", "–"]
     paper = paper.sort_index().reset_index(drop=True)
-    table(s, paper, (0.64, 2.65, 5.9, 2.6), widths=[1.2, 1.0, 1.25, 1.15, 1.3], size=11)
+    machine = {(-1, 3): ORANGE, (-1, 4): ORANGE}  # time columns: depend on the computer and the software
+    table(s, paper, (0.64, 2.65, 5.9, 2.4), widths=[1.2, 1.0, 1.25, 1.15, 1.3], size=10, fills=machine)
     heading(s, (6.85, 2.25, 6.2, 0.4), "Ours: same protocol, our split (± s.e.)")
     ours = pd.DataFrame([(mm, f"{100 * a[mm]['auc']:.1f} ± {100 * a[mm]['se']:.1f}",
                           "–" if mm == "Logit" else f"{px[mm]['auc_sd']:.4f}", f"{px[mm]['fit_s']:.2f}",
                           "–" if mm == "Logit" else f"{px[mm]['shap_s']:,.1f}") for mm in ["Logit"] + MODELS5],
                         columns=["Model", "AUC %", "SD of AUC", "Train s", "SHAP s"])
-    table(s, ours, (6.85, 2.65, 6.2, 2.6), widths=[1.15, 1.45, 1.2, 1.1, 1.3], size=11)
+    table(s, ours, (6.85, 2.65, 6.2, 2.4), widths=[1.15, 1.45, 1.2, 1.1, 1.3], size=10, fills=machine)
     best = max(MODELS5, key=lambda mm: a[mm]["auc"])
     v = {r["id"]: r for r in k["verdicts"]}
-    text(s, (0.64, 5.5, 12.4, 1.5), [
+    text(s, (0.64, 5.15, 6.0, 2.0), [
         f"**AUC:** {v['R12']['ours']}. Gain of {best} over the logit: {100 * a[best]['gain']:+.1f} ± {100 * a[best]['gain_se']:.1f} points (paired DeLong {'p < 0.001' if a[best]['gain_p'] < 0.001 else f"p = {a[best]['gain_p']:.3f}"}).",
-        f"**Proxies:** stability order {v['R7']['ours'].split(': ')[1]} ({v['R7']['verdict']}); training time {v['R9']['ours']} ({v['R9']['verdict']}); SHAP time {v['R10']['ours']} ({v['R10']['verdict']}).",
-    ], size=12, space=5)
+        f"**Stability:** {v['R7']['ours'].split(': ')[1]}: Lasso and XGBoost most stable, CART and the MLP least, as in the paper.",
+    ], size=11, space=4)
+    cpu = meta["environment"]["cpu"]
+    note_box(s, (6.85, 5.2, 6.2, 1.5), [
+        "**Orange columns: machine and software, not method.** The paper reports no hardware, library, solver or explainer; "
+        f"we time on an {cpu}, one thread.",
+        f"Comparable software, same time: random forest SHAP {px['RF']['shap_s']:.0f} s vs {P.TABLE5['shap_seconds']['RF']} s.",
+        f"Different software, different time: Lasso solver {px['Lasso']['fit_s']:.1f} s vs {P.TABLE5['training_seconds']['Lasso']} s; "
+        f"MLP explainer {px['MLP']['shap_s']:.0f} s vs {P.TABLE5['shap_seconds']['MLP']:,} s.",
+    ], size=10)
 
     # 5 Reproduction 2
     s = slide_with_title(prs, "Reproduction 2: weights from regulatory texts", (
@@ -329,9 +363,14 @@ def build() -> None:
         "(Table 3) and the sentiment check (Tables 8-10). Say which of the paper's statements hold."))
     picture(s, fig["weights_paper"], (0.5, 2.25, 6.1, 3.3))
     picture(s, fig["weights_ours"], (6.8, 2.25, 6.1, 3.3))
+    held = sum(imp.get("I3", {}).get("claims_point", {}).values())
+    r14 = k.get("extra", {}).get("R14", {}).get("spearman", {})
     text(s, (0.64, 5.65, 12.4, 1.4), [
-        f"**Table 2:** {v['R3']['ours']} ({v['R3']['verdict']}). **Mentions per document:** {v['R2']['ours']} ({v['R2']['verdict']}).",
-        f"**Table 3:** {v['R4']['ours']} ({v['R4']['verdict']}). **Sentiment:** {v['R5']['ours']} ({v['R5']['verdict']}).",
+        f"**Table 2:** {held} of 4 of the paper's statements hold; our levels are about half (we divide by all words, the paper most "
+        f"likely by words without stop words). **Mentions per document:** \"stability\" {v['R2']['ours']}."
+        + (f" **Fig. 9, document by document:** rank correlation " + " / ".join(f"{r14[c]['rho']:.2f}" for c in r14) + "." if r14 else ""),
+        f"**Table 3:** {v['R4']['ours']}. **Sentiment (Tables 8–9):** in our corpus, credit-scoring texts are not the most negative "
+        "around technology or conduct terms, at 10 or 20 words.",
     ], size=12, space=5)
 
     # 6 Reproduction 3
@@ -345,28 +384,9 @@ def build() -> None:
         picture(s, fig["rr_ours"], (6.8, 2.25, 6.1, 3.5))
     err = {e["id"]: e for e in k["errata"]}
     text(s, (0.64, 5.85, 12.4, 1.3), [
-        f"**{v['R13']['verdict'].capitalize()}:** {v['R13']['ours']}.",
+        f"**With our weights and gains:** {v['R13']['ours']}.",
         f"**Errata in the paper's own arithmetic:** {err['E1']['what']}; {err['E2']['what']}." if "E2" in err else "",
     ], size=12, space=4)
-
-    # 7 Scorecard
-    s = slide_with_title(prs, "Reproduction scorecard", (
-        "Scorecard, ~1 min. Left what the paper reports, right what we find, with the pre-registered verdict. Point to the "
-        "rows that do not reproduce and why (corpus versions, solver, explainer)."))
-    vr = pd.DataFrame(k["verdicts"])
-    short = {"R1": "Literature: gains ≤ 20%, not monotone", "R2": "\"Stability\" 6.4 mentions per document",
-             "R3": "Weights: stats→capital, tech/conduct→scoring", "R4": "6 of 9 use differences significant",
-             "R5": "Sentiment: scoring texts most negative", "R6": "Worked example 0.523 / 0.554 / 0.536",
-             "R7": "Lasso, XGBoost most stable", "R8": "Hyperparameter counts", "R9": "Training-time order",
-             "R10": "SHAP-time order", "R11": "SHAP feature rankings", "R12": "AUC 80.0–85.3, XGBoost best",
-             "R13": "XGBoost most risk-efficient", "R14": "Per-document shares (Fig. 9)",
-             "R15": "Sentiment at d = 20 (Table 9)", "R16": "Scores plotted in Fig. 4"}
-    heading(s, (0.64, 2.05, 5.0, 0.35), f"Paper reports ({len(vr)} results)", size=12)
-    table(s, pd.DataFrame({"#": vr["id"], "Result": [short[i] for i in vr["id"]]}), (0.64, 2.4, 4.6, 4.85), widths=[0.5, 4.1], size=8)
-    heading(s, (5.45, 2.05, 7.6, 0.35), "Ours", size=12)
-    ours_t = pd.DataFrame({"#": vr["id"], "What we find": vr["ours"], "Verdict": vr["verdict"]})
-    fills = {(i, 2): VERDICT_FILL.get(vv, MUTED) for i, vv in enumerate(vr["verdict"])}
-    table(s, ours_t, (5.45, 2.4, 7.65, 4.85), widths=[0.5, 5.85, 1.3], size=8, fills=fills)
 
     # 8 Improvements 1
     s = slide_with_title(prs, "Improvements 1: how certain are the conclusions?", (
@@ -396,18 +416,17 @@ def build() -> None:
     s = slide_with_title(prs, "Conclusions and critique", (
         "Conclusions, ~2 min. Summarise what holds, what does not, and what the paper cannot claim: one dataset, expert scores, "
         "word counts as preferences, no uncertainty. Then next steps."))
-    counts = vr["verdict"].value_counts().to_dict()
     i1 = imp.get("I1", {}).get("summary", {})
     german = i1.get("german_credit", {})
     text(s, (0.64, 2.3, 12.2, 4.8), [
-        "**Reproduction:** " + ", ".join(f"{counts.get(c, 0)} {c}" for c in ("reproduced", "close", "not reproduced", "not testable")) + f" of {len(vr)} results.",
-        "**What holds:** XGBoost predicts best and is on the risk–gain frontier in every Monte Carlo draw; the orderings of the text weights hold; the paper's arithmetic holds except for inconsistent scores.",
+        f"**Matched:** {v['R12']['ours'].split(';')[0]}, XGBoost best; the stability order; every ordering of the text weights, document by document too; the paper's own arithmetic.",
+        "**Differs only because of the machine and software:** training and SHAP times (hardware, libraries, solver and explainer are not reported).",
+        "**Differs in substance:** the sentiment check, SHAP mid-ranks and CART's AUC; and the paper contradicts itself on the statistics scores (Tables 5, 6 and Figs. 4, 5).",
         "**The biggest caveat (exploratory):** a logit with log-transformed inputs comes within a fraction of a point of XGBoost; most of the ML gain is a weak benchmark.",
-        "**What does not:** times depend on solver and explainer (Lasso, SHAP); the SHAP ranking claims; the sentiment check; our CART is 4 points better than the paper's.",
-        "**What is fragile:** \"provisions is the least risky use\" only reflects fewer risk words in provisioning texts; the paper uses three versions of the statistics scores (Tables 5, 6 and Figs. 4, 5); with few loans the ML gain disappears"
+        "**What is fragile:** \"provisions is the least risky use\" only reflects fewer risk words in provisioning texts; with few loans the ML gain disappears"
         + (f" (German credit: best is {german['best']})." if german else "."),
         "**Critique and next steps:** one dataset, no uncertainty, expert Z, word counts as supervisory preference, no approval threshold. Next: use-specific metrics (calibration for capital and provisions), a supervisor's loss function, time-split validation.",
-    ], size=14, space=9)
+    ], size=13, space=8)
 
     prs.slides.add_slide(layout(prs, "Final_1"))
 

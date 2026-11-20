@@ -105,6 +105,8 @@ Give Me Some Credit: 150,000 rows in `cs-training.csv`, of which 120,269 complet
 | XGBoost | 0.0014 ± 0.0001 | 2,194 | 0.15 [0.15, 0.15] | 0.0 | 9.0 |
 | MLP | 0.0033 ± 0.0003 | 86,701 | 6.54 [5.97, 8.06] | 29.4 | 29.5 |
 
+**Times depend on the machine and the software, not on the method.** The paper reports no hardware, library, solver or explainer. Where the software is comparable, times agree (random-forest SHAP 67 s vs the paper's 60 s); where it differs, they do not (the Lasso's saga solver, the MLP's early stopping and its permutation explainer). The verdicts for R9 and R10 below record the different orderings; their cause is the computing set-up.
+
 ### SHAP feature rankings (Figs. 6–8)
 
 **Paper** (top four, read from the figures):

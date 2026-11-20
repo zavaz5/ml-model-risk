@@ -7,7 +7,7 @@ Numbers live in `results/`; documents are regenerated from them (CLAUDE.md, rule
 - **Course:** HSE Research Seminar (DSBA, 3rd year), module 2 (credit scoring), instructor Petr Lukianchenko. Rubric (lecture 1 of module 1): 4–5 presented, 6–7 own code, 8 similar results with discrepancies explained, 9–10 upgrades.
 - **Assignment for this paper:** reproduce every result it lists and propose an improvement for each.
 - **Paper:** Alonso Robisco & Carbó Martínez (2022), Financial Innovation 8:70, CC BY 4.0, in `paper/`.
-- **Talk:** at most 15 minutes, 11 main slides (title to final) plus backups, English, HSE template (`docs/hse_template.pptx`, from the team's VPIN deck). The user asked for a deck 30–40% shorter than VPIN's 16 slides.
+- **Talk:** at most 15 minutes (14 by the notes), 10 main slides (title to final) plus backups, English, HSE template (`docs/hse_template.pptx`, from the team's VPIN deck). The user asked for a deck 30–40% shorter than VPIN's 16 slides, and for no verdict scorecard slide: the README keeps the verdicts, and a result that differs only because of the computer and software (training and SHAP times) is marked in orange on the slide that shows it.
 - **Team:** Group 8: Nazarov, Doroshenko, Burlakov, Daunov, Sergeev. The paper's number in the seminar list and the talk date are not known yet (the title slide has no number).
 - **Instructor's rules from earlier talks:** slide numbers; say what is fitted, chosen and evaluated; never mix the paper's numbers and ours in one table; ± on metrics.
 
