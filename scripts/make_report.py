@@ -393,6 +393,31 @@ A3's variants: no squared features, winsorising at the 1st/99th percentiles, log
 """
 
 
+def section_figures() -> str:
+    """Our versions of the paper's figures (scripts/make_paper_figures.py), paper and ours in separate images."""
+    f = "results/report/figures"
+    if not (ROOT / f / "paper_fig1_checked.png").exists():
+        return ""
+    return f"""### The paper's figures, redrawn
+
+**Fig. 1**, the paper's plotted literature gains, coloured by what each cited source says (hollow circle: the source's own value):
+
+![Fig. 1 checked]({f}/paper_fig1_checked.png)
+
+**Fig. 4**, darkness scores: the paper's (read off its PDF) and ours by the I13 rule:
+
+![Fig. 4, paper]({f}/paper_fig4_radar.png) ![Fig. 4, ours]({f}/ours_fig4_radar.png)
+
+**Figs. 6–8**, our SHAP summary plots (1,000 test rows; XGBoost in log-odds, as in the paper):
+
+![Fig. 6, ours]({f}/ours_shap_RF.png) ![Fig. 7, ours]({f}/ours_shap_XGBoost.png) ![Fig. 8, ours]({f}/ours_shap_MLP.png)
+
+**Fig. 9**, per-document shares in the paper's layout, the paper's values and ours:
+
+![Fig. 9, paper]({f}/paper_fig9_layout.png) ![Fig. 9, ours]({f}/ours_fig9_layout.png)
+"""
+
+
 def section_verdicts(k: dict) -> str:
     v = pd.DataFrame(k["verdicts"])[["id", "result", "ours", "verdict"]]
     v.columns = ["#", "Paper's result", "What we find", "Verdict"]
@@ -548,8 +573,8 @@ def main() -> None:
     pics = ""
     if "rr_ours" in figs:
         pics = f"\n![Risk-reward, paper]({figs['rr_paper']}) ![Risk-reward, ours]({figs['rr_ours']})\n"
-    section = "\n".join([section_models(k), section_shap(k), section_nlp(k), section_extra(k), pics, section_verdicts(k),
-                         section_improvements(k), section_appendix(k)])
+    section = "\n".join([section_models(k), section_shap(k), section_nlp(k), section_extra(k), pics, section_figures(),
+                         section_verdicts(k), section_improvements(k), section_appendix(k)])
     write_readme(section)
     print(pd.DataFrame(k["verdicts"])[["id", "verdict", "ours"]].to_string(index=False))
 

@@ -60,7 +60,11 @@ MAIN_ORDER = [
 ]
 BACKUP_ORDER = [
     "Backup: errata, the paper against itself",
+    "Backup: Fig. 1 redrawn, each point checked",
     "Backup: Fig. 1 against its sources",
+    "Backup: Fig. 4, the paper's scores and our rule",
+    "Backup: Figs. 6–8, our SHAP summaries",
+    "Backup: Fig. 9 in the paper's layout",
     "Backup: Fig. 9 document by document",
     "Backup: the paper's remaining risk factors",
     "Backup: every improvement",
@@ -476,6 +480,28 @@ def build() -> None:
         e.columns = ["#", "Where", "What"]
         table(s, e, (0.64, 2.3, 12.2, 4.6), widths=[0.5, 2.6, 9.1], size=10)
     lit_path = ROOT / "data" / "fig1_sources.csv"
+    s = slide_with_title(prs, "Backup: Fig. 1 redrawn, each point checked", "The paper's plotted literature gains, coloured by what each cited source says.")
+    if (ROOT / "results" / "report" / "figures" / "paper_fig1_checked.png").exists():
+        picture(s, ROOT / "results" / "report" / "figures" / "paper_fig1_checked.png", (0.6, 2.2, 8.4, 4.8))
+        lit1 = pd.read_csv(ROOT / "data" / "fig1_sources.csv")
+        lit1 = lit1[lit1["status"] != "wrong_reference"]
+        text(s, (9.2, 2.4, 3.8, 4.4), [
+            f"**{int((lit1['status'] == 'matches').sum())} of {len(lit1)}** points match their source.",
+            "Gains are AUC points, not percent.",
+            f"{int(lit1['metric'].fillna('').str.startswith('KS').sum())} points are KS differences drawn on the AUC axis; two sources report recall or accuracy.",
+            "The 20-point gain is cited to a paper on price formation; the numbers come from a mortgage paper by the same author.",
+            "A negative Lasso gain is drawn at 0.",
+        ], size=12, space=8)
+    s = slide_with_title(prs, "Backup: Fig. 4, the paper's scores and our rule", "Darkness scores by model; left as the paper draws them, right from our measured proxies (I13).")
+    if (ROOT / "results" / "report" / "figures" / "paper_fig4_radar.png").exists():
+        picture(s, ROOT / "results" / "report" / "figures" / "paper_fig4_radar.png", (0.6, 2.2, 6.0, 4.5))
+        picture(s, ROOT / "results" / "report" / "figures" / "ours_fig4_radar.png", (6.8, 2.2, 6.0, 4.5))
+        text(s, (0.64, 6.7, 12.2, 0.5), ["Fig. 4 draws RF statistics 2 and MLP 4; Table 5 says 3 and 5 (erratum E9). Our rule scores RF darkest on conduct (slowest to explain: 67 s) and the MLP darkest on statistics and technology; the Lasso looks darker than in the paper because our saga solver is slow."], size=11)
+    s = slide_with_title(prs, "Backup: Figs. 6–8, our SHAP summaries", "Our SHAP summary plots for RF, XGBoost (log-odds, as in the paper) and the MLP; 1,000 test rows.")
+    for i, name in enumerate(("RF", "XGBoost", "MLP")):
+        path = ROOT / "results" / "report" / "figures" / f"ours_shap_{name}.png"
+        if path.exists():
+            picture(s, path, (0.3 + i * 4.3, 2.2, 4.2, 4.5))
     s = slide_with_title(prs, "Backup: Fig. 1 against its sources", "Each labelled point of Fig. 1 looked up in its cited source (open-access copies).")
     if lit_path.exists():
         lit = pd.read_csv(lit_path)
@@ -487,6 +513,12 @@ def build() -> None:
                              "Plotted": lit["plotted_value_matched"].fillna("–").astype(str).str.slice(0, 22),
                              "Status": lit["status"].str.replace("_", " ")})
         table(s, show, (0.4, 2.2, 12.5, 4.9), widths=[2.1, 1.7, 1.25, 2.0, 1.25, 0.85, 1.75, 1.6], size=7)
+    s = slide_with_title(prs, "Backup: Fig. 9 in the paper's layout", "Per-document shares by category, the paper's values (read off its PDF) and ours, in separate figures.")
+    pf = ROOT / "results" / "report" / "figures"
+    if (pf / "paper_fig9_layout.png").exists():
+        picture(s, pf / "paper_fig9_layout.png", (0.4, 2.2, 6.2, 4.4))
+        picture(s, pf / "ours_fig9_layout.png", (6.75, 2.2, 6.2, 4.4))
+        text(s, (0.64, 6.65, 12.2, 0.5), ["Levels differ by the denominator (the paper most likely without stop words); the shapes and the ordering of documents agree (rank correlation on the next slide)."], size=11)
     s = slide_with_title(prs, "Backup: Fig. 9 document by document", "R14: values read off the paper's Fig. 9 against ours; read the ranks, not the levels.")
     if "fig9" in fig:
         picture(s, fig["fig9"], (0.5, 2.3, 12.3, 3.8))

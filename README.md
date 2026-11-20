@@ -37,6 +37,8 @@ python scripts/improve_risk.py         # I13
 python scripts/appendix_factors.py     # A1-A5: the paper's unmeasured risk factors (~10 min)
 python scripts/extended_scorecard.py   # I14
 python scripts/explore_logit_benchmark.py  # exploratory: a logit with log inputs
+python scripts/reproduce_shap_figures.py   # SHAP values for our Figs. 6-8
+python scripts/make_paper_figures.py   # our versions of Figs. 1, 4, 6-8 and 9
 python scripts/make_report.py          # this README's results section and results/report/key_numbers.json
 python scripts/make_slides.py          # docs/presentation.pptx
 python scripts/make_speaker_script.py  # docs/speaker_script.pdf
@@ -231,6 +233,24 @@ The radar chart read off the PDF, against Table 5 (Fig. 4 / Table 5):
 
 
 ![Risk-reward, paper](results/report/figures/risk_reward_paper.png) ![Risk-reward, ours](results/report/figures/risk_reward_ours.png)
+
+### The paper's figures, redrawn
+
+**Fig. 1**, the paper's plotted literature gains, coloured by what each cited source says (hollow circle: the source's own value):
+
+![Fig. 1 checked](results/report/figures/paper_fig1_checked.png)
+
+**Fig. 4**, darkness scores: the paper's (read off its PDF) and ours by the I13 rule:
+
+![Fig. 4, paper](results/report/figures/paper_fig4_radar.png) ![Fig. 4, ours](results/report/figures/ours_fig4_radar.png)
+
+**Figs. 6–8**, our SHAP summary plots (1,000 test rows; XGBoost in log-odds, as in the paper):
+
+![Fig. 6, ours](results/report/figures/ours_shap_RF.png) ![Fig. 7, ours](results/report/figures/ours_shap_XGBoost.png) ![Fig. 8, ours](results/report/figures/ours_shap_MLP.png)
+
+**Fig. 9**, per-document shares in the paper's layout, the paper's values and ours:
+
+![Fig. 9, paper](results/report/figures/paper_fig9_layout.png) ![Fig. 9, ours](results/report/figures/ours_fig9_layout.png)
 
 ### Verdicts
 

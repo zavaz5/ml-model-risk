@@ -31,6 +31,7 @@ python scripts/extract_fig9_fig4.py && python scripts/reproduce_scorecard.py && 
 python scripts/improve_nlp.py && python scripts/improve_models.py && python scripts/improve_risk.py   # I1-I13
 python scripts/appendix_factors.py && python scripts/extended_scorecard.py   # A1-A5, I14
 python scripts/explore_logit_benchmark.py   # exploratory, not pre-registered
+python scripts/reproduce_shap_figures.py && python scripts/make_paper_figures.py   # our versions of Figs. 1, 4, 6-8, 9
 python scripts/make_report.py        # README results section
 python scripts/make_slides.py        # docs/presentation.pptx (export the PDF with PowerPoint, see HANDOFF)
 python scripts/make_speaker_script.py
