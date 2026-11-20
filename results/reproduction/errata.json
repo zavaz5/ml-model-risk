@@ -65,6 +65,21 @@
   {
     "id": "E8",
     "where": "Table 12 vs Fig. 9",
-    "what": "Fig. 9 counts the EBA report on innovative uses of consumer data in the common area (Table 12: credit scoring) and has no bar for IIF (2018), which Table 12 lists"
+    "what": "Fig. 9 counts the EBA report on innovative uses of consumer data in the common area (Table 12: credit scoring)"
+  },
+  {
+    "id": "E9",
+    "where": "Fig. 4 vs Tables 5 and 6 (pp. 18-20)",
+    "what": "The radar chart's scores differ from Table 5 (RF statistics: Fig. 4 2, Table 5 3, Table 6 3; MLP statistics: Fig. 4 4, Table 5 5, Table 6 4): the paper uses three versions of the statistics scores"
+  },
+  {
+    "id": "E10",
+    "where": "Fig. 1 vs references (pp. 4, 33-35)",
+    "what": "Fig. 1 credits its largest gain (19.95%) to \"Sirigniano et al (2019a)\", but the only Sirignano reference is Sirignano and Cont (2019), on price formation in limit order books; \"Cheng & Xiang\" in the figure is Chen and Xiang in the references"
+  },
+  {
+    "id": "E11",
+    "where": "Fig. 9, common area (p. 29)",
+    "what": "The panel plots 12 series but names 11; the unlabelled one matches IIF (2018), \"Explainability in predictive modelling\" (highest statistics share in the paper's panel and in our counts)"
   }
 ]

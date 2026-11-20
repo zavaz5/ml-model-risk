@@ -68,16 +68,13 @@ def nlp_block() -> dict:
 
 
 def verdicts(k: dict) -> list[dict]:
-    """One row per paper result R1-R13: what the paper says, what we find, and the verdict."""
+    """One row per paper result R1-R16: what the paper says, what we find, and the verdict."""
     rows = []
     m, n, imp = k["models"], k.get("nlp", {}), k.get("improvements", {})
     lit = pd.read_csv(RES / "paper_extracted" / "fig1_literature.csv")
     med = lit[lit["complexity_rank"] > 0].groupby("complexity_rank")["gain_pct"].median()
     monotone = bool(np.all(np.diff(med.to_numpy()) >= 0))
-    rows.append({"id": "R1", "result": "Literature: gains up to 20%, not monotone in complexity (Fig. 1)",
-                 "ours": f"max {lit['gain_pct'].max():.1f}% in the figure's data; class medians "
-                         + " / ".join(f"{v:.1f}" for v in med) + "%",
-                 "verdict": "reproduced" if lit["gain_pct"].max() >= 19.5 and not monotone else "close"})
+    rows.append(literature_verdict(lit, monotone, med))
     if n:
         mpd = n["meta"]["mentions_per_document"]
         others = max(v for t, v in mpd.items() if t != "stability")
@@ -143,7 +140,43 @@ def verdicts(k: dict) -> list[dict]:
     i13 = imp.get("I13", {})
     rows.append({"id": "R13", "result": "Risk-reward: XGBoost most risk-efficient; provisions least risky use (Table 6, Fig. 5)",
                  "ours": k.get("r13_text", ""), "verdict": k.get("r13_verdict", "")})
+    extra = _json(RES / "reproduction" / "extra.json")
+    if extra:
+        sp = extra["R14"]["spearman"]
+        rows.append({"id": "R14", "result": "Per-document term shares (Fig. 9)",
+                     "ours": f"rank correlation over {extra['R14']['documents']} documents: "
+                             + " / ".join(f"{sp[c]['rho']:.2f}" for c in CATS),
+                     "verdict": extra["R14"]["verdict"]})
+        r15 = extra["R15"]
+        rows.append({"id": "R15", "result": "Sentiment at d = 20 (Table 9)",
+                     "ours": f"technology {'yes' if r15['scoring_highest_technology'] else 'no'}, "
+                             f"conduct {'yes' if r15['scoring_highest_conduct'] else 'no'}",
+                     "verdict": r15["verdict"]})
+        diffs = extra["R16"]["differences_from_table5"]
+        rows.append({"id": "R16", "result": "Darkness scores plotted in Fig. 4",
+                     "ours": "equal to Table 5" if not diffs else
+                     "differs from Table 5: " + "; ".join(f"{d['model']} {d['category']} {d['fig4']:.0f} vs {d['table5']}" for d in diffs),
+                     "verdict": extra["R16"]["verdict"]})
     return rows
+
+
+def literature_verdict(lit: pd.DataFrame, monotone: bool, med: pd.Series) -> dict:
+    """R1, revised (pre-registration addendum): each labelled point checked against its source."""
+    shape = (f"figure: max {lit['gain_pct'].max():.1f}%, class medians " + " / ".join(f"{v:.1f}" for v in med) + "%")
+    src = ROOT / "data" / "fig1_sources.csv"
+    row = {"id": "R1", "result": "Literature gains of 20 papers (Fig. 1)"}
+    if not src.exists():
+        return {**row, "ours": shape + "; sources not checked", "verdict": "not testable"}
+    f = pd.read_csv(src)
+    checked = f[f["status"].isin(["matches", "differs"])]
+    n_match = int((checked["status"] == "matches").sum())
+    share = n_match / len(checked) if len(checked) else 0.0
+    counts = f["status"].value_counts().to_dict()
+    verdict = ("reproduced" if len(checked) and share >= 0.75 else "close" if len(checked) and share >= 0.5
+               else "not reproduced" if len(checked) else "not testable")
+    detail = ", ".join(f"{v} {k.replace('_', ' ')}" for k, v in counts.items())
+    return {**row, "ours": f"{n_match} of {len(checked)} checkable points match their source ({detail})", "verdict": verdict,
+            "shape": shape}
 
 
 def _range_verdict(paper_value: float, interval: dict | None, direction: bool) -> str:

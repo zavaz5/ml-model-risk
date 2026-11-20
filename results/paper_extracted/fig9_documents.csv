@@ -1,0 +1,121 @@
+panel,doc_id,category,share,markers_found
+capital,Cap_09_ECB,statistics,0.04448,1
+capital,Cap_09_ECB,technology,0.00274,1
+capital,Cap_09_ECB,conduct,0.00852,1
+capital,Cap_01_trucharte,statistics,0.01732,1
+capital,Cap_01_trucharte,technology,0.00023,1
+capital,Cap_01_trucharte,conduct,0.00048,1
+capital,Cap_08_EBA_IRB,statistics,0.04599,1
+capital,Cap_08_EBA_IRB,technology,0.00123,1
+capital,Cap_08_EBA_IRB,conduct,0.00173,1
+capital,Cap_03_BIS_Basel,statistics,0.01355,1
+capital,Cap_03_BIS_Basel,technology,0.005,1
+capital,Cap_03_BIS_Basel,conduct,0.00777,1
+capital,Cap_10_BDE_prov,statistics,0.02864,1
+capital,Cap_10_BDE_prov,technology,-0.00028,1
+capital,Cap_10_BDE_prov,conduct,0.00324,1
+capital,Cap_04_BDE,statistics,0.04021,1
+capital,Cap_04_BDE,technology,0.004,1
+capital,Cap_04_BDE,conduct,0.01204,1
+capital,Cap_12_EBA_LGD,statistics,0.0304,1
+capital,Cap_12_EBA_LGD,technology,0.00148,1
+capital,Cap_12_EBA_LGD,conduct,0.00224,1
+capital,Cap_11_EBA_RTS,statistics,0.00274,1
+capital,Cap_11_EBA_RTS,technology,0.00048,1
+capital,Cap_11_EBA_RTS,conduct,0.00525,1
+capital,Cap_06_EBA_PdLgd,statistics,0.03292,1
+capital,Cap_06_EBA_PdLgd,technology,0.00299,1
+capital,Cap_06_EBA_PdLgd,conduct,0.00525,1
+capital,Cap_02_BIS_Studies,statistics,0.04851,1
+capital,Cap_02_BIS_Studies,technology,0.00098,1
+capital,Cap_02_BIS_Studies,conduct,0.00224,1
+capital,Cap_05_EBA_2016,statistics,0.02462,1
+capital,Cap_05_EBA_2016,technology,0.00299,1
+capital,Cap_05_EBA_2016,conduct,0.01154,1
+capital,Cap_07_BIS_CRE,statistics,0.01355,1
+capital,Cap_07_BIS_CRE,technology,0.00274,1
+capital,Cap_07_BIS_CRE,conduct,0.004,1
+capital,Average Capital,statistics,0.02864,1
+capital,Average Capital,technology,0.00199,1
+capital,Average Capital,conduct,0.00525,1
+scoring,Cons_06_ECB_fintech_credit,statistics,0.02421,1
+scoring,Cons_06_ECB_fintech_credit,technology,0.02333,1
+scoring,Cons_06_ECB_fintech_credit,conduct,0.01965,1
+scoring,Cons_02_EBA_automation,statistics,0.01039,1
+scoring,Cons_02_EBA_automation,technology,0.00965,1
+scoring,Cons_02_EBA_automation,conduct,0.03053,1
+scoring,Cons_03_EBA_creditworthiness,statistics,0.00583,1
+scoring,Cons_03_EBA_creditworthiness,technology,0.00113,1
+scoring,Cons_03_EBA_creditworthiness,conduct,0.02053,1
+scoring,Cons_01_EBA_loan_origination,statistics,0.01671,1
+scoring,Cons_01_EBA_loan_origination,technology,0.00539,1
+scoring,Cons_01_EBA_loan_origination,conduct,0.01568,1
+scoring,Cons_04_EBA_final_report,statistics,0.01142,1
+scoring,Cons_04_EBA_final_report,technology,0.00024,1
+scoring,Cons_04_EBA_final_report,conduct,0.00951,1
+scoring,Average Credit Scoring,statistics,0.01377,1
+scoring,Average Credit Scoring,technology,0.00804,1
+scoring,Average Credit Scoring,conduct,0.01921,1
+provisions,prov_01_deloitte,statistics,0.01068,1
+provisions,prov_01_deloitte,technology,0.00024,1
+provisions,prov_01_deloitte,conduct,0.00274,1
+provisions,prov_08_EBA_accounting,statistics,0.01259,1
+provisions,prov_08_EBA_accounting,technology,0.00098,1
+provisions,prov_08_EBA_accounting,conduct,0.0098,1
+provisions,prov_07_EBA_management,statistics,0.00921,1
+provisions,prov_07_EBA_management,technology,0.00127,1
+provisions,prov_07_EBA_management,conduct,0.01892,1
+provisions,prov_02_ifrs_celex,statistics,0.00465,1
+provisions,prov_02_ifrs_celex,technology,0.00039,1
+provisions,prov_02_ifrs_celex,conduct,0.00186,1
+provisions,prov_06_bde_provspru,statistics,0.02877,1
+provisions,prov_06_bde_provspru,technology,-0.0002,1
+provisions,prov_06_bde_provspru,conduct,0.00362,1
+provisions,Average Provisions,statistics,0.01348,1
+provisions,Average Provisions,technology,0.00068,1
+provisions,Average Provisions,conduct,0.00701,1
+provisions,prov_04_bde,statistics,0.01656,1
+provisions,prov_04_bde,technology,0.00113,1
+provisions,prov_04_bde,conduct,0.00465,1
+provisions,prov_05_deloitte_gx,statistics,0.01921,1
+provisions,prov_05_deloitte_gx,technology,0.00127,1
+provisions,prov_05_deloitte_gx,conduct,0.01274,1
+provisions,prov_03_ifrs_pwc,statistics,0.00598,1
+provisions,prov_03_ifrs_pwc,technology,0.00039,1
+provisions,prov_03_ifrs_pwc,conduct,0.00127,1
+common,comun_06_bankfrance,statistics,0.07947,1
+common,comun_06_bankfrance,technology,0.01164,1
+common,comun_06_bankfrance,conduct,0.02789,1
+common,comun_09_eba_prudential,statistics,0.02098,1
+common,comun_09_eba_prudential,technology,0.02464,1
+common,comun_09_eba_prudential,conduct,0.01286,1
+common,comun_05_eba_bigdata,statistics,0.05388,1
+common,comun_05_eba_bigdata,technology,0.00677,1
+common,comun_05_eba_bigdata,conduct,0.02911,1
+common,comun_03_ethicguide,statistics,0.01489,1
+common,comun_03_ethicguide,technology,0.01164,1
+common,comun_03_ethicguide,conduct,0.04292,1
+common,comun_08_eba_bigdata_2,statistics,0.08638,1
+common,comun_08_eba_bigdata_2,technology,0.01855,1
+common,comun_08_eba_bigdata_2,conduct,0.02951,1
+common,Average Common,statistics,0.04941,1
+common,Average Common,technology,0.0222,1
+common,Average Common,conduct,0.03154,1
+common,comun_01_iif_recommend,statistics,0.04779,1
+common,comun_01_iif_recommend,technology,0.00839,1
+common,comun_01_iif_recommend,conduct,0.0421,1
+common,comun_11_iif_bias,statistics,0.06282,1
+common,comun_11_iif_bias,technology,0.00514,1
+common,comun_11_iif_bias,conduct,0.05551,1
+common,Cons_05_EBA_innovative,statistics,0.04617,1
+common,Cons_05_EBA_innovative,technology,0.00921,1
+common,Cons_05_EBA_innovative,conduct,0.03967,1
+common,comun_04_fsb,statistics,0.01895,1
+common,comun_04_fsb,technology,0.06891,1
+common,comun_04_fsb,conduct,0.01124,1
+common,unlabelled,statistics,0.09856,1
+common,unlabelled,technology,0.00514,1
+common,unlabelled,conduct,0.03642,1
+common,comun_07_ict,statistics,0.0153,1
+common,comun_07_ict,technology,0.07378,1
+common,comun_07_ict,conduct,0.01733,1

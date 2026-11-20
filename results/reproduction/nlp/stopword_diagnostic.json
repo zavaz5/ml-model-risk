@@ -2,22 +2,22 @@
   "kept_share_mean": 0.5822637115898018,
   "table2_pct": {
     "capital": {
-      "statistics": 5.05,
-      "technology": 2.43,
-      "conduct": 4.23,
-      "total": 11.71
+      "statistics": 5.74,
+      "technology": 2.29,
+      "conduct": 4.32,
+      "total": 12.35
     },
     "scoring": {
-      "statistics": 3.31,
-      "technology": 2.83,
-      "conduct": 5.72,
-      "total": 11.86
+      "statistics": 4.0,
+      "technology": 2.69,
+      "conduct": 5.82,
+      "total": 12.51
     },
     "provisions": {
-      "statistics": 3.91,
-      "technology": 2.31,
-      "conduct": 4.5,
-      "total": 10.72
+      "statistics": 4.6,
+      "technology": 2.17,
+      "conduct": 4.59,
+      "total": 11.37
     }
   },
   "neg_d10": {

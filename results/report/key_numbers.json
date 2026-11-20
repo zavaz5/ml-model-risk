@@ -294,22 +294,22 @@
   "nlp": {
     "table2": {
       "capital": {
-        "statistics": 2.953380616654143,
-        "technology": 1.5976824101093832,
-        "conduct": 2.4513846352415816,
-        "total": 7.002447662005107
+        "statistics": 3.3395005596148337,
+        "technology": 1.5003273151037506,
+        "conduct": 2.5005350814575373,
+        "total": 7.340362956176122
       },
       "scoring": {
-        "statistics": 1.9477456407896936,
-        "technology": 1.8460968702980534,
-        "conduct": 3.3125426259630317,
-        "total": 7.106385137050779
+        "statistics": 2.333865583750384,
+        "technology": 1.7487417752924208,
+        "conduct": 3.3616930721789875,
+        "total": 7.444300431221793
       },
       "provisions": {
-        "statistics": 2.319641350437436,
-        "technology": 1.50237775601842,
-        "conduct": 2.6324305143360953,
-        "total": 6.454449620791951
+        "statistics": 2.705761293398126,
+        "technology": 1.4050226610127874,
+        "conduct": 2.681580960552051,
+        "total": 6.792364914962964
       }
     },
     "table3": {
@@ -394,17 +394,17 @@
         "capital": 12,
         "scoring": 5,
         "provisions": 7,
-        "common": 10
+        "common": 11
       },
       "missing": [
         "prov_03_ifrs_pwc"
       ],
       "mentions_per_document": {
-        "stability": 7.529411764705882,
-        "hyperparameters": 0.20588235294117646,
-        "overfitting": 0.2647058823529412,
+        "stability": 7.3428571428571425,
+        "hyperparameters": 0.22857142857142856,
+        "overfitting": 0.2857142857142857,
         "dynamic calibration": 0.0,
-        "feature engineering": 0.29411764705882354
+        "feature engineering": 0.37142857142857144
       },
       "dictionary_size": {
         "conduct": 51,
@@ -417,28 +417,28 @@
   "improvements": {
     "I2": {
       "stability": {
-        "mean": 7.529411764705882,
-        "lo": 4.0,
-        "hi": 11.383823529411764,
-        "top3_share": 0.4375,
-        "documents_with_mention": 25,
-        "documents": 34
+        "mean": 7.3428571428571425,
+        "lo": 3.9985714285714287,
+        "hi": 11.200714285714284,
+        "top3_share": 0.4357976653696498,
+        "documents_with_mention": 26,
+        "documents": 35
       },
       "hyperparameters": {
-        "mean": 0.20588235294117646,
+        "mean": 0.22857142857142856,
         "lo": 0.0,
-        "hi": 0.5294117647058824,
+        "hi": 0.5428571428571428,
         "top3_share": 1.0,
-        "documents_with_mention": 2,
-        "documents": 34
+        "documents_with_mention": 3,
+        "documents": 35
       },
       "overfitting": {
-        "mean": 0.2647058823529412,
-        "lo": 0.08823529411764706,
-        "hi": 0.5,
-        "top3_share": 0.6666666666666666,
-        "documents_with_mention": 6,
-        "documents": 34
+        "mean": 0.2857142857142857,
+        "lo": 0.11428571428571428,
+        "hi": 0.5142857142857142,
+        "top3_share": 0.6,
+        "documents_with_mention": 7,
+        "documents": 35
       },
       "dynamic calibration": {
         "mean": 0.0,
@@ -446,23 +446,23 @@
         "hi": 0.0,
         "top3_share": 0.0,
         "documents_with_mention": 0,
-        "documents": 34
+        "documents": 35
       },
       "feature engineering": {
-        "mean": 0.29411764705882354,
-        "lo": 0.0,
-        "hi": 0.6470588235294118,
-        "top3_share": 1.0,
-        "documents_with_mention": 3,
-        "documents": 34
+        "mean": 0.37142857142857144,
+        "lo": 0.05714285714285714,
+        "hi": 0.7428571428571429,
+        "top3_share": 0.8461538461538461,
+        "documents_with_mention": 4,
+        "documents": 35
       }
     },
     "I3": {
       "claim_probability": {
-        "statistics_highest_for_capital": 0.982,
-        "technology_highest_for_scoring": 0.947,
-        "conduct_highest_for_scoring": 1.0,
-        "provisions_lowest_total": 0.907
+        "statistics_highest_for_capital": 0.99,
+        "technology_highest_for_scoring": 0.933,
+        "conduct_highest_for_scoring": 0.997,
+        "provisions_lowest_total": 0.92
       },
       "claims_point": {
         "statistics_highest_for_capital": true,
@@ -477,7 +477,6 @@
         "provisions_lowest_total": true
       },
       "dominant_terms": [
-        "conduct|Consumers",
         "conduct|Management",
         "statistics|Model",
         "technology|Development",
@@ -485,12 +484,11 @@
         "technology|Security"
       ],
       "dominant_shares": {
-        "conduct|Consumers": 0.10232772528232312,
-        "conduct|Management": 0.22931551048628715,
-        "statistics|Model": 0.41358872425009036,
-        "technology|Development": 0.16184301921741143,
-        "technology|ICT": 0.2243574901597592,
-        "technology|Security": 0.13683723084047233
+        "conduct|Management": 0.22327499721324268,
+        "statistics|Model": 0.4157753088123663,
+        "technology|Development": 0.1609353507565337,
+        "technology|ICT": 0.2221458046767538,
+        "technology|Security": 0.13548830811554333
       }
     },
     "I4": {
@@ -505,16 +503,16 @@
     },
     "I6": {
       "capital": {
-        "est": 0.5612793048379154,
-        "se": 0.020888642420021253
+        "est": 0.5498887655694569,
+        "se": 0.021475106851445266
       },
       "scoring": {
-        "est": 0.5971392270885608,
-        "se": 0.02114154736497933
+        "est": 0.584279951786902,
+        "se": 0.022240988146314047
       },
       "provisions": {
-        "est": 0.5746759633296592,
-        "se": 0.022993536490279114
+        "est": 0.5616999778819324,
+        "se": 0.023746615210338683
       },
       "p_scoring_riskiest": 1.0
     },
@@ -1085,7 +1083,22 @@
     {
       "id": "E8",
       "where": "Table 12 vs Fig. 9",
-      "what": "Fig. 9 counts the EBA report on innovative uses of consumer data in the common area (Table 12: credit scoring) and has no bar for IIF (2018), which Table 12 lists"
+      "what": "Fig. 9 counts the EBA report on innovative uses of consumer data in the common area (Table 12: credit scoring)"
+    },
+    {
+      "id": "E9",
+      "where": "Fig. 4 vs Tables 5 and 6 (pp. 18-20)",
+      "what": "The radar chart's scores differ from Table 5 (RF statistics: Fig. 4 2, Table 5 3, Table 6 3; MLP statistics: Fig. 4 4, Table 5 5, Table 6 4): the paper uses three versions of the statistics scores"
+    },
+    {
+      "id": "E10",
+      "where": "Fig. 1 vs references (pp. 4, 33-35)",
+      "what": "Fig. 1 credits its largest gain (19.95%) to \"Sirigniano et al (2019a)\", but the only Sirignano reference is Sirignano and Cont (2019), on price formation in limit order books; \"Cheng & Xiang\" in the figure is Chen and Xiang in the references"
+    },
+    {
+      "id": "E11",
+      "where": "Fig. 9, common area (p. 29)",
+      "what": "The panel plots 12 series but names 11; the unlabelled one matches IIF (2018), \"Explainability in predictive modelling\" (highest statistics share in the paper's panel and in our counts)"
     }
   ],
   "scorecard_checks": {
@@ -1094,6 +1107,307 @@
       "capital": 0.5236749116607774,
       "scoring": 0.5546138072453862,
       "provisions": 0.5363924050632911
+    }
+  },
+  "extra": {
+    "R14": {
+      "documents": 34,
+      "spearman": {
+        "statistics": {
+          "rho": 0.703239608801956,
+          "lo": 0.40882799637695866,
+          "hi": 0.9132327421313249,
+          "p": 3.5118399973983335e-06
+        },
+        "technology": {
+          "rho": 0.9541355536485178,
+          "lo": 0.8430270540691739,
+          "hi": 0.9944797372519385,
+          "p": 2.5351692230680566e-18
+        },
+        "conduct": {
+          "rho": 0.931458702192036,
+          "lo": 0.8121099144770506,
+          "hi": 0.990777779053332,
+          "p": 1.3313250271111304e-15
+        }
+      },
+      "level_ratio": {
+        "statistics": 2.255979234646907,
+        "technology": 1.5085239058929725,
+        "conduct": 1.578676879699248
+      },
+      "verdict": "reproduced",
+      "unlabelled_series": {
+        "panel": "common",
+        "statistics": 0.0986,
+        "technology": 0.0051,
+        "conduct": 0.0364
+      }
+    },
+    "R15": {
+      "scoring_highest_technology": false,
+      "scoring_highest_conduct": false,
+      "verdict": "not reproduced",
+      "ours": {
+        "capital": {
+          "statistics": 0.95,
+          "technology": 0.99,
+          "conduct": 0.97
+        },
+        "scoring": {
+          "statistics": 0.9,
+          "technology": 0.97,
+          "conduct": 0.88
+        },
+        "provisions": {
+          "statistics": 1.12,
+          "technology": 0.82,
+          "conduct": 1.18
+        }
+      }
+    },
+    "R16": {
+      "scores": {
+        "CART": {
+          "conduct": 1,
+          "statistics": 3,
+          "technology": 1
+        },
+        "Lasso": {
+          "conduct": 1,
+          "statistics": 1,
+          "technology": 1
+        },
+        "MLP": {
+          "conduct": 3,
+          "statistics": 4,
+          "technology": 5
+        },
+        "RF": {
+          "conduct": 2,
+          "statistics": 2,
+          "technology": 3
+        },
+        "XGBoost": {
+          "conduct": 2,
+          "statistics": 2,
+          "technology": 2
+        }
+      },
+      "differences_from_table5": [
+        {
+          "model": "RF",
+          "category": "statistics",
+          "fig4": 2.0,
+          "table5": 3,
+          "table6": 3
+        },
+        {
+          "model": "MLP",
+          "category": "statistics",
+          "fig4": 4.0,
+          "table5": 5,
+          "table6": 4
+        }
+      ],
+      "verdict": "not reproduced"
+    }
+  },
+  "appendix": {
+    "factors": {
+      "Logit": {
+        "auc_fit": 0.8033272184282826,
+        "auc_val": 0.81918756147056,
+        "overfit_gap": -0.01586034304227746,
+        "curve_10": 0.8157032724956664,
+        "curve_25": 0.8215846887940772,
+        "curve_50": 0.819826650618985,
+        "curve_100": 0.81918756147056,
+        "features_used": 20,
+        "d_auc_no_squares": -0.10585367231067322,
+        "d_auc_winsorised": 0.04094577341106764,
+        "d_auc_log1p": 0.042029885813565704,
+        "d_auc_imputed_rows_added": -0.0017044465817962484,
+        "fe_sensitivity": 0.10585367231067322,
+        "surrogate_r2": 0.8992918181687313,
+        "flip_+10": 0.02125448214935301,
+        "mean_abs_dpd_+10": 0.011929995145821895,
+        "flip_-10": 0.02728264823572208,
+        "mean_abs_dpd_-10": 0.01199272106306295,
+        "flip_rate": 0.024268565192537547
+      },
+      "Lasso": {
+        "auc_fit": 0.802867978667731,
+        "auc_val": 0.8188113760541734,
+        "overfit_gap": -0.01594339738644246,
+        "curve_10": 0.8159574879569288,
+        "curve_25": 0.8206115189261031,
+        "curve_50": 0.8192060658164916,
+        "curve_100": 0.8188113760541734,
+        "features_used": 20,
+        "d_auc_no_squares": -0.10540346951056045,
+        "d_auc_winsorised": 0.04136832411861446,
+        "d_auc_log1p": 0.04259165770619133,
+        "d_auc_imputed_rows_added": -0.0029312888941093185,
+        "fe_sensitivity": 0.10540346951056045,
+        "surrogate_r2": 0.8970826909463527,
+        "flip_+10": 0.021150548251312167,
+        "mean_abs_dpd_+10": 0.011949874499253998,
+        "flip_-10": 0.028581821961232656,
+        "mean_abs_dpd_-10": 0.012170796612522457,
+        "flip_rate": 0.024866185106272413
+      },
+      "CART": {
+        "auc_fit": 0.8462016939526056,
+        "auc_val": 0.846773656594928,
+        "overfit_gap": -0.0005719626423223989,
+        "curve_10": 0.7654851300663374,
+        "curve_25": 0.8041955325412916,
+        "curve_50": 0.8263068057313515,
+        "curve_100": 0.846773656594928,
+        "features_used": 19,
+        "d_auc_no_squares": 8.452267266922942e-05,
+        "d_auc_winsorised": 0.0014478293149104982,
+        "d_auc_log1p": 8.878326699202077e-05,
+        "d_auc_imputed_rows_added": 0.0018295075563310448,
+        "fe_sensitivity": 0.0018295075563310448,
+        "surrogate_r2": 0.8637993939755578,
+        "flip_+10": 0.0036896533804500337,
+        "mean_abs_dpd_+10": 0.0017628532515709615,
+        "flip_-10": 0.003325884737307073,
+        "mean_abs_dpd_-10": 0.002910688182972191,
+        "flip_rate": 0.003507769058878553
+      },
+      "RF": {
+        "auc_fit": 0.9991831149426926,
+        "auc_val": 0.8483758071424436,
+        "overfit_gap": 0.15080730780024898,
+        "curve_10": 0.8312138408163432,
+        "curve_25": 0.8378074655804545,
+        "curve_50": 0.8464886562511565,
+        "curve_100": 0.8483758071424436,
+        "features_used": 20,
+        "d_auc_no_squares": 0.003274872409819718,
+        "d_auc_winsorised": 0.0006870208345569617,
+        "d_auc_log1p": 0.00031678771906240577,
+        "d_auc_imputed_rows_added": 0.003607971521853215,
+        "fe_sensitivity": 0.003607971521853215,
+        "surrogate_r2": 0.7821948323270282,
+        "flip_+10": 0.026139375357272773,
+        "mean_abs_dpd_+10": 0.019944148072849593,
+        "flip_-10": 0.04172946006339968,
+        "mean_abs_dpd_-10": 0.027045489237809816,
+        "flip_rate": 0.03393441771033623
+      },
+      "XGBoost": {
+        "auc_fit": 0.8784150740040443,
+        "auc_val": 0.8638948548812335,
+        "overfit_gap": 0.014520219122810762,
+        "curve_10": 0.8274873245230369,
+        "curve_25": 0.8549226697953352,
+        "curve_50": 0.8599271346475624,
+        "curve_100": 0.8638948548812335,
+        "features_used": 10,
+        "d_auc_no_squares": 0.0,
+        "d_auc_winsorised": -0.001790410337839221,
+        "d_auc_log1p": 0.0,
+        "d_auc_imputed_rows_added": 0.0016951944088302584,
+        "fe_sensitivity": 0.001790410337839221,
+        "surrogate_r2": 0.8429660846738813,
+        "flip_+10": 0.017824663514005093,
+        "mean_abs_dpd_+10": 0.011694788932800293,
+        "flip_-10": 0.024476432988619238,
+        "mean_abs_dpd_-10": 0.013677108101546764,
+        "flip_rate": 0.021150548251312164
+      },
+      "MLP": {
+        "auc_fit": 0.8079273970598637,
+        "auc_val": 0.8264471547208094,
+        "overfit_gap": -0.018519757660945713,
+        "curve_10": 0.8113706240041384,
+        "curve_25": 0.8243445096519588,
+        "curve_50": 0.8280477179880873,
+        "curve_100": 0.8264471547208094,
+        "features_used": 20,
+        "d_auc_no_squares": -0.0005361665561557372,
+        "d_auc_winsorised": 0.03303819388895446,
+        "d_auc_log1p": 0.03290820399157557,
+        "d_auc_imputed_rows_added": 0.001026594379140211,
+        "fe_sensitivity": 0.03303819388895446,
+        "surrogate_r2": 0.9058982106634954,
+        "flip_+10": 0.016993192329678324,
+        "mean_abs_dpd_+10": 0.010590447045207495,
+        "flip_-10": 0.018032531310086784,
+        "mean_abs_dpd_-10": 0.009935040663124603,
+        "flip_rate": 0.017512861819882555
+      }
+    },
+    "lasso_c_fit": 10.0,
+    "not_measurable": [
+      "third-party providers",
+      "cyber risk",
+      "privacy"
+    ],
+    "i14": {
+      "Lasso": {
+        "z_statistics": 2.6121722313794833,
+        "z_technology": 3.0,
+        "z_conduct": 2.973252013647096,
+        "gain_val": -0.00037618541638662073,
+        "risk_capital": 0.5628891558439855,
+        "risk_scoring": 0.5732666242794257,
+        "risk_provisions": 0.5669895163227836
+      },
+      "CART": {
+        "z_statistics": 2.7650977420611413,
+        "z_technology": 1.76364131419927,
+        "z_conduct": 1.4537608943164118,
+        "gain_val": 0.027586095124367938,
+        "risk_capital": 0.4227383551375042,
+        "risk_scoring": 0.38753453756930273,
+        "risk_provisions": 0.408047216666642
+      },
+      "RF": {
+        "z_statistics": 3.2547400944598763,
+        "z_technology": 3.595840748555265,
+        "z_conduct": 5.0,
+        "gain_val": 0.029188245671883606,
+        "risk_capital": 0.7837982955802941,
+        "risk_scoring": 0.8245983210719838,
+        "risk_provisions": 0.8028629983488674
+      },
+      "XGBoost": {
+        "z_statistics": 1.6715967237450797,
+        "z_technology": 2.0,
+        "z_conduct": 2.6613095899869554,
+        "gain_val": 0.044707293410673477,
+        "risk_capital": 0.4151743151655856,
+        "risk_scoring": 0.4391351954865521,
+        "risk_provisions": 0.4260520258584673
+      },
+      "MLP": {
+        "z_statistics": 3.519508386527125,
+        "z_technology": 4.470973365512936,
+        "z_conduct": 2.829083643409335,
+        "gain_val": 0.007259593250249385,
+        "risk_capital": 0.6957570556914814,
+        "risk_scoring": 0.6862471098845888,
+        "risk_provisions": 0.688749370394765
+      }
+    },
+    "frontier": {
+      "capital": [
+        "XGBoost"
+      ],
+      "scoring": [
+        "CART",
+        "XGBoost"
+      ],
+      "provisions": [
+        "CART",
+        "XGBoost"
+      ]
     }
   },
   "r13_text": "frontier: Lasso, CART, XGBoost; provisions least risky for 4 of 5 models",
@@ -1125,45 +1439,46 @@
     },
     "table6_ours": {
       "capital": {
-        "Lasso": 7.002447662005107,
-        "CART": 12.909208895313393,
-        "RF": 18.55595835077374,
-        "XGBoost": 14.004895324010214,
-        "MLP": 27.15608842288823
+        "Lasso": 7.340362956176122,
+        "CART": 14.019364075405788,
+        "RF": 19.520553787070828,
+        "XGBoost": 14.680725912352244,
+        "MLP": 28.3612440583507
       },
       "scoring": {
-        "Lasso": 7.106385137050779,
-        "CART": 11.001876418630166,
-        "RF": 18.006612785189304,
-        "XGBoost": 14.212770274101558,
-        "MLP": 26.959094792538135
+        "Lasso": 7.444300431221793,
+        "CART": 12.11203159872256,
+        "RF": 18.97120822148639,
+        "XGBoost": 14.888600862443585,
+        "MLP": 28.1642504280006
       },
       "provisions": {
-        "Lasso": 6.4544496207919515,
-        "CART": 11.093732321666822,
-        "RF": 16.730918348039758,
-        "XGBoost": 12.908899241583903,
-        "MLP": 24.68774572485013
+        "Lasso": 6.792364914962965,
+        "CART": 12.203887501759215,
+        "RF": 17.695513784336843,
+        "XGBoost": 13.58472982992593,
+        "MLP": 25.892901360312592
       }
     }
   },
   "verdicts": [
     {
       "id": "R1",
-      "result": "Literature: gains up to 20%, not monotone in complexity (Fig. 1)",
-      "ours": "max 19.9% in the figure's data; class medians 6.0 / 8.0 / 4.9 / 4.8%",
-      "verdict": "reproduced"
+      "result": "Literature gains of 20 papers (Fig. 1)",
+      "ours": "8 of 11 checkable points match their source (8 matches, 7 unverifiable, 3 differs, 2 different metric, 1 wrong reference)",
+      "verdict": "close",
+      "shape": "figure: max 19.9%, class medians 6.0 / 8.0 / 4.9 / 4.8%"
     },
     {
       "id": "R2",
       "result": "\"Stability\" mentioned 6.4 times per document, others \u2264 0.33 (p. 11)",
-      "ours": "7.5 vs at most 0.29",
+      "ours": "7.3 vs at most 0.37",
       "verdict": "reproduced"
     },
     {
       "id": "R3",
       "result": "Weights: statistics \u2192 capital; technology and conduct \u2192 scoring; provisions lowest (Table 2)",
-      "ours": "4 of 4 hold; levels about half (totals 7.0 / 7.1 / 6.5%)",
+      "ours": "4 of 4 hold; levels about half (totals 7.3 / 7.4 / 6.8%)",
       "verdict": "reproduced"
     },
     {
@@ -1225,6 +1540,24 @@
       "result": "Risk-reward: XGBoost most risk-efficient; provisions least risky use (Table 6, Fig. 5)",
       "ours": "frontier: Lasso, CART, XGBoost; provisions least risky for 4 of 5 models",
       "verdict": "close"
+    },
+    {
+      "id": "R14",
+      "result": "Per-document term shares (Fig. 9)",
+      "ours": "rank correlation over 34 documents: 0.70 / 0.95 / 0.93",
+      "verdict": "reproduced"
+    },
+    {
+      "id": "R15",
+      "result": "Sentiment at d = 20 (Table 9)",
+      "ours": "technology no, conduct no",
+      "verdict": "not reproduced"
+    },
+    {
+      "id": "R16",
+      "result": "Darkness scores plotted in Fig. 4",
+      "ours": "differs from Table 5: RF statistics 2 vs 3; MLP statistics 4 vs 5",
+      "verdict": "not reproduced"
     }
   ],
   "figures": {
@@ -1233,6 +1566,7 @@
     "weights_ours": "results/report/figures/weights_ours.png",
     "weights_paper": "results/report/figures/weights_paper.png",
     "benchmark": "results/report/figures/benchmark.png",
+    "fig9": "results/report/figures/fig9_ranks.png",
     "shap_default": "results/report/figures/shap_default.png",
     "shap_common": "results/report/figures/shap_common.png"
   },
@@ -1245,12 +1579,12 @@
     {
       "id": "I2",
       "what": "Bootstrap intervals for the mentions per document",
-      "finding": "stability 7.53 [4.00, 11.38] per document; 44% of all mentions in the top three documents"
+      "finding": "stability 7.34 [4.00, 11.20] per document; 44% of all mentions in the top three documents"
     },
     {
       "id": "I3",
       "what": "Document bootstrap of the weights; dictionary audit",
-      "finding": "statistics highest for capital: P = 0.98; technology highest for scoring: P = 0.95; conduct highest for scoring: P = 1.00; provisions lowest total: P = 0.91. Terms above 10% of their category: Model (41% of statistics), Management (23% of conduct), ICT (22% of technology), Development (16% of technology), Security (14% of technology), Consumers (10% of conduct)"
+      "finding": "statistics highest for capital: P = 0.99; technology highest for scoring: P = 0.93; conduct highest for scoring: P = 1.00; provisions lowest total: P = 0.92. Terms above 10% of their category: Model (42% of statistics), Management (22% of conduct), ICT (22% of technology), Development (16% of technology), Security (14% of technology)"
     },
     {
       "id": "I4",
@@ -1265,7 +1599,7 @@
     {
       "id": "I6",
       "what": "Worked example with weight uncertainty",
-      "finding": "0.561 \u00b1 0.021 / 0.597 \u00b1 0.021 / 0.575 \u00b1 0.023; P(scoring riskiest) = 1.00"
+      "finding": "0.550 \u00b1 0.021 / 0.584 \u00b1 0.022 / 0.562 \u00b1 0.024; P(scoring riskiest) = 1.00"
     },
     {
       "id": "I7",
@@ -1301,6 +1635,21 @@
       "id": "I13",
       "what": "Rule-based Z and Monte Carlo over all inputs",
       "finding": "P(on the frontier, worst use): Lasso 0.00; CART 0.01; RF 0.00; XGBoost 1.00; MLP 0.00. P(highest gain): XGBoost 1.00. On the normalised scale, provisions is the least risky use for 0 of 5 models: the paper's ordering of uses comes from provisioning texts using fewer risk terms overall"
+    },
+    {
+      "id": "A1\u2013A5",
+      "what": "The paper's remaining risk factors, measured as its appendix proposes",
+      "finding": "largest overfitting gap RF (+0.151); most sensitive to preprocessing Lasso; hardest to imitate with a surrogate RF (R\u00b2 0.78); most age-sensitive RF (3.4% of decisions flip)"
+    },
+    {
+      "id": "X1",
+      "what": "Exploratory (not pre-registered): a logit with log-transformed inputs as the benchmark",
+      "finding": "logit AUC 81.9 \u2192 86.1 on validation rows; XGBoost's lead shrinks from 4.47 \u00b1 0.43 (p < 0.001) to 0.27 \u00b1 0.20 points (p = 0.174)"
+    },
+    {
+      "id": "I14",
+      "what": "Rule-based scorecard with the appendix factors",
+      "finding": "frontier: capital XGBoost; scoring CART, XGBoost; provisions CART, XGBoost"
     }
   ]
 }

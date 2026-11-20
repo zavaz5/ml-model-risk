@@ -1,0 +1,105 @@
+{
+  "R14": {
+    "documents": 34,
+    "spearman": {
+      "statistics": {
+        "rho": 0.703239608801956,
+        "lo": 0.40882799637695866,
+        "hi": 0.9132327421313249,
+        "p": 3.5118399973983335e-06
+      },
+      "technology": {
+        "rho": 0.9541355536485178,
+        "lo": 0.8430270540691739,
+        "hi": 0.9944797372519385,
+        "p": 2.5351692230680566e-18
+      },
+      "conduct": {
+        "rho": 0.931458702192036,
+        "lo": 0.8121099144770506,
+        "hi": 0.990777779053332,
+        "p": 1.3313250271111304e-15
+      }
+    },
+    "level_ratio": {
+      "statistics": 2.255979234646907,
+      "technology": 1.5085239058929725,
+      "conduct": 1.578676879699248
+    },
+    "verdict": "reproduced",
+    "unlabelled_series": {
+      "panel": "common",
+      "statistics": 0.0986,
+      "technology": 0.0051,
+      "conduct": 0.0364
+    }
+  },
+  "R15": {
+    "scoring_highest_technology": false,
+    "scoring_highest_conduct": false,
+    "verdict": "not reproduced",
+    "ours": {
+      "capital": {
+        "statistics": 0.95,
+        "technology": 0.99,
+        "conduct": 0.97
+      },
+      "scoring": {
+        "statistics": 0.9,
+        "technology": 0.97,
+        "conduct": 0.88
+      },
+      "provisions": {
+        "statistics": 1.12,
+        "technology": 0.82,
+        "conduct": 1.18
+      }
+    }
+  },
+  "R16": {
+    "scores": {
+      "CART": {
+        "conduct": 1,
+        "statistics": 3,
+        "technology": 1
+      },
+      "Lasso": {
+        "conduct": 1,
+        "statistics": 1,
+        "technology": 1
+      },
+      "MLP": {
+        "conduct": 3,
+        "statistics": 4,
+        "technology": 5
+      },
+      "RF": {
+        "conduct": 2,
+        "statistics": 2,
+        "technology": 3
+      },
+      "XGBoost": {
+        "conduct": 2,
+        "statistics": 2,
+        "technology": 2
+      }
+    },
+    "differences_from_table5": [
+      {
+        "model": "RF",
+        "category": "statistics",
+        "fig4": 2.0,
+        "table5": 3,
+        "table6": 3
+      },
+      {
+        "model": "MLP",
+        "category": "statistics",
+        "fig4": 4.0,
+        "table5": 5,
+        "table6": 4
+      }
+    ],
+    "verdict": "not reproduced"
+  }
+}

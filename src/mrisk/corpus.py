@@ -3,8 +3,9 @@
 Which document belongs to which use: Table 12 and Fig. 9 of the paper
 disagree. Fig. 9, which plots the documents the computation actually used,
 puts the EBA report on innovative uses of consumer data (Cons_05) in the
-common area and has no bar for the IIF's "Explainability in predictive
-modelling". We follow Fig. 9 by default (DEVIATIONS.md, D9).
+common area. Its common-area panel also has one unlabelled series, whose
+values match the IIF's "Explainability in predictive modelling" (Table 12),
+so that report stays in. We follow Fig. 9 by default (DEVIATIONS.md, D14).
 """
 from __future__ import annotations
 
@@ -30,7 +31,6 @@ def assignment(manifest: pd.DataFrame, scheme: str = "fig9") -> pd.DataFrame:
     frame["use"] = frame["set"]
     if scheme == "fig9":
         frame.loc[frame["doc_id"] == "Cons_05_EBA_innovative", "use"] = "common"
-        frame = frame[frame["doc_id"] != "comun_02_iif_explain"]
     return frame[["doc_id", "use", "file"]].reset_index(drop=True)
 
 

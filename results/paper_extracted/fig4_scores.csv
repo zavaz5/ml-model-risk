@@ -1,0 +1,6 @@
+model,conduct,statistics,technology
+CART,1.0,3.0,1.0
+Lasso,1.0,1.0,1.0
+MLP,3.0,4.02,5.01
+RF,1.98,1.98,3.0
+XGBoost,1.98,1.98,1.98

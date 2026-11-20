@@ -1,0 +1,15 @@
+{
+  "frontier": {
+    "capital": [
+      "XGBoost"
+    ],
+    "scoring": [
+      "CART",
+      "XGBoost"
+    ],
+    "provisions": [
+      "CART",
+      "XGBoost"
+    ]
+  }
+}

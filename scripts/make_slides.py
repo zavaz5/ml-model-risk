@@ -51,14 +51,17 @@ MAIN_ORDER = [
     "Reproduction 1: prediction and the model-risk proxies",
     "Reproduction 2: weights from regulatory texts",
     "Reproduction 3: the risk–reward picture",
-    "Reproduction scorecard: 13 results",
+    "Reproduction scorecard",
     "Improvements 1: how certain are the conclusions?",
-    "Improvements 2: explanations, size and other data",
+    "Improvements 2: benchmarks, explanations, missing factors",
     "Conclusions and critique",
     "FINAL",
 ]
 BACKUP_ORDER = [
     "Backup: errata, the paper against itself",
+    "Backup: Fig. 1 against its sources",
+    "Backup: Fig. 9 document by document",
+    "Backup: the paper's remaining risk factors",
     "Backup: every improvement",
     "Backup: SHAP rankings under two explainers",
     "Backup: calibration next to AUC",
@@ -347,7 +350,7 @@ def build() -> None:
     ], size=12, space=4)
 
     # 7 Scorecard
-    s = slide_with_title(prs, "Reproduction scorecard: 13 results", (
+    s = slide_with_title(prs, "Reproduction scorecard", (
         "Scorecard, ~1 min. Left what the paper reports, right what we find, with the pre-registered verdict. Point to the "
         "rows that do not reproduce and why (corpus versions, solver, explainer)."))
     vr = pd.DataFrame(k["verdicts"])
@@ -356,13 +359,14 @@ def build() -> None:
              "R5": "Sentiment: scoring texts most negative", "R6": "Worked example 0.523 / 0.554 / 0.536",
              "R7": "Lasso, XGBoost most stable", "R8": "Hyperparameter counts", "R9": "Training-time order",
              "R10": "SHAP-time order", "R11": "SHAP feature rankings", "R12": "AUC 80.0–85.3, XGBoost best",
-             "R13": "XGBoost most risk-efficient"}
-    heading(s, (0.64, 2.2, 5.0, 0.4), "Paper reports")
-    table(s, pd.DataFrame({"#": vr["id"], "Result": [short[i] for i in vr["id"]]}), (0.64, 2.6, 5.2, 4.4), widths=[0.55, 4.65], size=10)
-    heading(s, (6.1, 2.2, 7.0, 0.4), "Ours")
+             "R13": "XGBoost most risk-efficient", "R14": "Per-document shares (Fig. 9)",
+             "R15": "Sentiment at d = 20 (Table 9)", "R16": "Scores plotted in Fig. 4"}
+    heading(s, (0.64, 2.05, 5.0, 0.35), f"Paper reports ({len(vr)} results)", size=12)
+    table(s, pd.DataFrame({"#": vr["id"], "Result": [short[i] for i in vr["id"]]}), (0.64, 2.4, 4.6, 4.85), widths=[0.5, 4.1], size=8)
+    heading(s, (5.45, 2.05, 7.6, 0.35), "Ours", size=12)
     ours_t = pd.DataFrame({"#": vr["id"], "What we find": vr["ours"], "Verdict": vr["verdict"]})
     fills = {(i, 2): VERDICT_FILL.get(vv, MUTED) for i, vv in enumerate(vr["verdict"])}
-    table(s, ours_t, (6.1, 2.6, 7.0, 4.4), widths=[0.55, 5.0, 1.45], size=10, fills=fills)
+    table(s, ours_t, (5.45, 2.4, 7.65, 4.85), widths=[0.5, 5.85, 1.3], size=8, fills=fills)
 
     # 8 Improvements 1
     s = slide_with_title(prs, "Improvements 1: how certain are the conclusions?", (
@@ -377,14 +381,16 @@ def build() -> None:
         text(s, (7.2, 5.8, 5.8, 1.2), [f"**I13. {rows['I13']['what']}:** {rows['I13']['finding']}"], size=11)
 
     # 9 Improvements 2
-    s = slide_with_title(prs, "Improvements 2: explanations, size and other data", (
+    s = slide_with_title(prs, "Improvements 2: benchmarks, explanations, missing factors", (
         "Improvements, ~1.5 min. Benchmark: same protocol on two more public datasets, does XGBoost stay on top? SHAP: the paper "
         "explains XGBoost in log-odds and the others in probabilities, so its rankings are not comparable; with one explainer and "
-        "one scale we check which ranking claims survive over five seeds. Size: count fitted parameters instead of hyperparameters."))
+        "one scale we check which ranking claims survive over five seeds. Appendix: the paper names 13 risk factors but measures 5; "
+        "we measure five more as its appendix proposes (overfitting, inputs used, preprocessing sensitivity, surrogate fidelity, "
+        "age counterfactual) and redo the frontier with them."))
     if "benchmark" in fig:
         picture(s, fig["benchmark"], (0.5, 2.25, 6.6, 3.4))
-    text(s, (7.3, 2.3, 5.8, 4.8), [f"**{i}. {rows[i]['what']}:** {rows[i]['finding']}" for i in ("I1", "I10", "I11", "I8") if i in rows],
-         size=11, space=7)
+    text(s, (7.3, 2.3, 5.8, 4.8), [f"**{i}. {rows[i]['what']}:** {rows[i]['finding']}" for i in ("I1", "X1", "I11", "A1–A5", "I14") if i in rows],
+         size=10, space=6)
 
     # 10 Conclusions
     s = slide_with_title(prs, "Conclusions and critique", (
@@ -394,10 +400,11 @@ def build() -> None:
     i1 = imp.get("I1", {}).get("summary", {})
     german = i1.get("german_credit", {})
     text(s, (0.64, 2.3, 12.2, 4.8), [
-        "**Reproduction:** " + ", ".join(f"{counts.get(c, 0)} {c}" for c in ("reproduced", "close", "not reproduced", "not testable")) + " of 13 results.",
-        "**What holds:** XGBoost predicts best and is the only model on the risk–gain frontier in every Monte Carlo draw; the orderings of the text weights hold; the paper's arithmetic holds except for two inconsistent scores.",
+        "**Reproduction:** " + ", ".join(f"{counts.get(c, 0)} {c}" for c in ("reproduced", "close", "not reproduced", "not testable")) + f" of {len(vr)} results.",
+        "**What holds:** XGBoost predicts best and is on the risk–gain frontier in every Monte Carlo draw; the orderings of the text weights hold; the paper's arithmetic holds except for inconsistent scores.",
+        "**The biggest caveat (exploratory):** a logit with log-transformed inputs comes within a fraction of a point of XGBoost; most of the ML gain is a weak benchmark.",
         "**What does not:** times depend on solver and explainer (Lasso, SHAP); the SHAP ranking claims; the sentiment check; our CART is 4 points better than the paper's.",
-        "**What is fragile:** \"provisions is the least risky use\" only reflects fewer risk words in provisioning texts; with few loans the ML gain disappears"
+        "**What is fragile:** \"provisions is the least risky use\" only reflects fewer risk words in provisioning texts; the paper uses three versions of the statistics scores (Tables 5, 6 and Figs. 4, 5); with few loans the ML gain disappears"
         + (f" (German credit: best is {german['best']})." if german else "."),
         "**Critique and next steps:** one dataset, no uncertainty, expert Z, word counts as supervisory preference, no approval threshold. Next: use-specific metrics (calibration for capital and provisions), a supervisor's loss function, time-split validation.",
     ], size=14, space=9)
@@ -410,7 +417,36 @@ def build() -> None:
         e = pd.DataFrame(k["errata"])[["id", "where", "what"]]
         e.columns = ["#", "Where", "What"]
         table(s, e, (0.64, 2.3, 12.2, 4.6), widths=[0.5, 2.6, 9.1], size=10)
-    s = slide_with_title(prs, "Backup: every improvement", "All thirteen improvements and their findings.")
+    lit_path = ROOT / "data" / "fig1_sources.csv"
+    s = slide_with_title(prs, "Backup: Fig. 1 against its sources", "Each labelled point of Fig. 1 looked up in its cited source (open-access copies).")
+    if lit_path.exists():
+        lit = pd.read_csv(lit_path)
+        show = pd.DataFrame({"Label in Fig. 1": lit["label"].str.slice(0, 34), "Metric": lit["metric"].str.slice(0, 26),
+                             "Logit": lit["logit_value"].fillna("–").astype(str).str.slice(0, 16),
+                             "ML model": lit["ml_model"].fillna("–").astype(str).str.slice(0, 28),
+                             "ML": lit["ml_value"].fillna("–").astype(str).str.slice(0, 16),
+                             "Gain, points": lit["abs_gain_points"].map(lambda v: "–" if pd.isna(v) else f"{v:+.2f}"),
+                             "Plotted": lit["plotted_value_matched"].fillna("–").astype(str).str.slice(0, 22),
+                             "Status": lit["status"].str.replace("_", " ")})
+        table(s, show, (0.4, 2.2, 12.5, 4.9), widths=[2.1, 1.7, 1.25, 2.0, 1.25, 0.85, 1.75, 1.6], size=7)
+    s = slide_with_title(prs, "Backup: Fig. 9 document by document", "R14: values read off the paper's Fig. 9 against ours; read the ranks, not the levels.")
+    if "fig9" in fig:
+        picture(s, fig["fig9"], (0.5, 2.3, 12.3, 3.8))
+        r14 = k["extra"]["R14"]["spearman"]
+        text(s, (0.64, 6.2, 12.2, 0.8), ["Spearman ρ, paper vs ours: " + "; ".join(f"{c} {r14[c]['rho']:.2f} [{r14[c]['lo']:.2f}, {r14[c]['hi']:.2f}]" for c in r14)
+                                         + ". Levels differ: the paper most likely divided by words without stop words."], size=12)
+    s = slide_with_title(prs, "Backup: the paper's remaining risk factors", "A1-A5 on validation rows; third-party, cyber and privacy need bank data.")
+    ap = k.get("appendix", {})
+    if ap:
+        f = ap["factors"]
+        at = pd.DataFrame([(m, f"{f[m]['overfit_gap']:+.3f}", f"{f[m]['features_used']} / 20", f"{f[m]['fe_sensitivity']:.4f}",
+                            f"{f[m]['surrogate_r2']:.3f}", f"{100 * f[m]['flip_rate']:.2f}%") for m in f],
+                          columns=["Model", "A1 overfitting (AUC gap)", "A2 inputs used", "A3 largest ΔAUC", "A4 surrogate R²", "A5 age flips"])
+        table(s, at, (0.64, 2.3, 12.0, 3.0), size=11)
+        if "frontier" in ap:
+            text(s, (0.64, 5.6, 12.0, 1.2), ["**I14, scorecard with these factors, risk-gain frontier:** "
+                                             + "; ".join(f"{u} {', '.join(v)}" for u, v in ap["frontier"].items())], size=13)
+    s = slide_with_title(prs, "Backup: every improvement", "All improvements and their findings.")
     table(s, pd.DataFrame([(r["id"], r["what"], r["finding"]) for r in k["improvement_rows"]], columns=["#", "Improvement", "Finding"]),
           (0.5, 2.3, 12.4, 4.9), widths=[0.45, 3.2, 8.75], size=7)
     s = slide_with_title(prs, "Backup: SHAP rankings under two explainers", "Default explainers (XGBoost in log-odds) vs one explainer on the probability scale.")

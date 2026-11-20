@@ -26,14 +26,23 @@ python scripts/download_corpus.py      # the regulatory PDFs listed in data/corp
 python scripts/extract_paper.py        # Table 11 and the values behind Figs. 1 and 5, from the paper's PDF
 python scripts/reproduce_models.py     # Tables 5 and 7, Figs. 6-8 (~25 min on 14 cores)
 python scripts/reproduce_nlp.py        # Tables 2, 3, 8-10
+python scripts/extract_fig9_fig4.py    # values behind Figs. 9 and 4 (vector graphics)
 python scripts/reproduce_scorecard.py  # Tables 4 and 6, Fig. 5, errata
+python scripts/reproduce_extra.py      # Fig. 9, Table 9, Fig. 4 (R14-R16)
+python scripts/diagnose_cart.py        # why our CART differs (validation rows)
+python scripts/diagnose_nlp_levels.py  # why our word shares are half the paper's
 python scripts/improve_nlp.py          # I2-I6
 python scripts/improve_models.py       # I1, I7, I11, I12
 python scripts/improve_risk.py         # I13
+python scripts/appendix_factors.py     # A1-A5: the paper's unmeasured risk factors (~10 min)
+python scripts/extended_scorecard.py   # I14
+python scripts/explore_logit_benchmark.py  # exploratory: a logit with log inputs
 python scripts/make_report.py          # this README's results section and results/report/key_numbers.json
 python scripts/make_slides.py          # docs/presentation.pptx
 python scripts/make_speaker_script.py  # docs/speaker_script.pdf
 ```
+
+`data/fig1_sources.csv` holds the numbers we looked up in the sources behind the paper's Fig. 1 (open-access copies), each with the table or page it comes from.
 
 Data are not committed: Kaggle's licence forbids redistribution, and the regulatory texts belong to their publishers. `data/corpus_manifest.csv` lists every document's source URL, version and SHA-256.
 
@@ -118,7 +127,7 @@ Give Me Some Credit: 150,000 rows in `cs-training.csv`, of which 120,269 complet
 
 ### Weights from regulatory texts (Table 2, Fig. 3)
 
-Our corpus: 12 capital, 5 credit-scoring, 7 provisioning and 10 common-area documents (1,139,972 words); missing: prov_03_ifrs_pwc. Sources, versions and hashes: `data/corpus_manifest.csv`.
+Our corpus: 12 capital, 5 credit-scoring, 7 provisioning and 11 common-area documents (1,139,972 words); missing: prov_03_ifrs_pwc. Sources, versions and hashes: `data/corpus_manifest.csv`.
 
 **Paper** (percent of all words):
 
@@ -132,14 +141,14 @@ Our corpus: 12 capital, 5 credit-scoring, 7 provisioning and 10 common-area docu
 
 | Use | Statistics | Technology | Market conduct | Total |
 |---|---|---|---|---|
-| Capital | 2.95 ± 0.48 | 1.60 ± 0.46 | 2.45 ± 0.29 | 7.00 ± 0.53 |
-| Credit scoring | 1.95 ± 0.45 | 1.85 ± 0.48 | 3.31 ± 0.33 | 7.11 ± 0.58 |
-| Provisions | 2.32 ± 0.48 | 1.50 ± 0.46 | 2.63 ± 0.30 | 6.45 ± 0.49 |
+| Capital | 3.34 ± 0.58 | 1.50 ± 0.44 | 2.50 ± 0.27 | 7.34 ± 0.57 |
+| Credit scoring | 2.33 ± 0.55 | 1.75 ± 0.47 | 3.36 ± 0.32 | 7.44 ± 0.63 |
+| Provisions | 2.71 ± 0.57 | 1.41 ± 0.44 | 2.68 ± 0.29 | 6.79 ± 0.56 |
 
 
-**Why our levels are about half the paper's.** Every ordering matches, but our shares are roughly half. If the denominator excludes English stop words (a step the paper does not mention; 42% of our tokens), the totals become 11.7% / 11.9% / 10.7% (paper 14.2% / 14.6% / 12.6%) and the share of negative words 3.77% / 2.90% / 4.55% (paper 3.87% / 3.09% / 4.88%). So the paper most likely divided by non-stop-words. Our main results keep all words, as the paper's text describes (`scripts/diagnose_nlp_levels.py`).
+**Why our levels are about half the paper's.** Every ordering matches, but our shares are roughly half. If the denominator excludes English stop words (a step the paper does not mention; 42% of our tokens), the totals become 12.3% / 12.5% / 11.4% (paper 14.2% / 14.6% / 12.6%) and the share of negative words 3.77% / 2.90% / 4.55% (paper 3.87% / 3.09% / 4.88%). So the paper most likely divided by non-stop-words. Our main results keep all words, as the paper's text describes (`scripts/diagnose_nlp_levels.py`).
 
-Mentions per document (p. 11). Paper: stability 6.4, feature engineering 0.33, hyperparameters 0.2, overfitting 0.16, dynamic calibration 0.02. Ours: stability 7.53, feature engineering 0.29, hyperparameters 0.21, overfitting 0.26, dynamic calibration 0.00.
+Mentions per document (p. 11). Paper: stability 6.4, feature engineering 0.33, hyperparameters 0.2, overfitting 0.16, dynamic calibration 0.02. Ours: stability 7.34, feature engineering 0.37, hyperparameters 0.23, overfitting 0.29, dynamic calibration 0.00.
 
 ### Are the differences significant? (Table 3)
 
@@ -177,6 +186,47 @@ Mentions per document (p. 11). Paper: stability 6.4, feature engineering 0.33, h
 | Credit scoring | 0.49 | 0.43 | 0.48 | 1.69% |
 | Provisions | 0.60 | 0.32 | 0.67 | 2.63% |
 
+### Document by document (Fig. 9)
+
+Values read off the paper's vector figure for the 34 documents we also have, against our shares. Levels differ (we divide by all words; see above), so the test is the rank order across documents:
+
+| Category | Spearman ρ, paper vs ours [95% bootstrap] | Median ratio, paper / ours |
+|---|---|---|
+| Statistics | 0.70 [0.41, 0.91] | 2.26 |
+| Technology | 0.95 [0.84, 0.99] | 1.51 |
+| Market conduct | 0.93 [0.81, 0.99] | 1.58 |
+One series in the paper's common-area panel has no label; its values (statistics 0.0986) match IIF (2018), the document with the highest statistics share in our counts too (erratum E11).
+
+### Sentiment at d = 20 (Table 9)
+
+**Paper:**
+
+| Use | Statistics | Technology | Market conduct |
+|---|---|---|---|
+| Capital | 1.53 | 1.17 | 1.46 |
+| Credit scoring | 1.85 | 2.04 | 1.76 |
+| Provisions | 1.76 | 0.96 | 1.38 |
+
+**Ours:**
+
+| Use | Statistics | Technology | Market conduct |
+|---|---|---|---|
+| Capital | 0.95 | 0.99 | 0.97 |
+| Credit scoring | 0.90 | 0.97 | 0.88 |
+| Provisions | 1.12 | 0.82 | 1.18 |
+
+### What Fig. 4 plots (the paper's numbers only)
+
+The radar chart read off the PDF, against Table 5 (Fig. 4 / Table 5):
+
+| Model | Statistics: Fig. 4 / Table 5 | Technology: Fig. 4 / Table 5 | Market conduct: Fig. 4 / Table 5 |
+|---|---|---|---|
+| Lasso | 1 / 1 | 1 / 1 | 1 / 1 |
+| CART | 3 / 3 | 1 / 1 | 1 / 1 |
+| RF | 2 / 3 | 3 / 3 | 2 / 2 |
+| XGBoost | 2 / 2 | 2 / 2 | 2 / 2 |
+| MLP | 4 / 5 | 5 / 5 | 3 / 3 |
+
 
 ![Risk-reward, paper](results/report/figures/risk_reward_paper.png) ![Risk-reward, ours](results/report/figures/risk_reward_ours.png)
 
@@ -186,9 +236,9 @@ Rules from `docs/preregistration.md`: *reproduced* if the paper's value is insid
 
 | # | Paper's result | What we find | Verdict |
 |---|---|---|---|
-| R1 | Literature: gains up to 20%, not monotone in complexity (Fig. 1) | max 19.9% in the figure's data; class medians 6.0 / 8.0 / 4.9 / 4.8% | reproduced |
-| R2 | "Stability" mentioned 6.4 times per document, others ≤ 0.33 (p. 11) | 7.5 vs at most 0.29 | reproduced |
-| R3 | Weights: statistics → capital; technology and conduct → scoring; provisions lowest (Table 2) | 4 of 4 hold; levels about half (totals 7.0 / 7.1 / 6.5%) | reproduced |
+| R1 | Literature gains of 20 papers (Fig. 1) | 8 of 11 checkable points match their source (8 matches, 7 unverifiable, 3 differs, 2 different metric, 1 wrong reference) | close |
+| R2 | "Stability" mentioned 6.4 times per document, others ≤ 0.33 (p. 11) | 7.3 vs at most 0.37 | reproduced |
+| R3 | Weights: statistics → capital; technology and conduct → scoring; provisions lowest (Table 2) | 4 of 4 hold; levels about half (totals 7.3 / 7.4 / 6.8%) | reproduced |
 | R4 | Six of nine use differences significant at 10% (Table 3) | 5 of 9 significant; agree with the paper on 8 of 9 | reproduced |
 | R5 | Sentiment: technology and conduct terms most negative in scoring texts (Tables 8-10) | technology no, conduct no (d = 10) | not reproduced |
 | R6 | Worked example: riskiness 0.523 / 0.554 / 0.536 (Table 4) | with the paper's weights: 0.5237 / 0.5546 / 0.5364 | reproduced |
@@ -199,6 +249,9 @@ Rules from `docs/preregistration.md`: *reproduced* if the paper's value is insid
 | R11 | SHAP: late payments top 3; revolving first only for XGBoost; age 4th (Figs. 6-8) | 1 of 3 statements hold | not reproduced |
 | R12 | AUC: logit 80.0 to XGBoost 85.3; XGBoost best (Table 7) | 5 of 6 paper AUCs inside our 95% intervals; best: XGBoost | reproduced |
 | R13 | Risk-reward: XGBoost most risk-efficient; provisions least risky use (Table 6, Fig. 5) | frontier: Lasso, CART, XGBoost; provisions least risky for 4 of 5 models | close |
+| R14 | Per-document term shares (Fig. 9) | rank correlation over 34 documents: 0.70 / 0.95 / 0.93 | reproduced |
+| R15 | Sentiment at d = 20 (Table 9) | technology no, conduct no | not reproduced |
+| R16 | Darkness scores plotted in Fig. 4 | differs from Table 5: RF statistics 2 vs 3; MLP statistics 4 vs 5 | not reproduced |
 
 ### Errata: the paper against itself
 
@@ -213,7 +266,10 @@ Found by `scripts/reproduce_scorecard.py` from the paper's own numbers (no data 
 | E5 | Text vs Table 5 (p. 18) | Text names CART and MLP as least stable; Table 5's two largest SDs are CART and RF |
 | E6 | p. 17 vs Figs. 6-8 | Text: 11 characteristics and 22 variables with squares; the data have 10 characteristics (11 columns with the file's row index) and the SHAP figures show 10 features |
 | E7 | p. 13 vs Table 11 | statistics: 54 terms stated, 53 listed |
-| E8 | Table 12 vs Fig. 9 | Fig. 9 counts the EBA report on innovative uses of consumer data in the common area (Table 12: credit scoring) and has no bar for IIF (2018), which Table 12 lists |
+| E8 | Table 12 vs Fig. 9 | Fig. 9 counts the EBA report on innovative uses of consumer data in the common area (Table 12: credit scoring) |
+| E9 | Fig. 4 vs Tables 5 and 6 (pp. 18-20) | The radar chart's scores differ from Table 5 (RF statistics: Fig. 4 2, Table 5 3, Table 6 3; MLP statistics: Fig. 4 4, Table 5 5, Table 6 4): the paper uses three versions of the statistics scores |
+| E10 | Fig. 1 vs references (pp. 4, 33-35) | Fig. 1 credits its largest gain (19.95%) to "Sirigniano et al (2019a)", but the only Sirignano reference is Sirignano and Cont (2019), on price formation in limit order books; "Cheng & Xiang" in the figure is Chen and Xiang in the references |
+| E11 | Fig. 9, common area (p. 29) | The panel plots 12 series but names 11; the unlabelled one matches IIF (2018), "Explainability in predictive modelling" (highest statistics share in the paper's panel and in our counts) |
 
 ### Improvements, one per result
 
@@ -222,11 +278,11 @@ Pre-registered in `docs/preregistration.md` before they were run.
 | # | Improvement | Finding |
 |---|---|---|
 | I1 | Same-protocol benchmark on three datasets with paired DeLong intervals | GMSC: best XGBoost (vs CART, p < 0.001); Taiwan: best XGBoost (vs RF, p = 0.678); German (1,000 loans): best MLP (vs Lasso, p = 0.983). Spearman(complexity, gain): GMSC +0.21, Taiwan +0.67, German +0.36 |
-| I2 | Bootstrap intervals for the mentions per document | stability 7.53 [4.00, 11.38] per document; 44% of all mentions in the top three documents |
-| I3 | Document bootstrap of the weights; dictionary audit | statistics highest for capital: P = 0.98; technology highest for scoring: P = 0.95; conduct highest for scoring: P = 1.00; provisions lowest total: P = 0.91. Terms above 10% of their category: Model (41% of statistics), Management (23% of conduct), ICT (22% of technology), Development (16% of technology), Security (14% of technology), Consumers (10% of conduct) |
+| I2 | Bootstrap intervals for the mentions per document | stability 7.34 [4.00, 11.20] per document; 44% of all mentions in the top three documents |
+| I3 | Document bootstrap of the weights; dictionary audit | statistics highest for capital: P = 0.99; technology highest for scoring: P = 0.93; conduct highest for scoring: P = 1.00; provisions lowest total: P = 0.92. Terms above 10% of their category: Model (42% of statistics), Management (22% of conduct), ICT (22% of technology), Development (16% of technology), Security (14% of technology) |
 | I4 | Permutation tests, Holm and Benjamini–Hochberg over nine tests | 5 of 9 below 10% (Welch); after Holm: 2 at 10%, 1 at 5%; after BH: 7 at 10% |
 | I5 | Negative words relative to the base rate (lift), bootstrap | P(scoring has the highest lift): technology 0.54, conduct 0.71 |
-| I6 | Worked example with weight uncertainty | 0.561 ± 0.021 / 0.597 ± 0.021 / 0.575 ± 0.023; P(scoring riskiest) = 1.00 |
+| I6 | Worked example with weight uncertainty | 0.550 ± 0.021 / 0.584 ± 0.022 / 0.562 ± 0.024; P(scoring riskiest) = 1.00 |
 | I7 | Both stability definitions, paired bootstrap | P(Lasso and XGBoost more stable than CART and MLP): AUC spread 1.00, PD spread 1.00 |
 | I8 | Fitted parameters instead of a hyperparameter count | Lasso 21; CART 243; RF 856,606; XGBoost 2,194; MLP 86,701 (Spearman with the paper's count +0.82) |
 | I9 | Timing hygiene: single thread, warm-up, median and IQR; relative to the logit | XGBoost ×3; CART ×6; MLP ×132; RF ×182; Lasso ×516 |
@@ -234,5 +290,27 @@ Pre-registered in `docs/preregistration.md` before they were run.
 | I11 | SHAP rankings on the probability scale, five seeds | seeds where the claim holds, default explainer → probability scale: late payments in the top three 5→4 of 5; revolving utilisation first only for XGBoost 0→0 of 5; age fourth 0→0 of 5 |
 | I12 | Calibration next to AUC (Brier, ECE, slope) | best Brier: XGBoost; Spearman(AUC, −Brier) = +0.77; Lasso slope 1.05; CART slope 0.89; RF slope 0.85; XGBoost slope 0.97; MLP slope 0.93 |
 | I13 | Rule-based Z and Monte Carlo over all inputs | P(on the frontier, worst use): Lasso 0.00; CART 0.01; RF 0.00; XGBoost 1.00; MLP 0.00. P(highest gain): XGBoost 1.00. On the normalised scale, provisions is the least risky use for 0 of 5 models: the paper's ordering of uses comes from provisioning texts using fewer risk terms overall |
+| A1–A5 | The paper's remaining risk factors, measured as its appendix proposes | largest overfitting gap RF (+0.151); most sensitive to preprocessing Lasso; hardest to imitate with a surrogate RF (R² 0.78); most age-sensitive RF (3.4% of decisions flip) |
+| X1 | Exploratory (not pre-registered): a logit with log-transformed inputs as the benchmark | logit AUC 81.9 → 86.1 on validation rows; XGBoost's lead shrinks from 4.47 ± 0.43 (p < 0.001) to 0.27 ± 0.20 points (p = 0.174) |
+| I14 | Rule-based scorecard with the appendix factors | frontier: capital XGBoost; scoring CART, XGBoost; provisions CART, XGBoost |
+
+### The paper's remaining risk factors (appendix, A1–A5) and the extended scorecard (I14)
+
+The paper names 13 risk factors and measures 5. Its appendix proposes measures for the rest; we computed every one public data allow, on the fit and validation rows only. Third-party providers, cyber risk and privacy need a bank's IT set-up and data inventory, so we do not invent proxies for them.
+
+| Model | A1 AUC fit − validation | A1 learning curve (10/25/50/100%) | A2 inputs used | A3 largest ΔAUC | A4 surrogate R² | A5 decisions flipped by ±10 years of age |
+|---|---|---|---|---|---|---|
+| Logit | 0.803 − 0.819 = -0.016 | 0.816 / 0.822 / 0.820 / 0.819 | 20 of 20 | 0.1059 | 0.899 | 2.43% |
+| Lasso | 0.803 − 0.819 = -0.016 | 0.816 / 0.821 / 0.819 / 0.819 | 20 of 20 | 0.1054 | 0.897 | 2.49% |
+| CART | 0.846 − 0.847 = -0.001 | 0.765 / 0.804 / 0.826 / 0.847 | 19 of 20 | 0.0018 | 0.864 | 0.35% |
+| RF | 0.999 − 0.848 = +0.151 | 0.831 / 0.838 / 0.846 / 0.848 | 20 of 20 | 0.0036 | 0.782 | 3.39% |
+| XGBoost | 0.878 − 0.864 = +0.015 | 0.827 / 0.855 / 0.860 / 0.864 | 10 of 20 | 0.0018 | 0.843 | 2.12% |
+| MLP | 0.808 − 0.826 = -0.019 | 0.811 / 0.824 / 0.828 / 0.826 | 20 of 20 | 0.0330 | 0.906 | 1.75% |
+
+A3's variants: no squared features, winsorising at the 1st/99th percentiles, log(1 + x), and median imputation that adds the 29,731 incomplete rows. A5 rejects the 10% highest predicted PDs and counts decisions that change when only age moves by ±10 years.
+
+**Exploratory, not pre-registered: is the paper's logit a fair benchmark?** A3 shows that log(1 + x) lifts the logit by about four points while leaving the tree ensembles unchanged. On the validation rows, logit AUC 81.9 → 86.1 on validation rows; XGBoost's lead shrinks from 4.47 ± 0.43 (p < 0.001) to 0.27 ± 0.20 points (p = 0.174). Most of the ML "gain" in the paper's setting comes from giving the logit raw, heavy-tailed ratios (`scripts/explore_logit_benchmark.py`).
+
+**I14, the rule-based scorecard with these factors:** risk-gain frontier per use: Capital: XGBoost; Credit scoring: CART, XGBoost; Provisions: CART, XGBoost.
 
 <!-- results:end -->

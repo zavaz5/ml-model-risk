@@ -105,10 +105,23 @@ def improvements() -> dict:
     return out
 
 
+def appendix_block() -> dict:
+    d = RES / "improvements" / "appendix"
+    if not (d / "appendix_factors.csv").exists():
+        return {}
+    out = {"factors": pd.read_csv(d / "appendix_factors.csv").set_index("model").to_dict(orient="index"),
+           **_json(d / "summary.json")}
+    if (d / "i14_extended_scorecard.csv").exists():
+        out["i14"] = pd.read_csv(d / "i14_extended_scorecard.csv").set_index("model").to_dict(orient="index")
+        out.update(_json(d / "i14_summary.json"))
+    return out
+
+
 def build_numbers() -> dict:
     k = {"models": models_block(), "nlp": nlp_block(), "improvements": improvements(),
          "errata": _json(RES / "reproduction" / "errata.json") or [],
-         "scorecard_checks": _json(RES / "reproduction" / "scorecard" / "checks.json")}
+         "scorecard_checks": _json(RES / "reproduction" / "scorecard" / "checks.json"),
+         "extra": _json(RES / "reproduction" / "extra.json"), "appendix": appendix_block()}
     text, verdict, extra = r13(k)
     k.update({"r13_text": text, "r13_verdict": verdict, "r13": extra})
     k["verdicts"] = verdicts(k)
@@ -140,6 +153,9 @@ def figures(k: dict) -> dict:
     i1 = RES / "improvements" / "models" / "i1_benchmark.csv"
     if i1.exists():
         out["benchmark"] = plots.benchmark(pd.read_csv(i1), FIG / "benchmark.png")
+    f9 = RES / "reproduction" / "nlp" / "fig9_comparison.csv"
+    if f9.exists():
+        out["fig9"] = plots.fig9_scatter(pd.read_csv(f9, header=[0, 1], index_col=0), FIG / "fig9_ranks.png")
     r = k["models"]["ranks_default"]
     out["shap_default"] = plots.shap_ranks({m: r[m] for m in ("RF", "XGBoost", "MLP")}, FIG / "shap_default.png",
                                            "Ours, each library's default explainer (XGBoost in log-odds)")
@@ -296,6 +312,72 @@ Mentions per document (p. 11). Paper: stability {P.MENTIONS_PER_DOC['stability']
 """
 
 
+def section_extra(k: dict) -> str:
+    x = k.get("extra")
+    if not x:
+        return ""
+    r14 = x["R14"]
+    f9 = pd.DataFrame([(CAT_NAME[c], f"{r14['spearman'][c]['rho']:.2f} [{r14['spearman'][c]['lo']:.2f}, {r14['spearman'][c]['hi']:.2f}]",
+                        f"{r14['level_ratio'][c]:.2f}") for c in CATS],
+                      columns=["Category", "Spearman ρ, paper vs ours [95% bootstrap]", "Median ratio, paper / ours"])
+    paper9 = pd.DataFrame([(USE_NAME[u], *[f"{P.TABLE9_D20[u][c]:.2f}" for c in CATS]) for u in USES],
+                          columns=["Use", *[CAT_NAME[c] for c in CATS]])
+    ours9 = pd.DataFrame([(USE_NAME[u], *[f"{x['R15']['ours'][u][c]:.2f}" for c in CATS]) for u in USES],
+                         columns=["Use", *[CAT_NAME[c] for c in CATS]])
+    f4 = pd.DataFrame([(m, *[f"{x['R16']['scores'][m][c]} / {P.TABLE5['z_' + c][m]}" for c in CATS]) for m in MODELS5],
+                      columns=["Model", *[f"{CAT_NAME[c]}: Fig. 4 / Table 5" for c in CATS]])
+    unl = x["R14"].get("unlabelled_series")
+    return f"""### Document by document (Fig. 9)
+
+Values read off the paper's vector figure for the {r14['documents']} documents we also have, against our shares. Levels differ (we divide by all words; see above), so the test is the rank order across documents:
+
+{md_table(f9)}
+{'' if not unl else f"One series in the paper's common-area panel has no label; its values (statistics {unl['statistics']:.4f}) match IIF (2018), the document with the highest statistics share in our counts too (erratum E11)."}
+
+### Sentiment at d = 20 (Table 9)
+
+**Paper:**
+
+{md_table(paper9)}
+
+**Ours:**
+
+{md_table(ours9)}
+
+### What Fig. 4 plots (the paper's numbers only)
+
+The radar chart read off the PDF, against Table 5 (Fig. 4 / Table 5):
+
+{md_table(f4)}
+"""
+
+
+def section_appendix(k: dict) -> str:
+    ap = k.get("appendix")
+    if not ap:
+        return ""
+    f = ap["factors"]
+    t = pd.DataFrame([(m, f"{f[m]['auc_fit']:.3f} − {f[m]['auc_val']:.3f} = {f[m]['overfit_gap']:+.3f}",
+                       " / ".join(f"{f[m][f'curve_{p}']:.3f}" for p in (10, 25, 50, 100)), f"{f[m]['features_used']} of 20",
+                       f"{f[m]['fe_sensitivity']:.4f}", f"{f[m]['surrogate_r2']:.3f}", f"{100 * f[m]['flip_rate']:.2f}%")
+                      for m in f],
+                     columns=["Model", "A1 AUC fit − validation", "A1 learning curve (10/25/50/100%)", "A2 inputs used",
+                              "A3 largest ΔAUC", "A4 surrogate R²", "A5 decisions flipped by ±10 years of age"])
+    fr = ap.get("frontier", {})
+    return f"""### The paper's remaining risk factors (appendix, A1–A5) and the extended scorecard (I14)
+
+The paper names 13 risk factors and measures 5. Its appendix proposes measures for the rest; we computed every one public data allow, on the fit and validation rows only. Third-party providers, cyber risk and privacy need a bank's IT set-up and data inventory, so we do not invent proxies for them.
+
+{md_table(t)}
+
+A3's variants: no squared features, winsorising at the 1st/99th percentiles, log(1 + x), and median imputation that adds the {k['models']['meta']['rows_raw'] - k['models']['meta']['rows']:,} incomplete rows. A5 rejects the 10% highest predicted PDs and counts decisions that change when only age moves by ±10 years.
+
+**Exploratory, not pre-registered: is the paper's logit a fair benchmark?** A3 shows that log(1 + x) lifts the logit by about four points while leaving the tree ensembles unchanged. On the validation rows, {next((r['finding'] for r in improvement_rows(k) if r['id'] == 'X1'), '')}. Most of the ML "gain" in the paper's setting comes from giving the logit raw, heavy-tailed ratios (`scripts/explore_logit_benchmark.py`).
+
+**I14, the rule-based scorecard with these factors:** risk-gain frontier per use: {'; '.join(f"{USE_NAME[u]}: {', '.join(v)}" for u, v in fr.items())}.
+"""
+
+
 def section_verdicts(k: dict) -> str:
     v = pd.DataFrame(k["verdicts"])[["id", "result", "ours", "verdict"]]
     v.columns = ["#", "Paper's result", "What we find", "Verdict"]
@@ -409,6 +491,25 @@ def improvement_rows(k: dict) -> list[dict]:
                                 + f". P(highest gain): XGBoost {i13['p_best_gain']['XGBoost']:.2f}. On the normalised scale, "
                                 f"provisions is the least risky use for {n_prov} of 5 models: the paper's ordering of uses "
                                 "comes from provisioning texts using fewer risk terms overall"})
+    ap = k.get("appendix")
+    if ap:
+        f = ap["factors"]
+        worst = lambda key: max(MODELS5, key=lambda m: f[m][key])
+        rows.append({"id": "A1–A5", "what": "The paper's remaining risk factors, measured as its appendix proposes",
+                     "finding": f"largest overfitting gap {worst('overfit_gap')} ({f[worst('overfit_gap')]['overfit_gap']:+.3f}); "
+                                f"most sensitive to preprocessing {worst('fe_sensitivity')}; hardest to imitate with a surrogate "
+                                f"{min(MODELS5, key=lambda m: f[m]['surrogate_r2'])} (R² {min(f[m]['surrogate_r2'] for m in MODELS5):.2f}); "
+                                f"most age-sensitive {worst('flip_rate')} ({100 * f[worst('flip_rate')]['flip_rate']:.1f}% of decisions flip)"})
+        lb = _json(RES / "improvements" / "appendix" / "logit_benchmark.json")
+        if lb:
+            a1, a2 = lb["xgb_minus_logit_paper"], lb["xgb_minus_logit_log1p"]
+            rows.append({"id": "X1", "what": "Exploratory (not pre-registered): a logit with log-transformed inputs as the benchmark",
+                         "finding": f"logit AUC {100 * lb['auc']['Logit, paper inputs']['auc']:.1f} → {100 * lb['auc']['Logit, log1p inputs']['auc']:.1f} "
+                                    f"on validation rows; XGBoost's lead shrinks from {100 * a1['diff']:.2f} ± {100 * a1['se']:.2f} "
+                                    f"({pval(a1['p'])}) to {100 * a2['diff']:.2f} ± {100 * a2['se']:.2f} points ({pval(a2['p'])})"})
+        if "frontier" in ap:
+            rows.append({"id": "I14", "what": "Rule-based scorecard with the appendix factors",
+                         "finding": "frontier: " + "; ".join(f"{u} {', '.join(v)}" for u, v in ap["frontier"].items())})
     return rows
 
 
@@ -432,7 +533,8 @@ def main() -> None:
     pics = ""
     if "rr_ours" in figs:
         pics = f"\n![Risk-reward, paper]({figs['rr_paper']}) ![Risk-reward, ours]({figs['rr_ours']})\n"
-    section = "\n".join([section_models(k), section_shap(k), section_nlp(k), pics, section_verdicts(k), section_improvements(k)])
+    section = "\n".join([section_models(k), section_shap(k), section_nlp(k), section_extra(k), pics, section_verdicts(k),
+                         section_improvements(k), section_appendix(k)])
     write_readme(section)
     print(pd.DataFrame(k["verdicts"])[["id", "verdict", "ours"]].to_string(index=False))
 

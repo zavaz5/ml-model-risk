@@ -46,6 +46,17 @@ def implied_z(fig5: pd.DataFrame, model: str, category: str) -> dict:
     return out
 
 
+def paper_references() -> list[str]:
+    """The reference list (pp. 33-35) as one string per entry, split at "Author I (year)" starts."""
+    import re
+
+    import pymupdf
+
+    doc = pymupdf.open(ROOT / "paper" / "alonso_carbo_2022.pdf")
+    text = re.sub(r"\s*\n\s*", " ", "".join(doc[i].get_text() for i in range(32, 35)))
+    return [r.strip() for r in re.split(r"(?=[A-Z][a-zé]+ [A-Z]{1,3}(?:, [A-Z][a-zé]+ [A-Z]{1,3})*(?:,? et al)? \(\d{4})", text) if r.strip()]
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     errata = []
@@ -103,7 +114,29 @@ def main() -> None:
             errata.append({"id": "E7", "where": "p. 13 vs Table 11", "what": f"{cat}: {n} terms stated, {sizes.get(cat)} listed"})
     errata.append({"id": "E8", "where": "Table 12 vs Fig. 9",
                    "what": "Fig. 9 counts the EBA report on innovative uses of consumer data in the common area "
-                           "(Table 12: credit scoring) and has no bar for IIF (2018), which Table 12 lists"})
+                           "(Table 12: credit scoring)"})
+
+    f4_path = ROOT / "results" / "paper_extracted" / "fig4_scores.csv"
+    if f4_path.exists():
+        f4 = pd.read_csv(f4_path).set_index("model")
+        diffs = [f"{m} {c}: Fig. 4 {round(f4.loc[m, c])}, Table 5 {P.TABLE5['z_' + c][m]}, Table 6 {P.TABLE6_Z[c][m]}"
+                 for m in MODELS for c in CATS if round(f4.loc[m, c]) != P.TABLE5["z_" + c][m]]
+        if diffs:
+            errata.append({"id": "E9", "where": "Fig. 4 vs Tables 5 and 6 (pp. 18-20)",
+                           "what": "The radar chart's scores differ from Table 5 (" + "; ".join(diffs)
+                                   + "): the paper uses three versions of the statistics scores"})
+    refs = paper_references()
+    sirignano = [r for r in refs if r.startswith("Sirignano")]
+    if all("credit" not in r.lower() and "mortgage" not in r.lower() for r in sirignano):
+        errata.append({"id": "E10", "where": "Fig. 1 vs references (pp. 4, 33-35)",
+                       "what": "Fig. 1 credits its largest gain (19.95%) to \"Sirigniano et al (2019a)\", but the only Sirignano "
+                               "reference is Sirignano and Cont (2019), on price formation in limit order books; \"Cheng & Xiang\" "
+                               "in the figure is Chen and Xiang in the references"})
+    f9_path = ROOT / "results" / "paper_extracted" / "fig9_documents.csv"
+    if f9_path.exists() and (pd.read_csv(f9_path)["doc_id"] == "unlabelled").any():
+        errata.append({"id": "E11", "where": "Fig. 9, common area (p. 29)",
+                       "what": "The panel plots 12 series but names 11; the unlabelled one matches IIF (2018), "
+                               "\"Explainability in predictive modelling\" (highest statistics share in the paper's panel and in our counts)"})
 
     # Our weights, if the corpus has been counted.
     ours = ROOT / "results" / "reproduction" / "nlp" / "table2.csv"

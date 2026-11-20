@@ -3,17 +3,17 @@
     "capital": 12,
     "scoring": 5,
     "provisions": 7,
-    "common": 10
+    "common": 11
   },
   "missing": [
     "prov_03_ifrs_pwc"
   ],
   "mentions_per_document": {
-    "stability": 7.529411764705882,
-    "hyperparameters": 0.20588235294117646,
-    "overfitting": 0.2647058823529412,
+    "stability": 7.3428571428571425,
+    "hyperparameters": 0.22857142857142856,
+    "overfitting": 0.2857142857142857,
     "dynamic calibration": 0.0,
-    "feature engineering": 0.29411764705882354
+    "feature engineering": 0.37142857142857144
   },
   "dictionary_size": {
     "conduct": 51,

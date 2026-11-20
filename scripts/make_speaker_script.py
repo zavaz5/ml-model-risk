@@ -82,6 +82,17 @@ def questions(k: dict) -> list[tuple[str, str]]:
         ("What does 'risk-efficient' mean in your Monte Carlo?",
          "A model is on the frontier if no other model has both a larger AUC gain and a lower risk. We count how often each "
          "model is on the frontier when every noisy input is redrawn."),
+        ("Is machine learning really better than a logistic regression here?",
+         next((r["finding"] for r in k["improvement_rows"] if r["id"] == "X1"),
+              "See the exploratory logit benchmark in the README.")
+         + ". This was exploratory, not pre-registered: the paper's logit gets raw, heavy-tailed ratios; a credit scorer would transform them."),
+        ("Why does the paper have three different statistics scores?",
+         "Table 5 gives RF 3 and the MLP 5; Table 6 uses RF 3 and MLP 4; Figs. 4 and 5 are drawn with RF 2 and MLP 4. We read "
+         "Figs. 4 and 5 off the vector PDF, so this is exact, not eyeballed. No ranking changes."),
+        ("What about the risk factors the paper does not measure?",
+         "Its appendix proposes measures; we computed five on validation rows (overfitting, inputs used, preprocessing "
+         "sensitivity, surrogate fidelity, age counterfactual). " + next((r["finding"] for r in k["improvement_rows"] if r["id"] == "A1–A5"), "")
+         + ". Third-party, cyber and privacy risk need a bank's own data."),
         ("Which model would you recommend to a bank?",
          f"On these data XGBoost: the highest AUC ({100 * a['XGBoost']['auc']:.1f}%) with moderate risk scores. But the "
          "ranking is not an approval: the supervisor's own trade-off is unknown."),

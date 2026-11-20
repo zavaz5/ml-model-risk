@@ -26,8 +26,11 @@ pytest -q
 python scripts/download_data.py      # Kaggle GMSC (accept the competition rules first), lexicon, OpenML
 python scripts/extract_paper.py      # Table 11 dictionary, Fig. 1 / Fig. 5 values from the PDF
 python scripts/reproduce_models.py   # Tables 5 and 7, Figs. 6-8 (~25 min; timings first, then parallel retrains)
-python scripts/reproduce_nlp.py      # Tables 2, 3, 8-10, Fig. 3, Fig. 9 (needs data/raw/corpus/)
-python scripts/improve.py            # pre-registered improvements I1-I13
+python scripts/reproduce_nlp.py      # Tables 2, 3, 8-10, Fig. 3 (needs data/raw/corpus/)
+python scripts/extract_fig9_fig4.py && python scripts/reproduce_scorecard.py && python scripts/reproduce_extra.py
+python scripts/improve_nlp.py && python scripts/improve_models.py && python scripts/improve_risk.py   # I1-I13
+python scripts/appendix_factors.py && python scripts/extended_scorecard.py   # A1-A5, I14
+python scripts/explore_logit_benchmark.py   # exploratory, not pre-registered
 python scripts/make_report.py        # README results section
 python scripts/make_slides.py        # docs/presentation.pptx (export the PDF with PowerPoint, see HANDOFF)
 python scripts/make_speaker_script.py

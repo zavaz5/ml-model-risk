@@ -105,3 +105,21 @@ def shap_ranks(ranks: dict[str, list[str]], path: Path, title: str, top: int = 6
             cell.get_text().set_color("white")
     ax.set_title(title, fontsize=11, color=NAVY, loc="left")
     return _save(fig, path)
+
+
+def fig9_scatter(pairs: pd.DataFrame, path: Path) -> Path:
+    """R14: each document's share in the paper's Fig. 9 against ours, one panel per category (log scales)."""
+    cats = [("statistics", "Statistics"), ("technology", "Technology"), ("conduct", "Market conduct")]
+    fig, axes = plt.subplots(1, 3, figsize=(9.6, 3.0))
+    for ax, (c, label) in zip(axes, cats):
+        x, y = pairs[("paper", c)].clip(lower=1e-4), pairs[("ours", c)].clip(lower=1e-4)
+        ax.scatter(x, y, s=18, color=BLUE, edgecolor="white", linewidth=0.6)
+        lo, hi = min(x.min(), y.min()) * 0.8, max(x.max(), y.max()) * 1.2
+        ax.plot([lo, hi], [lo, hi], color=GREY, lw=0.8, ls="--")
+        ax.set_xscale("log")
+        ax.set_yscale("log")
+        ax.set_title(label, fontsize=10, color=NAVY, loc="left")
+        ax.set_xlabel("Paper (Fig. 9)")
+    axes[0].set_ylabel("Ours")
+    fig.tight_layout()
+    return _save(fig, path)

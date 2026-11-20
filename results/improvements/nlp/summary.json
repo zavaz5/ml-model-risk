@@ -1,28 +1,28 @@
 {
   "I2": {
     "stability": {
-      "mean": 7.529411764705882,
-      "lo": 4.0,
-      "hi": 11.383823529411764,
-      "top3_share": 0.4375,
-      "documents_with_mention": 25,
-      "documents": 34
+      "mean": 7.3428571428571425,
+      "lo": 3.9985714285714287,
+      "hi": 11.200714285714284,
+      "top3_share": 0.4357976653696498,
+      "documents_with_mention": 26,
+      "documents": 35
     },
     "hyperparameters": {
-      "mean": 0.20588235294117646,
+      "mean": 0.22857142857142856,
       "lo": 0.0,
-      "hi": 0.5294117647058824,
+      "hi": 0.5428571428571428,
       "top3_share": 1.0,
-      "documents_with_mention": 2,
-      "documents": 34
+      "documents_with_mention": 3,
+      "documents": 35
     },
     "overfitting": {
-      "mean": 0.2647058823529412,
-      "lo": 0.08823529411764706,
-      "hi": 0.5,
-      "top3_share": 0.6666666666666666,
-      "documents_with_mention": 6,
-      "documents": 34
+      "mean": 0.2857142857142857,
+      "lo": 0.11428571428571428,
+      "hi": 0.5142857142857142,
+      "top3_share": 0.6,
+      "documents_with_mention": 7,
+      "documents": 35
     },
     "dynamic calibration": {
       "mean": 0.0,
@@ -30,23 +30,23 @@
       "hi": 0.0,
       "top3_share": 0.0,
       "documents_with_mention": 0,
-      "documents": 34
+      "documents": 35
     },
     "feature engineering": {
-      "mean": 0.29411764705882354,
-      "lo": 0.0,
-      "hi": 0.6470588235294118,
-      "top3_share": 1.0,
-      "documents_with_mention": 3,
-      "documents": 34
+      "mean": 0.37142857142857144,
+      "lo": 0.05714285714285714,
+      "hi": 0.7428571428571429,
+      "top3_share": 0.8461538461538461,
+      "documents_with_mention": 4,
+      "documents": 35
     }
   },
   "I3": {
     "claim_probability": {
-      "statistics_highest_for_capital": 0.982,
-      "technology_highest_for_scoring": 0.947,
-      "conduct_highest_for_scoring": 1.0,
-      "provisions_lowest_total": 0.907
+      "statistics_highest_for_capital": 0.99,
+      "technology_highest_for_scoring": 0.933,
+      "conduct_highest_for_scoring": 0.997,
+      "provisions_lowest_total": 0.92
     },
     "claims_point": {
       "statistics_highest_for_capital": true,
@@ -61,7 +61,6 @@
       "provisions_lowest_total": true
     },
     "dominant_terms": [
-      "conduct|Consumers",
       "conduct|Management",
       "statistics|Model",
       "technology|Development",
@@ -69,12 +68,11 @@
       "technology|Security"
     ],
     "dominant_shares": {
-      "conduct|Consumers": 0.10232772528232312,
-      "conduct|Management": 0.22931551048628715,
-      "statistics|Model": 0.41358872425009036,
-      "technology|Development": 0.16184301921741143,
-      "technology|ICT": 0.2243574901597592,
-      "technology|Security": 0.13683723084047233
+      "conduct|Management": 0.22327499721324268,
+      "statistics|Model": 0.4157753088123663,
+      "technology|Development": 0.1609353507565337,
+      "technology|ICT": 0.2221458046767538,
+      "technology|Security": 0.13548830811554333
     }
   },
   "I4": {
@@ -89,16 +87,16 @@
   },
   "I6": {
     "capital": {
-      "est": 0.5612793048379154,
-      "se": 0.020888642420021253
+      "est": 0.5498887655694569,
+      "se": 0.021475106851445266
     },
     "scoring": {
-      "est": 0.5971392270885608,
-      "se": 0.02114154736497933
+      "est": 0.584279951786902,
+      "se": 0.022240988146314047
     },
     "provisions": {
-      "est": 0.5746759633296592,
-      "se": 0.022993536490279114
+      "est": 0.5616999778819324,
+      "se": 0.023746615210338683
     },
     "p_scoring_riskiest": 1.0
   }
