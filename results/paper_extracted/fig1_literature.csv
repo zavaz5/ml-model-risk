@@ -1,0 +1,22 @@
+complexity_rank,class,gain_pct
+0,Logit,-0.06
+1,"Regularisation (PCA, Lasso, Ridge)",-0.06
+1,"Regularisation (PCA, Lasso, Ridge)",-0.06
+1,"Regularisation (PCA, Lasso, Ridge)",5.98
+1,"Regularisation (PCA, Lasso, Ridge)",6.34
+1,"Regularisation (PCA, Lasso, Ridge)",7.56
+2,"Trees, RF, XGBoost",1.94
+2,"Trees, RF, XGBoost",2.94
+2,"Trees, RF, XGBoost",7.56
+2,"Trees, RF, XGBoost",7.97
+2,"Trees, RF, XGBoost",7.97
+2,"Trees, RF, XGBoost",11.97
+2,"Trees, RF, XGBoost",16.96
+3,Deep neural networks,-0.06
+3,Deep neural networks,2.94
+3,Deep neural networks,4.34
+3,Deep neural networks,4.93
+3,Deep neural networks,5.98
+3,Deep neural networks,5.98
+3,Deep neural networks,19.95
+4,"RL, CNN, ensembles",4.84

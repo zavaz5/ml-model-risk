@@ -1,0 +1,6 @@
+{
+  "data/raw/gmsc/cs-training.csv": "1bd46da486a5708c58c7b01a034fae2a13b327f6f7b62ea7ba4fe3b5824b24ac",
+  "data/raw/lexicon/negative-words.txt": "f80f5cfe3a62e7e07768eca9435b9ba514dbd5fc0eecf181e80b16f8f4578b34",
+  "data/raw/openml/german_credit.csv": "d0baf9fddd41e5a6af0ba84e6037a415f11384dd40c494186563a2d3b68f5c25",
+  "data/raw/openml/taiwan_default.csv": "e7d8139013acb492a9590bee777fc17134547542dcad1fe7e4efc9ee90bc69cf"
+}

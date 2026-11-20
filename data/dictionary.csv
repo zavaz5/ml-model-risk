@@ -1,0 +1,136 @@
+category,term
+statistics,Stability
+statistics,Over-fitting
+statistics,Over-fit
+statistics,Hyper parameters
+statistics,Dynamic calibration
+statistics,Feature engineering
+statistics,Forecast
+statistics,Parameters
+statistics,Test
+statistics,Calibration
+statistics,Features
+statistics,Explanatory variables
+statistics,AUC
+statistics,ROC
+statistics,Recall
+statistics,Prediction
+statistics,Logit
+statistics,Algorithm
+statistics,Scenario
+statistics,Data quality
+statistics,Back-testing
+statistics,Benchmarking
+statistics,Model
+statistics,Optimisation
+statistics,Dimensionality
+statistics,Validation
+statistics,Metrics
+statistics,Structured
+statistics,Unstructured
+statistics,Semi-structured
+statistics,Classification
+statistics,Tree-based
+statistics,Neural network
+statistics,Regression
+statistics,Clustering
+statistics,Support vector machine
+statistics,Reinforcement learning
+statistics,Parametric
+statistics,Non-parametric
+statistics,Performance
+statistics,Prociclality
+statistics,Train
+statistics,Training
+statistics,Volatility
+statistics,Tuning
+statistics,Threshold
+statistics,Cross-validation
+statistics,Compilation
+statistics,Out-of-sample statistical
+statistics,Predictive
+statistics,Challenger model
+statistics,Correlation
+statistics,Confidence level
+technology,Transparency
+technology,Carbon footprint
+technology,External providers
+technology,Dependencies
+technology,Cyber-risk
+technology,Third-party
+technology,Cloud
+technology,IT system
+technology,Legacy
+technology,Infrastructure
+technology,Computing
+technology,Computational power
+technology,Deployment
+technology,in-house
+technology,Development
+technology,Pilot
+technology,ICT
+technology,Architecture
+technology,Resilience
+technology,Security
+technology,Operational risk
+technology,Outsourcing risk
+technology,Reversibility
+technology,DevOps
+technology,Software
+technology,Hosting
+technology,Cyber-risk
+technology,Model stealing
+technology,Poisoning attacks
+technology,Adversarial attacks
+technology,Open-source
+conduct,Privacy
+conduct,Auditability
+conduct,Interpretability
+conduct,Biases
+conduct,Expert judgement
+conduct,Expert personnel
+conduct,Human judgement
+conduct,Human-in-the-loop
+conduct,Human-on-the-loop
+conduct,Governance
+conduct,Ethics
+conduct,Ethical
+conduct,Human
+conduct,Compliance
+conduct,Management
+conduct,Explainability
+conduct,Internal control
+conduct,Knowledge
+conduct,Consumers
+conduct,Consumer protection
+conduct,Discrimination
+conduct,Uncertainty
+conduct,Accountability
+conduct,Market abuse
+conduct,Complexity
+conduct,Decision making
+conduct,Soundness
+conduct,Conduct
+conduct,Internal audit
+conduct,Fairness
+conduct,Fair
+conduct,Diversity
+conduct,Oversight
+conduct,Simplicity
+conduct,GDPR
+conduct,Transparency
+conduct,Traceability
+conduct,Opaqueness
+conduct,Black-box
+conduct,Black boxes
+conduct,Surrogates
+conduct,Trust
+conduct,Trustworthiness
+conduct,Influence
+conduct,SHAP
+conduct,Shapley
+conduct,Independent conditional expectations
+conduct,Partial dependence plots
+conduct,ICE
+conduct,PDP
+conduct,Complex

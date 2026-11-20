@@ -1,0 +1,16 @@
+use,risk,gain_pct,model
+capital,0.2998,0.38,CART
+capital,0.1418,0.18,Lasso
+capital,0.5536,1.68,MLP
+capital,0.3085,4.18,RF
+capital,0.2834,5.27,XGBoost
+provisions,0.2541,0.38,CART
+provisions,0.127,0.18,Lasso
+provisions,0.4905,1.68,MLP
+provisions,0.2767,4.18,RF
+provisions,0.2531,5.27,XGBoost
+scoring,0.2746,0.38,CART
+scoring,0.1464,0.18,Lasso
+scoring,0.5649,1.68,MLP
+scoring,0.3239,4.18,RF
+scoring,0.2931,5.27,XGBoost
