@@ -89,7 +89,8 @@ def verdicts(k: dict) -> list[dict]:
         cl = imp.get("I3", {}).get("claims_point", {})
         held = sum(bool(v) for v in cl.values())
         rows.append({"id": "R3", "result": "Weights: statistics → capital; technology and conduct → scoring; provisions lowest (Table 2)",
-                     "ours": f"{held} of {len(cl)} statements hold; totals " + " / ".join(f"{t2[u]['total']:.1f}" for u in USES) + "%",
+                     "ours": f"{held} of {len(cl)} hold; levels about half (totals "
+                         + " / ".join(f"{t2[u]['total']:.1f}" for u in USES) + "%)",
                      "verdict": "reproduced" if cl and held == len(cl) else ("close" if held >= 2 else "not reproduced")})
         sig_paper = {f"{a} vs {b}|{c}" for (a, b), cs in P.TABLE3_BOLD.items() for c in cs}
         sig_ours = {key for key, v in n["table3"].items() if v["p"] < 0.10}
@@ -124,7 +125,7 @@ def verdicts(k: dict) -> list[dict]:
     shp = {mm: m["proxies"][mm]["shap_s"] for mm in ("RF", "XGBoost", "MLP")}
     paper_shap = _order({mm: P.TABLE5["shap_seconds"][mm] for mm in ("RF", "XGBoost", "MLP")}, ["RF", "XGBoost", "MLP"])
     rows.append({"id": "R10", "result": "SHAP time: XGBoost 8 s < RF 60 s < MLP 2,000 s (Table 5)",
-                 "ours": " < ".join(f"{mm} {shp[mm]:.0f} s" for mm in _order(shp, ["RF", "XGBoost", "MLP"])),
+                 "ours": " < ".join(f"{mm} {shp[mm]:.1f} s" for mm in _order(shp, ["RF", "XGBoost", "MLP"])),
                  "verdict": "reproduced" if _order(shp, ["RF", "XGBoost", "MLP"]) == paper_shap else "not reproduced"})
     r = m["ranks_default"]
     top3 = all({"NumberOfTimes90DaysLate", "NumberOfTime30-59DaysPastDueNotWorse"} <= set(r[mm][:3]) for mm in ("RF", "XGBoost", "MLP"))

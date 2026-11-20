@@ -57,7 +57,8 @@ def main() -> None:
     t3.to_csv(OUT / "table3.csv", index=False)
     print(t3.round(4).to_string(index=False))
 
-    mpd = mentions_per_document(counts, STAT_TERMS)
+    # Over the documents the computation uses (Fig. 9 assignment), as in improve_nlp.py.
+    mpd = mentions_per_document({i: counts[i] for i in dict.fromkeys(docs['doc_id'])}, STAT_TERMS)
     print("mentions per document:", {k: round(v, 2) for k, v in mpd.items()})
 
     sentiment = {d: negative_table(counts, docs, d) for d in (5, 10, 15, 20)}

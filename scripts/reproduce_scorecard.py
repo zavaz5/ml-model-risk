@@ -91,7 +91,8 @@ def main() -> None:
     top2 = set(sorted(sd, key=sd.get, reverse=True)[:2])
     if top2 != unstable_text:
         errata.append({"id": "E5", "where": "Text vs Table 5 (p. 18)",
-                       "what": f"Text names {sorted(unstable_text)} as least stable; Table 5's two largest SDs are {sorted(top2)}"})
+                       "what": f"Text names {' and '.join(sorted(unstable_text))} as least stable; Table 5's two largest SDs are "
+                               f"{' and '.join(sorted(top2))}"})
     errata.append({"id": "E6", "where": "p. 17 vs Figs. 6-8",
                    "what": "Text: 11 characteristics and 22 variables with squares; the data have 10 characteristics "
                            "(11 columns with the file's row index) and the SHAP figures show 10 features"})

@@ -1,0 +1,22 @@
+{
+  "I12_spearman_auc_vs_brier": 0.7714285714285715,
+  "I7_claim_probability": {
+    "auc_sd": 1.0,
+    "pd_sd": 1.0
+  },
+  "I11_claims_seeds": {
+    "default": {
+      "top3_late_payments": 5,
+      "revolving_first_only_xgb": 0,
+      "age_fourth": 0,
+      "seeds": 5
+    },
+    "probability": {
+      "top3_late_payments": 4,
+      "revolving_first_only_xgb": 0,
+      "age_fourth": 0,
+      "seeds": 5
+    }
+  },
+  "smoke_rows": null
+}

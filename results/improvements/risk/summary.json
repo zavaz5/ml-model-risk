@@ -1,0 +1,18 @@
+{
+  "p_best_gain": {
+    "Lasso": 0.0,
+    "CART": 0.0,
+    "RF": 0.0,
+    "XGBoost": 1.0,
+    "MLP": 0.0
+  },
+  "xgb_on_frontier_all_uses": 1.0,
+  "lowest_risk_use_by_model": {
+    "Lasso": "capital",
+    "CART": "scoring",
+    "RF": "capital",
+    "XGBoost": "scoring",
+    "MLP": "scoring"
+  },
+  "draws": 1000
+}

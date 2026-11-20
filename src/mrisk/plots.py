@@ -78,7 +78,7 @@ def benchmark(frame: pd.DataFrame, path: Path) -> Path:
     ax.axhline(0, color=GREY, lw=0.8)
     ax.set_xticks(x, models)
     ax.set_ylabel("AUC gain over the logit (points)")
-    ax.legend(frameon=False, fontsize=8, ncol=3, loc="upper left")
+    ax.legend(frameon=False, fontsize=8, ncol=1, loc="lower left")
     ax.grid(axis="y", alpha=0.25)
     return _save(fig, path)
 

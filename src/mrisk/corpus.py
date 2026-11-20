@@ -41,7 +41,7 @@ def document_text(path: Path) -> str:
 def count_corpus(dictionary: pd.DataFrame, negative_path: Path, refresh: bool = False) -> dict[str, DocumentCounts]:
     """Count every downloaded document once; cached because PDF parsing is the slow part."""
     manifest = pd.read_csv(MANIFEST)
-    key = (tuple(dictionary.itertuples(index=False)), tuple(manifest["sha256"].fillna("")))
+    key = (tuple(map(tuple, dictionary.to_numpy().tolist())), tuple(manifest["sha256"].fillna("")))
     if CACHE.exists() and not refresh:
         cached = pickle.loads(CACHE.read_bytes())
         if cached["key"] == key:

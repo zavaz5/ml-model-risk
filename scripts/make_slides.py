@@ -235,7 +235,9 @@ def build() -> None:
     for ph in list(s.placeholders):
         idx = ph.placeholder_format.idx
         if idx == 0:
-            ph.text = "MEASURING THE MODEL RISK-ADJUSTED PERFORMANCE OF MACHINE LEARNING IN CREDIT DEFAULT PREDICTION"
+            ph.text = "MEASURING THE MODEL RISK-ADJUSTED PERFORMANCE OF ML IN CREDIT DEFAULT PREDICTION"
+            for run in ph.text_frame.paragraphs[0].runs:
+                run.font.size = Pt(30)
         elif idx == 1:
             ph.text = "Research Seminar"
         elif idx == 2:
@@ -307,13 +309,13 @@ def build() -> None:
     heading(s, (6.85, 2.25, 6.2, 0.4), "Ours: same protocol, our split (± s.e.)")
     ours = pd.DataFrame([(mm, f"{100 * a[mm]['auc']:.1f} ± {100 * a[mm]['se']:.1f}",
                           "–" if mm == "Logit" else f"{px[mm]['auc_sd']:.4f}", f"{px[mm]['fit_s']:.2f}",
-                          "–" if mm == "Logit" else f"{px[mm]['shap_s']:,.0f}") for mm in ["Logit"] + MODELS5],
+                          "–" if mm == "Logit" else f"{px[mm]['shap_s']:,.1f}") for mm in ["Logit"] + MODELS5],
                         columns=["Model", "AUC %", "SD of AUC", "Train s", "SHAP s"])
     table(s, ours, (6.85, 2.65, 6.2, 2.6), widths=[1.15, 1.45, 1.2, 1.1, 1.3], size=11)
     best = max(MODELS5, key=lambda mm: a[mm]["auc"])
     v = {r["id"]: r for r in k["verdicts"]}
     text(s, (0.64, 5.5, 12.4, 1.5), [
-        f"**AUC:** {v['R12']['ours']}. Gain of {best} over the logit: {100 * a[best]['gain']:+.1f} ± {100 * a[best]['gain_se']:.1f} points (paired DeLong p = {a[best]['gain_p']:.3f}).",
+        f"**AUC:** {v['R12']['ours']}. Gain of {best} over the logit: {100 * a[best]['gain']:+.1f} ± {100 * a[best]['gain_se']:.1f} points (paired DeLong {'p < 0.001' if a[best]['gain_p'] < 0.001 else f"p = {a[best]['gain_p']:.3f}"}).",
         f"**Proxies:** stability order {v['R7']['ours'].split(': ')[1]} ({v['R7']['verdict']}); training time {v['R9']['ours']} ({v['R9']['verdict']}); SHAP time {v['R10']['ours']} ({v['R10']['verdict']}).",
     ], size=12, space=5)
 
@@ -358,7 +360,7 @@ def build() -> None:
     heading(s, (0.64, 2.2, 5.0, 0.4), "Paper reports")
     table(s, pd.DataFrame({"#": vr["id"], "Result": [short[i] for i in vr["id"]]}), (0.64, 2.6, 5.2, 4.4), widths=[0.55, 4.65], size=10)
     heading(s, (6.1, 2.2, 7.0, 0.4), "Ours")
-    ours_t = pd.DataFrame({"#": vr["id"], "What we find": [o[:70] for o in vr["ours"]], "Verdict": vr["verdict"]})
+    ours_t = pd.DataFrame({"#": vr["id"], "What we find": vr["ours"], "Verdict": vr["verdict"]})
     fills = {(i, 2): VERDICT_FILL.get(vv, MUTED) for i, vv in enumerate(vr["verdict"])}
     table(s, ours_t, (6.1, 2.6, 7.0, 4.4), widths=[0.55, 5.0, 1.45], size=10, fills=fills)
 
@@ -389,13 +391,16 @@ def build() -> None:
         "Conclusions, ~2 min. Summarise what holds, what does not, and what the paper cannot claim: one dataset, expert scores, "
         "word counts as preferences, no uncertainty. Then next steps."))
     counts = vr["verdict"].value_counts().to_dict()
+    i1 = imp.get("I1", {}).get("summary", {})
+    german = i1.get("german_credit", {})
     text(s, (0.64, 2.3, 12.2, 4.8), [
         "**Reproduction:** " + ", ".join(f"{counts.get(c, 0)} {c}" for c in ("reproduced", "close", "not reproduced", "not testable")) + " of 13 results.",
-        "**What holds:** tree ensembles predict best and XGBoost has the best gain for its risk; the paper's own arithmetic holds except for two inconsistent scores.",
-        "**What is fragile:** weights from word counts depend on a few generic terms and on document versions; the expert Z and the choice of explainer drive the risk axis.",
-        "**Critique:** one dataset, no uncertainty, judgement in Z, frequency taken as supervisory preference, a ranking with no approval threshold.",
-        "**Next:** use-specific performance (calibration for provisions and capital), a supervisor's loss function, more datasets and time-split validation.",
-    ], size=15, space=10)
+        "**What holds:** XGBoost predicts best and is the only model on the risk–gain frontier in every Monte Carlo draw; the orderings of the text weights hold; the paper's arithmetic holds except for two inconsistent scores.",
+        "**What does not:** times depend on solver and explainer (Lasso, SHAP); the SHAP ranking claims; the sentiment check; our CART is 4 points better than the paper's.",
+        "**What is fragile:** \"provisions is the least risky use\" only reflects fewer risk words in provisioning texts; with few loans the ML gain disappears"
+        + (f" (German credit: best is {german['best']})." if german else "."),
+        "**Critique and next steps:** one dataset, no uncertainty, expert Z, word counts as supervisory preference, no approval threshold. Next: use-specific metrics (calibration for capital and provisions), a supervisor's loss function, time-split validation.",
+    ], size=14, space=9)
 
     prs.slides.add_slide(layout(prs, "Final_1"))
 
@@ -406,8 +411,8 @@ def build() -> None:
         e.columns = ["#", "Where", "What"]
         table(s, e, (0.64, 2.3, 12.2, 4.6), widths=[0.5, 2.6, 9.1], size=10)
     s = slide_with_title(prs, "Backup: every improvement", "All thirteen improvements and their findings.")
-    table(s, pd.DataFrame([(r["id"], r["what"], r["finding"][:150]) for r in k["improvement_rows"]], columns=["#", "Improvement", "Finding"]),
-          (0.5, 2.2, 12.4, 4.9), widths=[0.5, 4.0, 7.9], size=8)
+    table(s, pd.DataFrame([(r["id"], r["what"], r["finding"]) for r in k["improvement_rows"]], columns=["#", "Improvement", "Finding"]),
+          (0.5, 2.3, 12.4, 4.9), widths=[0.45, 3.2, 8.75], size=7)
     s = slide_with_title(prs, "Backup: SHAP rankings under two explainers", "Default explainers (XGBoost in log-odds) vs one explainer on the probability scale.")
     picture(s, fig["shap_default"], (0.5, 2.3, 6.2, 3.2))
     picture(s, fig["shap_common"], (6.8, 2.3, 6.2, 3.2))

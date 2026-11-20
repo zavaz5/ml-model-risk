@@ -50,7 +50,7 @@
   {
     "id": "E5",
     "where": "Text vs Table 5 (p. 18)",
-    "what": "Text names ['CART', 'MLP'] as least stable; Table 5's two largest SDs are ['CART', 'RF']"
+    "what": "Text names CART and MLP as least stable; Table 5's two largest SDs are CART and RF"
   },
   {
     "id": "E6",

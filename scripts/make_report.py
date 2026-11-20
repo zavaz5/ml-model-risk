@@ -25,6 +25,11 @@ README = ROOT / "README.md"
 START, END = "<!-- results:start -->", "<!-- results:end -->"
 CATS, USES = P.CATEGORIES, P.USES
 USE_NAME = {"capital": "Capital", "scoring": "Credit scoring", "provisions": "Provisions"}
+SHORT = {"NumberOfTimes90DaysLate": "90+ days late", "NumberOfTime30-59DaysPastDueNotWorse": "30–59 days",
+         "NumberOfTime60-89DaysPastDueNotWorse": "60–89 days", "RevolvingUtilizationOfUnsecuredLines": "Revolving utilisation",
+         "age": "age", "DebtRatio": "Debt ratio", "MonthlyIncome": "Monthly income",
+         "NumberOfOpenCreditLinesAndLoans": "Open credit lines", "NumberRealEstateLoansOrLines": "Real-estate loans",
+         "NumberOfDependents": "Dependents"}
 CAT_NAME = {"statistics": "Statistics", "technology": "Technology", "conduct": "Market conduct"}
 
 
@@ -34,6 +39,10 @@ def _json(path: Path) -> dict:
 
 def pct(x: float, nd: int = 1) -> str:
     return f"{100 * x:.{nd}f}%"
+
+
+def pval(p: float) -> str:
+    return "p < 0.001" if p < 0.001 else f"p = {p:.3f}"
 
 
 def md_table(frame: pd.DataFrame) -> str:
@@ -63,8 +72,8 @@ def r13(k: dict) -> tuple[str, str, dict]:
     lowest = {m: t6.loc[m].idxmin() for m in MODELS5}
     xgb_all = all("XGBoost" in fr[u] for u in USES)
     prov_all = all(v == "provisions" for v in lowest.values())
-    text = (f"risk-efficient (paper's Z, our weights and gains): {', '.join(fr['capital'])}; "
-            f"provisions least risky for {sum(v == 'provisions' for v in lowest.values())} of 5 models")
+    text = (f"frontier: {', '.join(fr['capital'])}; provisions least risky for "
+            f"{sum(v == 'provisions' for v in lowest.values())} of 5 models")
     verdict = "reproduced" if xgb_all and prov_all else ("close" if xgb_all or prov_all else "not reproduced")
     return text, verdict, {"frontier": fr, "lowest_use": lowest, "table6_ours": t6.to_dict()}
 
@@ -148,7 +157,7 @@ def section_models(k: dict) -> str:
                             "–" if mm == "Logit" else f"{P.TABLE7_AUC[mm] - P.TABLE7_AUC['Logit']:+.1f}") for mm in P.TABLE7_AUC],
                           columns=["Model", "AUC (%)", "95% interval", "Gain over logit (points)"])
     ours7 = pd.DataFrame([(mm, f"{100 * a[mm]['auc']:.1f} ± {100 * a[mm]['se']:.1f}", f"[{100 * a[mm]['lo']:.1f}, {100 * a[mm]['hi']:.1f}]",
-                           "–" if mm == "Logit" else f"{100 * a[mm]['gain']:+.1f} ± {100 * a[mm]['gain_se']:.1f} (p = {a[mm]['gain_p']:.3f})")
+                           "–" if mm == "Logit" else f"{100 * a[mm]['gain']:+.2f} ± {100 * a[mm]['gain_se']:.2f} ({pval(a[mm]['gain_p'])})")
                           for mm in a], columns=["Model", "AUC (%, ± s.e.)", "95% interval", "Gain over logit (points, paired DeLong)"])
     paper5 = pd.DataFrame([(mm, P.TABLE5["stability_sd"][mm], P.TABLE5["n_hyperparameters"][mm], P.TABLE5["training_seconds"][mm],
                             P.TABLE5["transparency"][mm], P.TABLE5["shap_seconds"][mm],
@@ -162,6 +171,14 @@ def section_models(k: dict) -> str:
                                   "SHAP (s), default explainer", "SHAP (s), one explainer"])
     meta = m["meta"]
     env = meta["environment"]
+    cart = _json(RES / "reproduction" / "models" / "cart_diagnostic.json")
+    cart_txt = ""
+    if cart:
+        d = cart["depth"]
+        cart_txt = (f"\n**Why our CART is far above the paper's.** On the validation rows a depth-7 tree scores {100 * d['7']:.1f}; "
+                    f"depth 3 gives {100 * d['3']:.1f}, depth 11 {100 * d['11']:.1f}, an unpruned tree {100 * d['None']:.1f}; "
+                    f"scoring depth 7 by hard labels gives {100 * cart['depth7_hard_labels']:.1f}. No setting at the paper's depth gives 80.4, "
+                    "so the paper's tree probably differs from what it reports (`scripts/diagnose_cart.py`, validation rows only).\n")
     return f"""### Data and setup (ours)
 
 Give Me Some Credit: {meta['rows_raw']:,} rows in `cs-training.csv`, of which {meta['rows']:,} complete cases (the paper: 120,000); default rate {pct(meta['default_rate'], 2)}. {k['models']['n_features']} features (10 characteristics and their squares). Stratified 80/20 split: {meta['train']:,} training and {meta['test']:,} test rows. Lasso penalty chosen by 5-fold CV on the training rows: C = {meta['lasso_c']:g}. Timings on {env['cpu']}, {env['os']}, Python {env['python']}.
@@ -177,7 +194,7 @@ Give Me Some Credit: {meta['rows_raw']:,} rows in `cs-training.csv`, of which {m
 **Ours** (± DeLong standard error; the gain test is paired, on the same test rows):
 
 {md_table(ours7)}
-
+{cart_txt}
 ### Model-risk proxies (Table 5)
 
 **Paper:**
@@ -196,7 +213,7 @@ def section_shap(k: dict) -> str:
                           "RF (Fig. 6)": ["90+ days late", "30–59 days", "60–89 days", "age"],
                           "XGBoost (Fig. 7)": ["Revolving utilisation", "30–59 days", "90+ days late", "age"],
                           "MLP (Fig. 8)": ["30–59 days", "90+ days late", "60–89 days", "age"]})
-    ours = pd.DataFrame({"Rank": [1, 2, 3, 4], **{f"{m}": r[m][:4] for m in ("RF", "XGBoost", "MLP")}})
+    ours = pd.DataFrame({"Rank": [1, 2, 3, 4], **{m: [SHORT.get(f, f) for f in r[m][:4]] for m in ("RF", "XGBoost", "MLP")}})
     return f"""### SHAP feature rankings (Figs. 6–8)
 
 **Paper** (top four, read from the figures):
@@ -231,6 +248,17 @@ def section_nlp(k: dict) -> str:
     meta = n["meta"]
     docs = meta["documents"]
     mpd = meta["mentions_per_document"]
+    sw = _json(RES / "reproduction" / "nlp" / "stopword_diagnostic.json")
+    diag = ""
+    if sw:
+        diag = (f"\n**Why our levels are about half the paper's.** Every ordering matches, but our shares are roughly half. "
+                f"If the denominator excludes English stop words (a step the paper does not mention; {pct(1 - sw['kept_share_mean'], 0)} of our tokens), "
+                f"the totals become " + " / ".join(f"{sw['table2_pct'][u]['total']:.1f}%" for u in USES)
+                + " (paper " + " / ".join(f"{P.TABLE2[u]['total']:.1f}%" for u in USES) + ") and the share of negative words "
+                + " / ".join(f"{sw['neg_share_pct'][u]:.2f}%" for u in USES) + " (paper "
+                + " / ".join(f"{P.TABLE10_NEG_SHARE[u]:.2f}%" for u in USES) + "). "
+                "So the paper most likely divided by non-stop-words. Our main results keep all words, as the paper's text describes "
+                "(`scripts/diagnose_nlp_levels.py`).\n")
     return f"""### Weights from regulatory texts (Table 2, Fig. 3)
 
 Our corpus: {docs['capital']} capital, {docs['scoring']} credit-scoring, {docs['provisions']} provisioning and {docs['common']} common-area documents ({meta['tokens_total']:,} words); missing: {', '.join(meta['missing']) or 'none'}. Sources, versions and hashes: `data/corpus_manifest.csv`.
@@ -243,6 +271,7 @@ Our corpus: {docs['capital']} capital, {docs['scoring']} credit-scoring, {docs['
 
 {md_table(ours2)}
 
+{diag}
 Mentions per document (p. 11). Paper: stability {P.MENTIONS_PER_DOC['stability']}, feature engineering {P.MENTIONS_PER_DOC['feature engineering']}, hyperparameters {P.MENTIONS_PER_DOC['hyperparameters']}, overfitting {P.MENTIONS_PER_DOC['overfitting']}, dynamic calibration {P.MENTIONS_PER_DOC['dynamic calibration']}. Ours: stability {mpd['stability']:.2f}, feature engineering {mpd['feature engineering']:.2f}, hyperparameters {mpd['hyperparameters']:.2f}, overfitting {mpd['overfitting']:.2f}, dynamic calibration {mpd['dynamic calibration']:.2f}.
 
 ### Are the differences significant? (Table 3)
@@ -306,8 +335,10 @@ def improvement_rows(k: dict) -> list[dict]:
     imp, rows = k["improvements"], []
     if "I1" in imp:
         s = imp["I1"]["summary"]
-        txt = "; ".join(f"{n}: best {v['best']} (vs {v['runner_up']} p = {v['best_vs_runner_p']:.3f}), "
-                        f"Spearman(complexity, gain) {v['spearman']:+.2f}" for n, v in s.items())
+        names = {"gmsc": "GMSC", "taiwan_default": "Taiwan", "german_credit": "German (1,000 loans)"}
+        txt = "; ".join(f"{names[n]}: best {v['best']} (vs {v['runner_up']}, {pval(v['best_vs_runner_p'])})"
+                        for n, v in s.items()) + ". Spearman(complexity, gain): " + ", ".join(
+            f"{names[n].split(' ')[0]} {v['spearman']:+.2f}" for n, v in s.items())
         rows.append({"id": "I1", "what": "Same-protocol benchmark on three datasets with paired DeLong intervals", "finding": txt})
     if "I2" in imp:
         st = imp["I2"]["stability"]
@@ -320,7 +351,9 @@ def improvement_rows(k: dict) -> list[dict]:
         rows.append({"id": "I3", "what": "Document bootstrap of the weights; dictionary audit",
                      "finding": "; ".join(f"{c.replace('_', ' ')}: P = {p:.2f}{'' if tr[c] else ' (fails with trimmed dictionary)'}"
                                           for c, p in p3.items())
-                                + f". Dominant terms: {', '.join(t.split('|')[1] for t in imp['I3']['dominant_terms'])}"})
+                                + ". Terms above 10% of their category: " + ", ".join(
+                                    f"{t.split('|')[1]} ({pct(imp['I3']['dominant_shares'][t], 0)} of {t.split('|')[0]})"
+                                    for t in sorted(imp['I3']['dominant_terms'], key=lambda t: -imp['I3']['dominant_shares'][t]))})
     if "I4" in imp:
         i4 = imp["I4"]
         rows.append({"id": "I4", "what": "Permutation tests, Holm and Benjamini–Hochberg over nine tests",
@@ -355,8 +388,10 @@ def improvement_rows(k: dict) -> list[dict]:
         c = imp["I11"]["claims_seeds"]
         rows.append({"id": "I11", "what": "SHAP rankings on the probability scale, five seeds",
                      "finding": "seeds where the claim holds, default explainer → probability scale: "
-                                + "; ".join(f"{name.replace('_', ' ')} {c['default'][name]}→{c['probability'][name]} of {c['default']['seeds']}"
-                                            for name in ("top3_late_payments", "revolving_first_only_xgb", "age_fourth"))})
+                                + "; ".join(f"{label} {c['default'][name]}→{c['probability'][name]} of {c['default']['seeds']}"
+                                            for name, label in (("top3_late_payments", "late payments in the top three"),
+                                                                ("revolving_first_only_xgb", "revolving utilisation first only for XGBoost"),
+                                                                ("age_fourth", "age fourth")))})
     if "I12" in imp:
         t = imp["I12"]["table"]
         best_b = min(t, key=lambda m: t[m]["brier"])
@@ -367,9 +402,13 @@ def improvement_rows(k: dict) -> list[dict]:
         i13 = imp["I13"]
         tab = pd.DataFrame(i13["table"])
         pf = tab.groupby("model")["p_frontier"].min()
+        lowest = i13["lowest_risk_use_by_model"]
+        n_prov = sum(v == "provisions" for v in lowest.values())
         rows.append({"id": "I13", "what": "Rule-based Z and Monte Carlo over all inputs",
                      "finding": "P(on the frontier, worst use): " + "; ".join(f"{m} {pf[m]:.2f}" for m in MODELS5)
-                                + f". P(highest gain): XGBoost {i13['p_best_gain']['XGBoost']:.2f}"})
+                                + f". P(highest gain): XGBoost {i13['p_best_gain']['XGBoost']:.2f}. On the normalised scale, "
+                                f"provisions is the least risky use for {n_prov} of 5 models: the paper's ordering of uses "
+                                "comes from provisioning texts using fewer risk terms overall"})
     return rows
 
 
@@ -379,7 +418,7 @@ def write_readme(section: str) -> None:
     if START in text:
         text = text[: text.index(START)] + block + text[text.index(END) + len(END):]
     else:
-        text += "\n## Results\n\n" + block + "\n"
+        text += ("" if "## Results" in text else "\n## Results\n") + "\n" + block + "\n"
     README.write_text(text)
 
 

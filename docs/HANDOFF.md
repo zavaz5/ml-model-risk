@@ -29,11 +29,13 @@ Numbers live in `results/`; documents are regenerated from them (CLAUDE.md, rule
 - **pandas 3 and OpenML:** scikit-learn's pandas ARFF parser fails; `download_data.py` uses `parser="liac-arff"`.
 - **Corpus hosts:** banque-france.fr refuses scripted downloads; EUR-Lex shows a bot challenge (we used the Publications Office copy); two files come from the Internet Archive. `download_corpus.py` reports any file it cannot fetch or whose hash differs.
 - **Timing hygiene:** `reproduce_models.py` times first (single thread), then runs the parallel refits. Do not run other heavy jobs during its first ~20 minutes.
-- **PDF export of the deck** (LibreOffice is not installed), from the project root:
+- **PDF export of the deck:** PowerPoint on this Mac has no subscription and opens files read-only, so it cannot save a PDF. Keynote can (LibreOffice is not installed), from the project root:
 
   ```
-  osascript -e 'with timeout of 240 seconds' -e 'tell application "Microsoft PowerPoint" to open (POSIX file "<abs>/docs/presentation.pptx")' -e 'delay 3' -e 'tell application "Microsoft PowerPoint" to save active presentation in (POSIX file "<abs>/docs/presentation.pdf") as save as PDF' -e 'tell application "Microsoft PowerPoint" to close active presentation saving no' -e 'end timeout'
+  A=$(pwd); osascript -e 'with timeout of 300 seconds' -e 'tell application id "com.apple.Keynote"' -e "set d to open (POSIX file \"$A/docs/presentation.pptx\")" -e 'delay 3' -e "export d to (POSIX file \"$A/docs/presentation.pdf\") as PDF" -e 'close d saving no' -e 'end tell' -e 'end timeout'
   ```
+
+  Then check that every content slide shows its number (the final slide has none).
 
 ## 4. Open tasks
 

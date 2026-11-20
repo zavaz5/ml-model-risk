@@ -1,0 +1,1306 @@
+{
+  "models": {
+    "meta": {
+      "rows": 120269,
+      "rows_raw": 150000,
+      "defaults_raw": 10026,
+      "default_rate": 0.06948590243537403,
+      "train": 96215,
+      "test": 24054,
+      "lasso_c": 10.0,
+      "shap_rows": 1000,
+      "shap_background": 100,
+      "retrains": 100,
+      "environment": {
+        "python": "3.13.15",
+        "os": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+        "cpu": "Apple M5 Pro"
+      }
+    },
+    "n_features": 20,
+    "auc": {
+      "Logit": {
+        "auc": 0.805039052330714,
+        "se": 0.006235365193346366,
+        "lo": 0.7928179611213005,
+        "hi": 0.8172601435401275,
+        "gain": 0.0,
+        "gain_se": 0.0,
+        "gain_p": 0.0,
+        "params": 21
+      },
+      "Lasso": {
+        "auc": 0.8045312719030775,
+        "se": 0.006235624061851059,
+        "lo": 0.792309673320718,
+        "hi": 0.816752870485437,
+        "gain": -0.0005077804276365505,
+        "gain_se": 0.00012867922439016306,
+        "gain_p": 7.943614884292139e-05,
+        "params": 21
+      },
+      "CART": {
+        "auc": 0.8443535214821306,
+        "se": 0.005181375902849312,
+        "lo": 0.8341982113221823,
+        "hi": 0.8545088316420789,
+        "gain": 0.039314469151416565,
+        "gain_se": 0.004545561306087272,
+        "gain_p": 5.19617344084872e-18,
+        "params": 243
+      },
+      "RF": {
+        "auc": 0.8419170069359673,
+        "se": 0.0052244828744606436,
+        "lo": 0.8316772086641782,
+        "hi": 0.8521568052077564,
+        "gain": 0.03687795460525323,
+        "gain_se": 0.00436232867144466,
+        "gain_p": 2.821380985147621e-17,
+        "params": 856606
+      },
+      "XGBoost": {
+        "auc": 0.8544939971514353,
+        "se": 0.004919648122959865,
+        "lo": 0.8448516640138238,
+        "hi": 0.8641363302890467,
+        "gain": 0.049454944820721214,
+        "gain_se": 0.004057561415885022,
+        "gain_p": 3.58645403858809e-34,
+        "params": 2194
+      },
+      "MLP": {
+        "auc": 0.8199095165864557,
+        "se": 0.0059624214514239025,
+        "lo": 0.8082233852810159,
+        "hi": 0.8315956478918956,
+        "gain": 0.014870464255741678,
+        "gain_se": 0.0026688619569772342,
+        "gain_p": 2.5206695830451904e-08,
+        "params": 86701
+      }
+    },
+    "proxies": {
+      "Logit": {
+        "fit_s": 0.04954262496903539,
+        "fit_q25": 0.04950654087588191,
+        "fit_q75": 0.0496825419832021,
+        "auc_sd": 0.0006020884033646524,
+        "auc_sd_se": 4.191954829971784e-05,
+        "pd_sd": 0.001954423263669014,
+        "shap_s": 4.377933833980933,
+        "shap_common_s": 4.298942416906357
+      },
+      "Lasso": {
+        "fit_s": 25.55343316704966,
+        "fit_q25": 25.481213584076613,
+        "fit_q75": 25.88028633291833,
+        "auc_sd": 0.0005922219355224335,
+        "auc_sd_se": 3.77908060316721e-05,
+        "pd_sd": 0.0016250698827207088,
+        "shap_s": 4.3434334171470255,
+        "shap_common_s": 4.313957792008296
+      },
+      "CART": {
+        "fit_s": 0.29146645800210536,
+        "fit_q25": 0.2910417919047177,
+        "fit_q75": 0.3038142919540405,
+        "auc_sd": 0.0037548457311654174,
+        "auc_sd_se": 0.000213692113707704,
+        "pd_sd": 0.01832803338766098,
+        "shap_s": 0.0059421248733997345,
+        "shap_common_s": 3.1156854168511927
+      },
+      "RF": {
+        "fit_s": 9.020364332944155,
+        "fit_q25": 8.9701688750647,
+        "fit_q75": 9.05430291686207,
+        "auc_sd": 0.0018600650070144246,
+        "auc_sd_se": 0.00011500632556896028,
+        "pd_sd": 0.019861964508891106,
+        "shap_s": 67.04418879188597,
+        "shap_common_s": 171.42682733293623
+      },
+      "XGBoost": {
+        "fit_s": 0.14777224999852479,
+        "fit_q25": 0.1476325828116387,
+        "fit_q75": 0.14822516706772149,
+        "auc_sd": 0.0013650745547361112,
+        "auc_sd_se": 8.537199483705789e-05,
+        "pd_sd": 0.014837644062936306,
+        "shap_s": 0.025810708990320563,
+        "shap_common_s": 8.986003583064303
+      },
+      "MLP": {
+        "fit_s": 6.538926334120333,
+        "fit_q25": 5.973825083114207,
+        "fit_q75": 8.063674916047603,
+        "auc_sd": 0.0032735069334011912,
+        "auc_sd_se": 0.000276833589115752,
+        "pd_sd": 0.015430456027388573,
+        "shap_s": 29.363831917056814,
+        "shap_common_s": 29.478233999805525
+      }
+    },
+    "ranks_default": {
+      "Logit": [
+        "NumberOfTime30-59DaysPastDueNotWorse",
+        "age",
+        "NumberOfTimes90DaysLate",
+        "NumberOfTime60-89DaysPastDueNotWorse",
+        "MonthlyIncome",
+        "NumberOfDependents",
+        "NumberRealEstateLoansOrLines",
+        "NumberOfOpenCreditLinesAndLoans",
+        "DebtRatio",
+        "RevolvingUtilizationOfUnsecuredLines"
+      ],
+      "Lasso": [
+        "NumberOfTime30-59DaysPastDueNotWorse",
+        "age",
+        "NumberOfTimes90DaysLate",
+        "NumberOfTime60-89DaysPastDueNotWorse",
+        "MonthlyIncome",
+        "NumberOfDependents",
+        "NumberRealEstateLoansOrLines",
+        "NumberOfOpenCreditLinesAndLoans",
+        "DebtRatio",
+        "RevolvingUtilizationOfUnsecuredLines"
+      ],
+      "CART": [
+        "RevolvingUtilizationOfUnsecuredLines",
+        "NumberOfTimes90DaysLate",
+        "NumberOfTime30-59DaysPastDueNotWorse",
+        "NumberOfTime60-89DaysPastDueNotWorse",
+        "DebtRatio",
+        "age",
+        "NumberRealEstateLoansOrLines",
+        "MonthlyIncome",
+        "NumberOfOpenCreditLinesAndLoans",
+        "NumberOfDependents"
+      ],
+      "RF": [
+        "RevolvingUtilizationOfUnsecuredLines",
+        "NumberOfTimes90DaysLate",
+        "NumberOfTime30-59DaysPastDueNotWorse",
+        "NumberOfTime60-89DaysPastDueNotWorse",
+        "age",
+        "DebtRatio",
+        "NumberOfOpenCreditLinesAndLoans",
+        "MonthlyIncome",
+        "NumberOfDependents",
+        "NumberRealEstateLoansOrLines"
+      ],
+      "XGBoost": [
+        "RevolvingUtilizationOfUnsecuredLines",
+        "NumberOfTime30-59DaysPastDueNotWorse",
+        "NumberOfTimes90DaysLate",
+        "age",
+        "NumberOfOpenCreditLinesAndLoans",
+        "NumberOfTime60-89DaysPastDueNotWorse",
+        "DebtRatio",
+        "MonthlyIncome",
+        "NumberRealEstateLoansOrLines",
+        "NumberOfDependents"
+      ],
+      "MLP": [
+        "NumberOfTime30-59DaysPastDueNotWorse",
+        "NumberOfTimes90DaysLate",
+        "age",
+        "NumberOfTime60-89DaysPastDueNotWorse",
+        "MonthlyIncome",
+        "NumberOfOpenCreditLinesAndLoans",
+        "NumberRealEstateLoansOrLines",
+        "NumberOfDependents",
+        "DebtRatio",
+        "RevolvingUtilizationOfUnsecuredLines"
+      ]
+    },
+    "ranks_common": {
+      "Logit": [
+        "NumberOfTime30-59DaysPastDueNotWorse",
+        "age",
+        "NumberOfTimes90DaysLate",
+        "NumberOfTime60-89DaysPastDueNotWorse",
+        "MonthlyIncome",
+        "NumberOfDependents",
+        "NumberRealEstateLoansOrLines",
+        "NumberOfOpenCreditLinesAndLoans",
+        "DebtRatio",
+        "RevolvingUtilizationOfUnsecuredLines"
+      ],
+      "Lasso": [
+        "NumberOfTime30-59DaysPastDueNotWorse",
+        "age",
+        "NumberOfTimes90DaysLate",
+        "NumberOfTime60-89DaysPastDueNotWorse",
+        "MonthlyIncome",
+        "NumberOfDependents",
+        "NumberRealEstateLoansOrLines",
+        "NumberOfOpenCreditLinesAndLoans",
+        "DebtRatio",
+        "RevolvingUtilizationOfUnsecuredLines"
+      ],
+      "CART": [
+        "RevolvingUtilizationOfUnsecuredLines",
+        "NumberOfTimes90DaysLate",
+        "NumberOfTime30-59DaysPastDueNotWorse",
+        "NumberOfTime60-89DaysPastDueNotWorse",
+        "DebtRatio",
+        "age",
+        "MonthlyIncome",
+        "NumberRealEstateLoansOrLines",
+        "NumberOfOpenCreditLinesAndLoans",
+        "NumberOfDependents"
+      ],
+      "RF": [
+        "RevolvingUtilizationOfUnsecuredLines",
+        "NumberOfTime30-59DaysPastDueNotWorse",
+        "NumberOfTimes90DaysLate",
+        "DebtRatio",
+        "NumberOfOpenCreditLinesAndLoans",
+        "age",
+        "MonthlyIncome",
+        "NumberOfTime60-89DaysPastDueNotWorse",
+        "NumberOfDependents",
+        "NumberRealEstateLoansOrLines"
+      ],
+      "XGBoost": [
+        "RevolvingUtilizationOfUnsecuredLines",
+        "NumberOfTime30-59DaysPastDueNotWorse",
+        "NumberOfTimes90DaysLate",
+        "NumberOfOpenCreditLinesAndLoans",
+        "age",
+        "NumberOfTime60-89DaysPastDueNotWorse",
+        "DebtRatio",
+        "MonthlyIncome",
+        "NumberRealEstateLoansOrLines",
+        "NumberOfDependents"
+      ],
+      "MLP": [
+        "NumberOfTime30-59DaysPastDueNotWorse",
+        "NumberOfTimes90DaysLate",
+        "age",
+        "NumberOfTime60-89DaysPastDueNotWorse",
+        "MonthlyIncome",
+        "NumberOfOpenCreditLinesAndLoans",
+        "NumberRealEstateLoansOrLines",
+        "NumberOfDependents",
+        "DebtRatio",
+        "RevolvingUtilizationOfUnsecuredLines"
+      ]
+    }
+  },
+  "nlp": {
+    "table2": {
+      "capital": {
+        "statistics": 2.953380616654143,
+        "technology": 1.5976824101093832,
+        "conduct": 2.4513846352415816,
+        "total": 7.002447662005107
+      },
+      "scoring": {
+        "statistics": 1.9477456407896936,
+        "technology": 1.8460968702980534,
+        "conduct": 3.3125426259630317,
+        "total": 7.106385137050779
+      },
+      "provisions": {
+        "statistics": 2.319641350437436,
+        "technology": 1.50237775601842,
+        "conduct": 2.6324305143360953,
+        "total": 6.454449620791951
+      }
+    },
+    "table3": {
+      "capital vs scoring|statistics": {
+        "p": 0.0004368920570996675,
+        "df": 14.995662526635229
+      },
+      "capital vs scoring|technology": {
+        "p": 0.2537682104177748,
+        "df": 4.200334563941815
+      },
+      "capital vs scoring|conduct": {
+        "p": 0.01025232886696403,
+        "df": 6.381768119803648
+      },
+      "capital vs provisions|statistics": {
+        "p": 0.03551502558382443,
+        "df": 15.392236941645354
+      },
+      "capital vs provisions|technology": {
+        "p": 0.008913454896238985,
+        "df": 13.968590345439404
+      },
+      "capital vs provisions|conduct": {
+        "p": 0.34555282081426686,
+        "df": 12.67904139244919
+      },
+      "scoring vs provisions|statistics": {
+        "p": 0.13470558509900912,
+        "df": 9.179259010628307
+      },
+      "scoring vs provisions|technology": {
+        "p": 0.1378720013711136,
+        "df": 4.029808822405192
+      },
+      "scoring vs provisions|conduct": {
+        "p": 0.0309556911755421,
+        "df": 7.610965208343521
+      }
+    },
+    "neg_d10": {
+      "capital": {
+        "statistics": 0.5024025627335825,
+        "technology": 0.5089766606822262,
+        "conduct": 0.5121283255086072
+      },
+      "scoring": {
+        "statistics": 0.48659003831417624,
+        "technology": 0.42995169082125606,
+        "conduct": 0.4807916181606519
+      },
+      "provisions": {
+        "statistics": 0.6044642857142857,
+        "technology": 0.3185840707964602,
+        "conduct": 0.6717827626918536
+      }
+    },
+    "neg_d20": {
+      "capital": {
+        "statistics": 0.9484249866524292,
+        "technology": 0.9910233393177738,
+        "conduct": 0.9679186228482003
+      },
+      "scoring": {
+        "statistics": 0.9003831417624522,
+        "technology": 0.9710144927536232,
+        "conduct": 0.8812572759022119
+      },
+      "provisions": {
+        "statistics": 1.1223214285714285,
+        "technology": 0.8230088495575221,
+        "conduct": 1.1818181818181819
+      }
+    },
+    "neg_share": {
+      "capital": 2.151352460208476,
+      "scoring": 1.6880001149276673,
+      "provisions": 2.6282344335741064
+    },
+    "meta": {
+      "documents": {
+        "capital": 12,
+        "scoring": 5,
+        "provisions": 7,
+        "common": 10
+      },
+      "missing": [
+        "prov_03_ifrs_pwc"
+      ],
+      "mentions_per_document": {
+        "stability": 7.529411764705882,
+        "hyperparameters": 0.20588235294117646,
+        "overfitting": 0.2647058823529412,
+        "dynamic calibration": 0.0,
+        "feature engineering": 0.29411764705882354
+      },
+      "dictionary_size": {
+        "conduct": 51,
+        "statistics": 53,
+        "technology": 30
+      },
+      "tokens_total": 1139972
+    }
+  },
+  "improvements": {
+    "I2": {
+      "stability": {
+        "mean": 7.529411764705882,
+        "lo": 4.0,
+        "hi": 11.383823529411764,
+        "top3_share": 0.4375,
+        "documents_with_mention": 25,
+        "documents": 34
+      },
+      "hyperparameters": {
+        "mean": 0.20588235294117646,
+        "lo": 0.0,
+        "hi": 0.5294117647058824,
+        "top3_share": 1.0,
+        "documents_with_mention": 2,
+        "documents": 34
+      },
+      "overfitting": {
+        "mean": 0.2647058823529412,
+        "lo": 0.08823529411764706,
+        "hi": 0.5,
+        "top3_share": 0.6666666666666666,
+        "documents_with_mention": 6,
+        "documents": 34
+      },
+      "dynamic calibration": {
+        "mean": 0.0,
+        "lo": 0.0,
+        "hi": 0.0,
+        "top3_share": 0.0,
+        "documents_with_mention": 0,
+        "documents": 34
+      },
+      "feature engineering": {
+        "mean": 0.29411764705882354,
+        "lo": 0.0,
+        "hi": 0.6470588235294118,
+        "top3_share": 1.0,
+        "documents_with_mention": 3,
+        "documents": 34
+      }
+    },
+    "I3": {
+      "claim_probability": {
+        "statistics_highest_for_capital": 0.982,
+        "technology_highest_for_scoring": 0.947,
+        "conduct_highest_for_scoring": 1.0,
+        "provisions_lowest_total": 0.907
+      },
+      "claims_point": {
+        "statistics_highest_for_capital": true,
+        "technology_highest_for_scoring": true,
+        "conduct_highest_for_scoring": true,
+        "provisions_lowest_total": true
+      },
+      "claims_trimmed": {
+        "statistics_highest_for_capital": true,
+        "technology_highest_for_scoring": true,
+        "conduct_highest_for_scoring": true,
+        "provisions_lowest_total": true
+      },
+      "dominant_terms": [
+        "conduct|Consumers",
+        "conduct|Management",
+        "statistics|Model",
+        "technology|Development",
+        "technology|ICT",
+        "technology|Security"
+      ],
+      "dominant_shares": {
+        "conduct|Consumers": 0.10232772528232312,
+        "conduct|Management": 0.22931551048628715,
+        "statistics|Model": 0.41358872425009036,
+        "technology|Development": 0.16184301921741143,
+        "technology|ICT": 0.2243574901597592,
+        "technology|Security": 0.13683723084047233
+      }
+    },
+    "I4": {
+      "holm_10pct": 2,
+      "holm_5pct": 1,
+      "bh_10pct": 7,
+      "welch_10pct": 5
+    },
+    "I5": {
+      "p_scoring_highest_technology": 0.539,
+      "p_scoring_highest_conduct": 0.714
+    },
+    "I6": {
+      "capital": {
+        "est": 0.5612793048379154,
+        "se": 0.020888642420021253
+      },
+      "scoring": {
+        "est": 0.5971392270885608,
+        "se": 0.02114154736497933
+      },
+      "provisions": {
+        "est": 0.5746759633296592,
+        "se": 0.022993536490279114
+      },
+      "p_scoring_riskiest": 1.0
+    },
+    "I1": {
+      "summary": {
+        "gmsc": {
+          "best": "XGBoost",
+          "runner_up": "CART",
+          "best_vs_runner_diff": 0.01014047566930465,
+          "best_vs_runner_p": 3.1601484948817693e-06,
+          "spearman": 0.20519567041703085
+        },
+        "taiwan_default": {
+          "best": "XGBoost",
+          "runner_up": "RF",
+          "best_vs_runner_diff": 0.0017472788168365616,
+          "best_vs_runner_p": 0.6781375026166823,
+          "spearman": 0.6668859288553503
+        },
+        "german_credit": {
+          "best": "MLP",
+          "runner_up": "Lasso",
+          "best_vs_runner_diff": 0.00035714285714283367,
+          "best_vs_runner_p": 0.9829440972920859,
+          "spearman": 0.35909242322980395
+        }
+      },
+      "gains": {
+        "german_credit": {
+          "Logit": {
+            "auc": 0.7786904761904762,
+            "gain": 0.0,
+            "gain_lo": 0.0,
+            "gain_hi": 0.0,
+            "gain_p": 0.0,
+            "n": 1000.0,
+            "default_rate": 0.3
+          },
+          "Lasso": {
+            "auc": 0.7875,
+            "gain": 0.008809523809523823,
+            "gain_lo": -0.0036618380004718436,
+            "gain_hi": 0.02128088561951949,
+            "gain_p": 0.16620378287341275,
+            "n": 1000.0,
+            "default_rate": 0.3
+          },
+          "CART": {
+            "auc": 0.6327380952380952,
+            "gain": -0.14595238095238094,
+            "gain_lo": -0.23050102640227307,
+            "gain_hi": -0.061403735502488815,
+            "gain_p": 0.0007157953751593144,
+            "n": 1000.0,
+            "default_rate": 0.3
+          },
+          "RF": {
+            "auc": 0.7501785714285715,
+            "gain": -0.028511904761904683,
+            "gain_lo": -0.08902419739501305,
+            "gain_hi": 0.032000387871203684,
+            "gain_p": 0.35574471119472884,
+            "n": 1000.0,
+            "default_rate": 0.3
+          },
+          "XGBoost": {
+            "auc": 0.7514285714285714,
+            "gain": -0.02726190476190471,
+            "gain_lo": -0.08072225682307527,
+            "gain_hi": 0.026198447299265848,
+            "gain_p": 0.31755515246315236,
+            "n": 1000.0,
+            "default_rate": 0.3
+          },
+          "MLP": {
+            "auc": 0.7878571428571428,
+            "gain": 0.009166666666666656,
+            "gain_lo": -0.029294787952784902,
+            "gain_hi": 0.047628121286118215,
+            "gain_p": 0.6404037584675528,
+            "n": 1000.0,
+            "default_rate": 0.3
+          }
+        },
+        "gmsc": {
+          "Logit": {
+            "auc": 0.805039052330714,
+            "gain": 0.0,
+            "gain_lo": 0.0,
+            "gain_hi": 0.0,
+            "gain_p": 0.0,
+            "n": 120269.0,
+            "default_rate": 0.06948590243537403
+          },
+          "Lasso": {
+            "auc": 0.8045312719030775,
+            "gain": -0.0005077804276365505,
+            "gain_lo": -0.0007599917074412701,
+            "gain_hi": -0.0002555691478318309,
+            "gain_p": 7.943614884292139e-05,
+            "n": 120269.0,
+            "default_rate": 0.06948590243537403
+          },
+          "CART": {
+            "auc": 0.8443535214821306,
+            "gain": 0.039314469151416565,
+            "gain_lo": 0.03040516899148551,
+            "gain_hi": 0.048223769311347614,
+            "gain_p": 5.19617344084872e-18,
+            "n": 120269.0,
+            "default_rate": 0.06948590243537403
+          },
+          "RF": {
+            "auc": 0.8419170069359673,
+            "gain": 0.03687795460525323,
+            "gain_lo": 0.028327790409221693,
+            "gain_hi": 0.045428118801284764,
+            "gain_p": 2.821380985147621e-17,
+            "n": 120269.0,
+            "default_rate": 0.06948590243537403
+          },
+          "XGBoost": {
+            "auc": 0.8544939971514353,
+            "gain": 0.049454944820721214,
+            "gain_lo": 0.04150212444558657,
+            "gain_hi": 0.05740776519585586,
+            "gain_p": 3.58645403858809e-34,
+            "n": 120269.0,
+            "default_rate": 0.06948590243537403
+          },
+          "MLP": {
+            "auc": 0.8199095165864557,
+            "gain": 0.014870464255741678,
+            "gain_lo": 0.009639494820066298,
+            "gain_hi": 0.020101433691417057,
+            "gain_p": 2.5206695830451904e-08,
+            "n": 120269.0,
+            "default_rate": 0.06948590243537403
+          }
+        },
+        "taiwan_default": {
+          "Logit": {
+            "auc": 0.7451425729523175,
+            "gain": 0.0,
+            "gain_lo": 0.0,
+            "gain_hi": 0.0,
+            "gain_p": 0.0,
+            "n": 30000.0,
+            "default_rate": 0.2212
+          },
+          "Lasso": {
+            "auc": 0.7450754877665487,
+            "gain": -6.708518576870048e-05,
+            "gain_lo": -0.00041545120388240846,
+            "gain_hi": 0.0002812808323450075,
+            "gain_p": 0.7058472977218821,
+            "n": 30000.0,
+            "default_rate": 0.2212
+          },
+          "CART": {
+            "auc": 0.751217007513702,
+            "gain": 0.006074434561384567,
+            "gain_lo": -0.006361894480992671,
+            "gain_hi": 0.018510763603761804,
+            "gain_p": 0.3383917569855752,
+            "n": 30000.0,
+            "default_rate": 0.2212
+          },
+          "RF": {
+            "auc": 0.7738526941555741,
+            "gain": 0.028710121203256667,
+            "gain_lo": 0.01622492087076339,
+            "gain_hi": 0.041195321535749944,
+            "gain_p": 6.5724844731522144e-06,
+            "n": 30000.0,
+            "default_rate": 0.2212
+          },
+          "XGBoost": {
+            "auc": 0.7755999729724107,
+            "gain": 0.030457400020093228,
+            "gain_lo": 0.020220741425422267,
+            "gain_hi": 0.04069405861476419,
+            "gain_p": 5.488535206261182e-09,
+            "n": 30000.0,
+            "default_rate": 0.2212
+          },
+          "MLP": {
+            "auc": 0.7616632675226586,
+            "gain": 0.01652069457034111,
+            "gain_lo": 0.009484887393155903,
+            "gain_hi": 0.02355650174752632,
+            "gain_p": 4.1794602356922515e-06,
+            "n": 30000.0,
+            "default_rate": 0.2212
+          }
+        }
+      }
+    },
+    "I7": {
+      "table": {
+        "Logit": {
+          "auc_sd": 0.0006020884033646524,
+          "auc_sd_se": 4.339222280627681e-05,
+          "pd_sd": 0.0019544233,
+          "pd_sd_se": 2.1808446e-05
+        },
+        "Lasso": {
+          "auc_sd": 0.0005922219355224335,
+          "auc_sd_se": 4.003888713996997e-05,
+          "pd_sd": 0.0016250699,
+          "pd_sd_se": 1.7299471e-05
+        },
+        "CART": {
+          "auc_sd": 0.0037548457311654174,
+          "auc_sd_se": 0.00021402031433694375,
+          "pd_sd": 0.018328033,
+          "pd_sd_se": 0.00022778462
+        },
+        "RF": {
+          "auc_sd": 0.0018600650070144246,
+          "auc_sd_se": 0.0001127364796452624,
+          "pd_sd": 0.019861965,
+          "pd_sd_se": 0.00012606473
+        },
+        "XGBoost": {
+          "auc_sd": 0.0013650745547361112,
+          "auc_sd_se": 8.506028079589718e-05,
+          "pd_sd": 0.014837644,
+          "pd_sd_se": 0.00015020538
+        },
+        "MLP": {
+          "auc_sd": 0.0032735069334011912,
+          "auc_sd_se": 0.00027677025430572337,
+          "pd_sd": 0.015430456,
+          "pd_sd_se": 9.852588e-05
+        }
+      },
+      "claim_probability": {
+        "auc_sd": 1.0,
+        "pd_sd": 1.0
+      }
+    },
+    "I11": {
+      "claims_seeds": {
+        "default": {
+          "top3_late_payments": 5,
+          "revolving_first_only_xgb": 0,
+          "age_fourth": 0,
+          "seeds": 5
+        },
+        "probability": {
+          "top3_late_payments": 4,
+          "revolving_first_only_xgb": 0,
+          "age_fourth": 0,
+          "seeds": 5
+        }
+      }
+    },
+    "I12": {
+      "table": {
+        "Logit": {
+          "auc": 0.805039052330714,
+          "brier": 0.05373597378203748,
+          "brier_se": 0.0013107791966917826,
+          "ece": 0.013874549344656095,
+          "ece_se": 0.0015955736585676248,
+          "slope": 1.0369324917766238,
+          "slope_se": 0.030799811388796006
+        },
+        "Lasso": {
+          "auc": 0.8045312719030775,
+          "brier": 0.05372855304375054,
+          "brier_se": 0.001307185359107484,
+          "ece": 0.014011310175005117,
+          "ece_se": 0.0015885759824476183,
+          "slope": 1.0522894013595983,
+          "slope_se": 0.031208034511395352
+        },
+        "CART": {
+          "auc": 0.8443535214821306,
+          "brier": 0.05251863833708343,
+          "brier_se": 0.0012514075629205055,
+          "ece": 0.005011888635097805,
+          "ece_se": 0.0012752904975687727,
+          "slope": 0.8874991751876734,
+          "slope_se": 0.028259864964574645
+        },
+        "RF": {
+          "auc": 0.8419170069359673,
+          "brier": 0.05231336999718075,
+          "brier_se": 0.0011953121332382865,
+          "ece": 0.008639919077070395,
+          "ece_se": 0.0014384189044428597,
+          "slope": 0.8543540125288244,
+          "slope_se": 0.02087429539915642
+        },
+        "XGBoost": {
+          "auc": 0.8544939971514353,
+          "brier": 0.05158918055911263,
+          "brier_se": 0.0011974758462587167,
+          "ece": 0.005166216663674907,
+          "ece_se": 0.001315031191877551,
+          "slope": 0.9676467180252075,
+          "slope_se": 0.01981767805143391
+        },
+        "MLP": {
+          "auc": 0.8199095165864557,
+          "brier": 0.052398874048239355,
+          "brier_se": 0.0012706779988349804,
+          "ece": 0.008984716392055987,
+          "ece_se": 0.0014243645861565545,
+          "slope": 0.9303582312272115,
+          "slope_se": 0.022001394478845616
+        }
+      },
+      "spearman_auc_vs_brier": 0.7714285714285715
+    },
+    "I13": {
+      "table": [
+        {
+          "use": "capital",
+          "model": "Lasso",
+          "risk": 0.48918607380375745,
+          "risk_se": 0.020164067603143786,
+          "gain": -0.0005077804276365505,
+          "p_frontier": 0.001,
+          "z_statistics": 1.0,
+          "z_technology": 3.0,
+          "z_conduct": 3.826846024943003
+        },
+        {
+          "use": "capital",
+          "model": "CART",
+          "risk": 0.4372933058929837,
+          "risk_se": 0.016843053766566255,
+          "gain": 0.039314469151416676,
+          "p_frontier": 0.007,
+          "z_statistics": 3.4,
+          "z_technology": 1.76364131419927,
+          "z_conduct": 1.0
+        },
+        {
+          "use": "capital",
+          "model": "RF",
+          "risk": 0.7336275253825786,
+          "risk_se": 0.01714189096275196,
+          "gain": 0.03687795460525334,
+          "p_frontier": 0.0,
+          "z_statistics": 2.6017666048289687,
+          "z_technology": 3.595840748555265,
+          "z_conduct": 5.0
+        },
+        {
+          "use": "capital",
+          "model": "XGBoost",
+          "risk": 0.3984230721751131,
+          "risk_se": 0.006443995720238146,
+          "gain": 0.0494549448207211,
+          "p_frontier": 1.0,
+          "z_statistics": 2.2887414179823757,
+          "z_technology": 2.0,
+          "z_conduct": 1.6296072567136917
+        },
+        {
+          "use": "capital",
+          "model": "MLP",
+          "risk": 0.9254040017074036,
+          "risk_se": 0.016771998563556937,
+          "gain": 0.014870464255741678,
+          "p_frontier": 0.0,
+          "z_statistics": 4.6956079326113045,
+          "z_technology": 4.470973365512936,
+          "z_conduct": 4.646089529715622
+        },
+        {
+          "use": "scoring",
+          "model": "Lasso",
+          "risk": 0.5674510019779881,
+          "risk_se": 0.022172775429794303,
+          "gain": -0.0005077804276365505,
+          "p_frontier": 0.0,
+          "z_statistics": 1.0,
+          "z_technology": 3.0,
+          "z_conduct": 3.826846024943003
+        },
+        {
+          "use": "scoring",
+          "model": "CART",
+          "risk": 0.37123601551924595,
+          "risk_se": 0.018430663089902245,
+          "gain": 0.039314469151416676,
+          "p_frontier": 0.746,
+          "z_statistics": 3.4,
+          "z_technology": 1.76364131419927,
+          "z_conduct": 1.0
+        },
+        {
+          "use": "scoring",
+          "model": "RF",
+          "risk": 0.7955820716030824,
+          "risk_se": 0.018235039045755987,
+          "gain": 0.03687795460525334,
+          "p_frontier": 0.0,
+          "z_statistics": 2.6017666048289687,
+          "z_technology": 3.595840748555265,
+          "z_conduct": 5.0
+        },
+        {
+          "use": "scoring",
+          "model": "XGBoost",
+          "risk": 0.3812971883882875,
+          "risk_se": 0.005776432428445897,
+          "gain": 0.0494549448207211,
+          "p_frontier": 1.0,
+          "z_statistics": 2.2887414179823757,
+          "z_technology": 2.0,
+          "z_conduct": 1.6296072567136917
+        },
+        {
+          "use": "scoring",
+          "model": "MLP",
+          "risk": 0.9228340090695479,
+          "risk_se": 0.011275749178785106,
+          "gain": 0.014870464255741678,
+          "p_frontier": 0.0,
+          "z_statistics": 4.6956079326113045,
+          "z_technology": 4.470973365512936,
+          "z_conduct": 4.646089529715622
+        },
+        {
+          "use": "provisions",
+          "model": "Lasso",
+          "risk": 0.5236908446469447,
+          "risk_se": 0.025177098010853348,
+          "gain": -0.0005077804276365505,
+          "p_frontier": 0.0,
+          "z_statistics": 1.0,
+          "z_technology": 3.0,
+          "z_conduct": 3.826846024943003
+        },
+        {
+          "use": "provisions",
+          "model": "CART",
+          "risk": 0.40805544576411623,
+          "risk_se": 0.020993897335401947,
+          "gain": 0.039314469151416676,
+          "p_frontier": 0.147,
+          "z_statistics": 3.4,
+          "z_technology": 1.76364131419927,
+          "z_conduct": 1.0
+        },
+        {
+          "use": "provisions",
+          "model": "RF",
+          "risk": 0.7622533468384152,
+          "risk_se": 0.02066542451097315,
+          "gain": 0.03687795460525334,
+          "p_frontier": 0.0,
+          "z_statistics": 2.6017666048289687,
+          "z_technology": 3.595840748555265,
+          "z_conduct": 5.0
+        },
+        {
+          "use": "provisions",
+          "model": "XGBoost",
+          "risk": 0.3905412035134229,
+          "risk_se": 0.006672304849774614,
+          "gain": 0.0494549448207211,
+          "p_frontier": 1.0,
+          "z_statistics": 2.2887414179823757,
+          "z_technology": 2.0,
+          "z_conduct": 1.6296072567136917
+        },
+        {
+          "use": "provisions",
+          "model": "MLP",
+          "risk": 0.924624928894378,
+          "risk_se": 0.01449728147423028,
+          "gain": 0.014870464255741678,
+          "p_frontier": 0.0,
+          "z_statistics": 4.6956079326113045,
+          "z_technology": 4.470973365512936,
+          "z_conduct": 4.646089529715622
+        }
+      ],
+      "p_best_gain": {
+        "Lasso": 0.0,
+        "CART": 0.0,
+        "RF": 0.0,
+        "XGBoost": 1.0,
+        "MLP": 0.0
+      },
+      "xgb_on_frontier_all_uses": 1.0,
+      "lowest_risk_use_by_model": {
+        "Lasso": "capital",
+        "CART": "scoring",
+        "RF": "capital",
+        "XGBoost": "scoring",
+        "MLP": "scoring"
+      },
+      "draws": 1000
+    }
+  },
+  "errata": [
+    {
+      "id": "E1",
+      "where": "Table 5 vs Table 6 (pp. 18, 20)",
+      "what": "MLP statistics score is 5 in Table 5 and the text but 4 in Table 6",
+      "effect": {
+        "capital": [
+          55.35,
+          63.25
+        ],
+        "scoring": [
+          56.480000000000004,
+          62.89
+        ],
+        "provisions": [
+          49.019999999999996,
+          55.4
+        ]
+      }
+    },
+    {
+      "id": "E2",
+      "where": "Fig. 5 vs Table 6 (pp. 20, 22)",
+      "what": "Random forest points in Fig. 5 match a statistics score of 2, not the 3 of Tables 5 and 6",
+      "max_abs_diff_by_z": {
+        "1": 0.07950000000000002,
+        "2": 0.0005000000000000004,
+        "3": 0.07850000000000001,
+        "4": 0.15750000000000003,
+        "5": 0.23650000000000004
+      },
+      "models_off": [
+        "RF"
+      ]
+    },
+    {
+      "id": "E3",
+      "where": "Text vs Table 6 (p. 20)",
+      "what": "The text says CART is less risky than XGBoost for provisioning; Table 6 says the opposite",
+      "values": [
+        25.4,
+        25.28
+      ]
+    },
+    {
+      "id": "E4",
+      "where": "Table 3 (p. 16)",
+      "what": "p = 0.1097 (scoring vs provisions, technology) is marked significant at 10%"
+    },
+    {
+      "id": "E5",
+      "where": "Text vs Table 5 (p. 18)",
+      "what": "Text names CART and MLP as least stable; Table 5's two largest SDs are CART and RF"
+    },
+    {
+      "id": "E6",
+      "where": "p. 17 vs Figs. 6-8",
+      "what": "Text: 11 characteristics and 22 variables with squares; the data have 10 characteristics (11 columns with the file's row index) and the SHAP figures show 10 features"
+    },
+    {
+      "id": "E7",
+      "where": "p. 13 vs Table 11",
+      "what": "statistics: 54 terms stated, 53 listed"
+    },
+    {
+      "id": "E8",
+      "where": "Table 12 vs Fig. 9",
+      "what": "Fig. 9 counts the EBA report on innovative uses of consumer data in the common area (Table 12: credit scoring) and has no bar for IIF (2018), which Table 12 lists"
+    }
+  ],
+  "scorecard_checks": {
+    "table6_max_abs_error_with_paper_inputs": 7.105427357601002e-15,
+    "table4_example": {
+      "capital": 0.5236749116607774,
+      "scoring": 0.5546138072453862,
+      "provisions": 0.5363924050632911
+    }
+  },
+  "r13_text": "frontier: Lasso, CART, XGBoost; provisions least risky for 4 of 5 models",
+  "r13_verdict": "close",
+  "r13": {
+    "frontier": {
+      "capital": [
+        "Lasso",
+        "CART",
+        "XGBoost"
+      ],
+      "scoring": [
+        "Lasso",
+        "CART",
+        "XGBoost"
+      ],
+      "provisions": [
+        "Lasso",
+        "CART",
+        "XGBoost"
+      ]
+    },
+    "lowest_use": {
+      "Lasso": "provisions",
+      "CART": "scoring",
+      "RF": "provisions",
+      "XGBoost": "provisions",
+      "MLP": "provisions"
+    },
+    "table6_ours": {
+      "capital": {
+        "Lasso": 7.002447662005107,
+        "CART": 12.909208895313393,
+        "RF": 18.55595835077374,
+        "XGBoost": 14.004895324010214,
+        "MLP": 27.15608842288823
+      },
+      "scoring": {
+        "Lasso": 7.106385137050779,
+        "CART": 11.001876418630166,
+        "RF": 18.006612785189304,
+        "XGBoost": 14.212770274101558,
+        "MLP": 26.959094792538135
+      },
+      "provisions": {
+        "Lasso": 6.4544496207919515,
+        "CART": 11.093732321666822,
+        "RF": 16.730918348039758,
+        "XGBoost": 12.908899241583903,
+        "MLP": 24.68774572485013
+      }
+    }
+  },
+  "verdicts": [
+    {
+      "id": "R1",
+      "result": "Literature: gains up to 20%, not monotone in complexity (Fig. 1)",
+      "ours": "max 19.9% in the figure's data; class medians 6.0 / 8.0 / 4.9 / 4.8%",
+      "verdict": "reproduced"
+    },
+    {
+      "id": "R2",
+      "result": "\"Stability\" mentioned 6.4 times per document, others \u2264 0.33 (p. 11)",
+      "ours": "7.5 vs at most 0.29",
+      "verdict": "reproduced"
+    },
+    {
+      "id": "R3",
+      "result": "Weights: statistics \u2192 capital; technology and conduct \u2192 scoring; provisions lowest (Table 2)",
+      "ours": "4 of 4 hold; levels about half (totals 7.0 / 7.1 / 6.5%)",
+      "verdict": "reproduced"
+    },
+    {
+      "id": "R4",
+      "result": "Six of nine use differences significant at 10% (Table 3)",
+      "ours": "5 of 9 significant; agree with the paper on 8 of 9",
+      "verdict": "reproduced"
+    },
+    {
+      "id": "R5",
+      "result": "Sentiment: technology and conduct terms most negative in scoring texts (Tables 8-10)",
+      "ours": "technology no, conduct no (d = 10)",
+      "verdict": "not reproduced"
+    },
+    {
+      "id": "R6",
+      "result": "Worked example: riskiness 0.523 / 0.554 / 0.536 (Table 4)",
+      "ours": "with the paper's weights: 0.5237 / 0.5546 / 0.5364",
+      "verdict": "reproduced"
+    },
+    {
+      "id": "R7",
+      "result": "Stability: Lasso, XGBoost most stable; CART, MLP least (Table 5)",
+      "ours": "order of SD(AUC): Lasso < XGBoost < RF < MLP < CART",
+      "verdict": "reproduced"
+    },
+    {
+      "id": "R8",
+      "result": "Hyperparameters: Lasso 0, CART 1, RF 2, XGBoost 2, MLP 5+ (Table 5)",
+      "ours": "a definition, taken as stated",
+      "verdict": "not testable"
+    },
+    {
+      "id": "R9",
+      "result": "Training time: CART < XGBoost < Lasso < RF < MLP (Table 5)",
+      "ours": "XGBoost < CART < MLP < RF < Lasso",
+      "verdict": "not reproduced"
+    },
+    {
+      "id": "R10",
+      "result": "SHAP time: XGBoost 8 s < RF 60 s < MLP 2,000 s (Table 5)",
+      "ours": "XGBoost 0.0 s < MLP 29.4 s < RF 67.0 s",
+      "verdict": "not reproduced"
+    },
+    {
+      "id": "R11",
+      "result": "SHAP: late payments top 3; revolving first only for XGBoost; age 4th (Figs. 6-8)",
+      "ours": "1 of 3 statements hold",
+      "verdict": "not reproduced"
+    },
+    {
+      "id": "R12",
+      "result": "AUC: logit 80.0 to XGBoost 85.3; XGBoost best (Table 7)",
+      "ours": "5 of 6 paper AUCs inside our 95% intervals; best: XGBoost",
+      "verdict": "reproduced"
+    },
+    {
+      "id": "R13",
+      "result": "Risk-reward: XGBoost most risk-efficient; provisions least risky use (Table 6, Fig. 5)",
+      "ours": "frontier: Lasso, CART, XGBoost; provisions least risky for 4 of 5 models",
+      "verdict": "close"
+    }
+  ],
+  "figures": {
+    "rr_paper": "results/report/figures/risk_reward_paper.png",
+    "rr_ours": "results/report/figures/risk_reward_ours.png",
+    "weights_ours": "results/report/figures/weights_ours.png",
+    "weights_paper": "results/report/figures/weights_paper.png",
+    "benchmark": "results/report/figures/benchmark.png",
+    "shap_default": "results/report/figures/shap_default.png",
+    "shap_common": "results/report/figures/shap_common.png"
+  },
+  "improvement_rows": [
+    {
+      "id": "I1",
+      "what": "Same-protocol benchmark on three datasets with paired DeLong intervals",
+      "finding": "GMSC: best XGBoost (vs CART, p < 0.001); Taiwan: best XGBoost (vs RF, p = 0.678); German (1,000 loans): best MLP (vs Lasso, p = 0.983). Spearman(complexity, gain): GMSC +0.21, Taiwan +0.67, German +0.36"
+    },
+    {
+      "id": "I2",
+      "what": "Bootstrap intervals for the mentions per document",
+      "finding": "stability 7.53 [4.00, 11.38] per document; 44% of all mentions in the top three documents"
+    },
+    {
+      "id": "I3",
+      "what": "Document bootstrap of the weights; dictionary audit",
+      "finding": "statistics highest for capital: P = 0.98; technology highest for scoring: P = 0.95; conduct highest for scoring: P = 1.00; provisions lowest total: P = 0.91. Terms above 10% of their category: Model (41% of statistics), Management (23% of conduct), ICT (22% of technology), Development (16% of technology), Security (14% of technology), Consumers (10% of conduct)"
+    },
+    {
+      "id": "I4",
+      "what": "Permutation tests, Holm and Benjamini\u2013Hochberg over nine tests",
+      "finding": "5 of 9 below 10% (Welch); after Holm: 2 at 10%, 1 at 5%; after BH: 7 at 10%"
+    },
+    {
+      "id": "I5",
+      "what": "Negative words relative to the base rate (lift), bootstrap",
+      "finding": "P(scoring has the highest lift): technology 0.54, conduct 0.71"
+    },
+    {
+      "id": "I6",
+      "what": "Worked example with weight uncertainty",
+      "finding": "0.561 \u00b1 0.021 / 0.597 \u00b1 0.021 / 0.575 \u00b1 0.023; P(scoring riskiest) = 1.00"
+    },
+    {
+      "id": "I7",
+      "what": "Both stability definitions, paired bootstrap",
+      "finding": "P(Lasso and XGBoost more stable than CART and MLP): AUC spread 1.00, PD spread 1.00"
+    },
+    {
+      "id": "I8",
+      "what": "Fitted parameters instead of a hyperparameter count",
+      "finding": "Lasso 21; CART 243; RF 856,606; XGBoost 2,194; MLP 86,701 (Spearman with the paper's count +0.82)"
+    },
+    {
+      "id": "I9",
+      "what": "Timing hygiene: single thread, warm-up, median and IQR; relative to the logit",
+      "finding": "XGBoost \u00d73; CART \u00d76; MLP \u00d7132; RF \u00d7182; Lasso \u00d7516"
+    },
+    {
+      "id": "I10",
+      "what": "One SHAP explainer and scale for every model",
+      "finding": "CART 3 s; Lasso 4 s; XGBoost 9 s; MLP 29 s; RF 171 s"
+    },
+    {
+      "id": "I11",
+      "what": "SHAP rankings on the probability scale, five seeds",
+      "finding": "seeds where the claim holds, default explainer \u2192 probability scale: late payments in the top three 5\u21924 of 5; revolving utilisation first only for XGBoost 0\u21920 of 5; age fourth 0\u21920 of 5"
+    },
+    {
+      "id": "I12",
+      "what": "Calibration next to AUC (Brier, ECE, slope)",
+      "finding": "best Brier: XGBoost; Spearman(AUC, \u2212Brier) = +0.77; Lasso slope 1.05; CART slope 0.89; RF slope 0.85; XGBoost slope 0.97; MLP slope 0.93"
+    },
+    {
+      "id": "I13",
+      "what": "Rule-based Z and Monte Carlo over all inputs",
+      "finding": "P(on the frontier, worst use): Lasso 0.00; CART 0.01; RF 0.00; XGBoost 1.00; MLP 0.00. P(highest gain): XGBoost 1.00. On the normalised scale, provisions is the least risky use for 0 of 5 models: the paper's ordering of uses comes from provisioning texts using fewer risk terms overall"
+    }
+  ]
+}
