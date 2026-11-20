@@ -40,7 +40,7 @@ Numbers live in `results/`; documents are regenerated from them (CLAUDE.md, rule
 ## 4. State on 20 November (evening)
 
 - 16 results checked (R1–R16), 11 errata, improvements I1–I14, appendix factors A1–A5, one exploratory analysis (X1: a logit with log inputs nearly matches XGBoost).
-- Fig. 1 was checked against its sources by a literature search; 7 points (Jones et al. 2015, Chen & Xiang 2017) could not be checked: Jones is paywalled, and ScienceDirect refused the scripted download of Chen & Xiang, which is open access and can be fetched in a browser.
+- Fig. 1 was checked against its sources: a literature search for the open-access ones, and copies of Jones et al. (2015) and Chen & Xiang (2017) that the team downloaded (subscription and browser). Every one of its 20 points is now checked; `data/fig1_sources.csv` gives the table or page for each number.
 
 ## 5. Open tasks
 

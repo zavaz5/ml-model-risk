@@ -238,7 +238,7 @@ Rules from `docs/preregistration.md`: *reproduced* if the paper's value is insid
 
 | # | Paper's result | What we find | Verdict |
 |---|---|---|---|
-| R1 | Literature gains of 20 papers (Fig. 1) | 8 of 11 checkable points match their source (8 matches, 7 unverifiable, 3 differs, 2 different metric, 1 wrong reference) | close |
+| R1 | Literature gains of 20 papers (Fig. 1) | 12 of 20 checkable points match their source (12 matches, 6 differs, 2 different metric, 1 wrong reference) | close |
 | R2 | "Stability" mentioned 6.4 times per document, others ≤ 0.33 (p. 11) | 7.3 vs at most 0.37 | reproduced |
 | R3 | Weights: statistics → capital; technology and conduct → scoring; provisions lowest (Table 2) | 4 of 4 hold; levels about half (totals 7.3 / 7.4 / 6.8%) | reproduced |
 | R4 | Six of nine use differences significant at 10% (Table 3) | 5 of 9 significant; agree with the paper on 8 of 9 | reproduced |

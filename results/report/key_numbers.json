@@ -1465,7 +1465,7 @@
     {
       "id": "R1",
       "result": "Literature gains of 20 papers (Fig. 1)",
-      "ours": "8 of 11 checkable points match their source (8 matches, 7 unverifiable, 3 differs, 2 different metric, 1 wrong reference)",
+      "ours": "12 of 20 checkable points match their source (12 matches, 6 differs, 2 different metric, 1 wrong reference)",
       "verdict": "close",
       "shape": "figure: max 19.9%, class medians 6.0 / 8.0 / 4.9 / 4.8%"
     },

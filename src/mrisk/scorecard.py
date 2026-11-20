@@ -168,7 +168,9 @@ def literature_verdict(lit: pd.DataFrame, monotone: bool, med: pd.Series) -> dic
     if not src.exists():
         return {**row, "ours": shape + "; sources not checked", "verdict": "not testable"}
     f = pd.read_csv(src)
-    checked = f[f["status"].isin(["matches", "differs"])]
+    # A point is checkable when its source is in hand; a source that reports another metric and does not
+    # give the plotted value is a non-match, not an unverifiable point.
+    checked = f[f["status"].isin(["matches", "differs", "different_metric"])]
     n_match = int((checked["status"] == "matches").sum())
     share = n_match / len(checked) if len(checked) else 0.0
     counts = f["status"].value_counts().to_dict()
