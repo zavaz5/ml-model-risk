@@ -1,0 +1,70 @@
+[
+  {
+    "id": "E1",
+    "where": "Table 5 vs Table 6 (pp. 18, 20)",
+    "what": "MLP statistics score is 5 in Table 5 and the text but 4 in Table 6",
+    "effect": {
+      "capital": [
+        55.35,
+        63.25
+      ],
+      "scoring": [
+        56.480000000000004,
+        62.89
+      ],
+      "provisions": [
+        49.019999999999996,
+        55.4
+      ]
+    }
+  },
+  {
+    "id": "E2",
+    "where": "Fig. 5 vs Table 6 (pp. 20, 22)",
+    "what": "Random forest points in Fig. 5 match a statistics score of 2, not the 3 of Tables 5 and 6",
+    "max_abs_diff_by_z": {
+      "1": 0.07950000000000002,
+      "2": 0.0005000000000000004,
+      "3": 0.07850000000000001,
+      "4": 0.15750000000000003,
+      "5": 0.23650000000000004
+    },
+    "models_off": [
+      "RF"
+    ]
+  },
+  {
+    "id": "E3",
+    "where": "Text vs Table 6 (p. 20)",
+    "what": "The text says CART is less risky than XGBoost for provisioning; Table 6 says the opposite",
+    "values": [
+      25.4,
+      25.28
+    ]
+  },
+  {
+    "id": "E4",
+    "where": "Table 3 (p. 16)",
+    "what": "p = 0.1097 (scoring vs provisions, technology) is marked significant at 10%"
+  },
+  {
+    "id": "E5",
+    "where": "Text vs Table 5 (p. 18)",
+    "what": "Text names ['CART', 'MLP'] as least stable; Table 5's two largest SDs are ['CART', 'RF']"
+  },
+  {
+    "id": "E6",
+    "where": "p. 17 vs Figs. 6-8",
+    "what": "Text: 11 characteristics and 22 variables with squares; the data have 10 characteristics (11 columns with the file's row index) and the SHAP figures show 10 features"
+  },
+  {
+    "id": "E7",
+    "where": "p. 13 vs Table 11",
+    "what": "statistics: 54 terms stated, 53 listed"
+  },
+  {
+    "id": "E8",
+    "where": "Table 12 vs Fig. 9",
+    "what": "Fig. 9 counts the EBA report on innovative uses of consumer data in the common area (Table 12: credit scoring) and has no bar for IIF (2018), which Table 12 lists"
+  }
+]

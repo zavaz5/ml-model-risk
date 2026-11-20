@@ -33,4 +33,5 @@ Errata (internal inconsistencies of the paper) are reported separately from verd
 
 ## Change log
 
-- *(empty)*
+- **20 November 2026, before I13 was run.** I13 did not say which measurement feeds each category. We use the paper's own proxies as we measure them: statistics = mean of the rule scores for the spread of test AUC and the paper's hyperparameter count; technology = mean of the scores for training time (log scale) and the transparency class; conduct = the score for SHAP time with each library's default explainer (log scale). Gains in the Monte Carlo are redrawn by resampling test rows (paired across models) rather than from independent normal draws, so that the correlation between models' AUCs is kept. Reason: the rule should replace only the expert judgement, not the proxies.
+- **20 November 2026, before the full run.** The Lasso is fitted with the saga solver instead of liblinear (DEVIATIONS D4): liblinear needed over 90 s per fit. This affects the Lasso's training time (R9, I9) and nothing else we pre-registered.

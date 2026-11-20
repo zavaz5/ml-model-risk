@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import numpy as np
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import StratifiedKFold, cross_val_score
+from sklearn.model_selection import StratifiedKFold
 from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import make_pipeline
@@ -40,8 +40,10 @@ def make_model(name: str, seed: int = 0, lasso_c: float = 1.0):
     if name == "Logit":  # unpenalised logistic regression, the paper's benchmark
         return make_pipeline(StandardScaler(), LogisticRegression(C=np.inf, max_iter=5000))
     if name == "Lasso":
+        # saga, not liblinear: with the heavy-tailed squared features liblinear's L1
+        # solver needs over 90 s per fit at C = 1; saga converges in about 18 s.
         return make_pipeline(StandardScaler(), LogisticRegression(
-            C=lasso_c, l1_ratio=1.0, solver="liblinear", max_iter=5000, random_state=seed))
+            C=lasso_c, l1_ratio=1.0, solver="saga", max_iter=2000, random_state=seed))
     if name == "CART":
         return DecisionTreeClassifier(**HYPERPARAMETERS["CART"], random_state=seed)
     if name == "RF":
@@ -57,11 +59,24 @@ def make_model(name: str, seed: int = 0, lasso_c: float = 1.0):
     raise ValueError(name)
 
 
-def choose_lasso_c(x: np.ndarray, y: np.ndarray, seed: int = 0) -> float:
-    """Pick the L1 penalty by 5-fold cross-validated AUC on the training rows, as the paper does."""
-    folds = StratifiedKFold(5, shuffle=True, random_state=seed)
-    scores = [cross_val_score(make_model("Lasso", seed, c), x, y, cv=folds, scoring="roc_auc").mean()
-              for c in LASSO_GRID]
+def _fold_auc(x, y, train, test, c, seed) -> float:
+    from sklearn.metrics import roc_auc_score
+
+    model = make_model("Lasso", seed, c).fit(x[train], y[train])
+    return roc_auc_score(y[test], predict_pd(model, x[test]))
+
+
+def choose_lasso_c(x: np.ndarray, y: np.ndarray, seed: int = 0, n_jobs: int = 14) -> float:
+    """Pick the L1 penalty by 5-fold cross-validated AUC on the training rows, as the paper does.
+
+    The 55 (penalty, fold) fits run in parallel: this step is not timed.
+    """
+    from joblib import Parallel, delayed
+
+    folds = list(StratifiedKFold(5, shuffle=True, random_state=seed).split(x, y))
+    jobs = [(c, tr, te) for c in LASSO_GRID for tr, te in folds]
+    aucs = Parallel(n_jobs=n_jobs)(delayed(_fold_auc)(x, y, tr, te, c, seed) for c, tr, te in jobs)
+    scores = np.array(aucs).reshape(len(LASSO_GRID), len(folds)).mean(axis=1)
     return float(LASSO_GRID[int(np.argmax(scores))])
 
 
