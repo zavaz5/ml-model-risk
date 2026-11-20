@@ -1,0 +1,72 @@
+{
+  "draws": 10000,
+  "seed": 0,
+  "models": [
+    "Lasso",
+    "CART",
+    "RF",
+    "XGBoost",
+    "MLP"
+  ],
+  "z_source": "paper Table 6",
+  "results": {
+    "paper": {
+      "random_weights_share_on_frontier": {
+        "Lasso": 1.0,
+        "CART": 0.7467,
+        "RF": 0.0,
+        "XGBoost": 1.0,
+        "MLP": 0.0
+      },
+      "paper_weights_on_frontier": {
+        "capital": [
+          "Lasso",
+          "XGBoost"
+        ],
+        "scoring": [
+          "Lasso",
+          "CART",
+          "XGBoost"
+        ],
+        "provisions": [
+          "Lasso",
+          "XGBoost"
+        ]
+      },
+      "xgboost_dominates_for_any_weights": [
+        "RF",
+        "MLP"
+      ],
+      "xgboost_highest_gain": true
+    },
+    "ours": {
+      "random_weights_share_on_frontier": {
+        "Lasso": 1.0,
+        "CART": 0.7467,
+        "RF": 0.0,
+        "XGBoost": 1.0,
+        "MLP": 0.0
+      },
+      "paper_weights_on_frontier": {
+        "capital": [
+          "Lasso",
+          "XGBoost"
+        ],
+        "scoring": [
+          "Lasso",
+          "CART",
+          "XGBoost"
+        ],
+        "provisions": [
+          "Lasso",
+          "XGBoost"
+        ]
+      },
+      "xgboost_dominates_for_any_weights": [
+        "RF",
+        "MLP"
+      ],
+      "xgboost_highest_gain": true
+    }
+  }
+}

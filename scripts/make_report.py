@@ -399,6 +399,10 @@ A3's variants: no squared features, winsorising at the 1st/99th percentiles, log
 
 **Exploratory, not pre-registered: is the paper's logit a fair benchmark?** A3 shows that log(1 + x) lifts the logit by about four points while leaving the tree ensembles unchanged. On the validation rows, {next((r['finding'] for r in improvement_rows(k) if r['id'] == 'X1'), '')}. Most of the ML "gain" in the paper's setting comes from giving the logit raw, heavy-tailed ratios (`scripts/explore_logit_benchmark.py`).
 
+**Exploratory, not pre-registered: does the text-mining phase change the winner?** A placebo replaces the weights from the 36 regulatory texts by random ones: {next((r['finding'] for r in improvement_rows(k) if r['id'] == 'X2'), '')} (`scripts/explore_placebo_weights.py`). XGBoost's Z is no higher than RF's or the MLP's in any category and its gain is the largest, so no weighting can move it off the frontier.
+
+![Placebo weights](results/report/figures/placebo_weights.png)
+
 **I14, the rule-based scorecard with these factors:** risk-gain frontier per use: {'; '.join(f"{USE_NAME[u]}: {', '.join(v)}" for u, v in fr.items())}.
 """
 
@@ -557,6 +561,15 @@ def improvement_rows(k: dict) -> list[dict]:
                          "finding": f"logit AUC {100 * lb['auc']['Logit, paper inputs']['auc']:.1f} → {100 * lb['auc']['Logit, log1p inputs']['auc']:.1f} "
                                     f"on validation rows; XGBoost's lead shrinks from {100 * a1['diff']:.2f} ± {100 * a1['se']:.2f} "
                                     f"({pval(a1['p'])}) to {100 * a2['diff']:.2f} ± {100 * a2['se']:.2f} points ({pval(a2['p'])})"})
+        pw = _json(RES / "improvements" / "appendix" / "placebo_weights.json")
+        if pw:
+            r = pw["results"]["paper"]
+            share = r["random_weights_share_on_frontier"]
+            rows.append({"id": "X2", "what": "Exploratory (not pre-registered): placebo, random weights instead of the regulatory texts",
+                         "finding": f"with the paper's scores and gains, over {pw['draws']:,} random weight vectors: "
+                                    + ", ".join(f"{m} on the frontier in {100 * share[m]:.0f}%" for m in MODELS5)
+                                    + f"; XGBoost beats {' and '.join(r['xgboost_dominates_for_any_weights'])} for any weights, "
+                                      "so the texts can only decide whether CART is also efficient"})
         if "frontier" in ap:
             rows.append({"id": "I14", "what": "Rule-based scorecard with the appendix factors",
                          "finding": "frontier: " + "; ".join(f"{u} {', '.join(v)}" for u, v in ap["frontier"].items())})

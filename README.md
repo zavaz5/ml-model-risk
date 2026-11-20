@@ -8,7 +8,7 @@ The paper scores five credit-default models (Lasso, CART, random forest, XGBoost
 
 We rebuild both phases from scratch: the six models on Kaggle's Give Me Some Credit with the paper's settings, the five proxies, and the term counts on 35 of the 36 regulatory documents the paper lists. We check the paper's own arithmetic, and we add one pre-registered improvement per result: uncertainty for every number, multiple-testing corrections, a common explainer for SHAP, a rule instead of expert scores, and the same protocol on two more datasets.
 
-- Presentation: [docs/presentation.pptx](docs/presentation.pptx) ([PDF](docs/presentation.pdf)); what to say on each slide and likely questions: [docs/speaker_script.pdf](docs/speaker_script.pdf).
+- Presentation: [docs/presentation.pdf](docs/presentation.pdf) ([PowerPoint](docs/presentation.pptx)), 15 minutes in the seminar's order (problem, method, results, critique with the overfitting slide, next steps), then one appendix slide per result of the paper. Speaker cue cards and likely questions, each with the speaker who answers it: [docs/speaker_script.pdf](docs/speaker_script.pdf).
 - Every departure from the paper and every decision where it is silent: [DEVIATIONS.md](DEVIATIONS.md).
 - Verdict rules and improvements, fixed before they were run: [docs/preregistration.md](docs/preregistration.md).
 - The paper (CC BY 4.0): [paper/alonso_carbo_2022.pdf](paper/alonso_carbo_2022.pdf).
@@ -20,6 +20,16 @@ Python 3.13 on macOS (Apple silicon); XGBoost needs the OpenMP runtime (`brew in
 ```bash
 python3.13 -m venv .venv && source .venv/bin/activate
 pip install -e . -r requirements.txt
+python scripts/run_all.py          # a few seconds, no data needed: tests, then every figure, this README's results,
+                                   # the slides and the cue cards rebuilt from the committed results/, then consistency checks
+python scripts/run_all.py --full   # everything from the raw data, in the order below (~45 minutes; needs Kaggle access)
+```
+
+The consistency checks recompute the paper's Tables 4 and 6 from its own numbers, confirm that only CART's AUC falls outside our interval (as the slides say), and confirm that two independent routes (the I13 Monte Carlo and the X2 placebo) keep XGBoost on the frontier.
+
+Step by step:
+
+```bash
 pytest -q
 python scripts/download_data.py        # needs ~/.kaggle/kaggle.json and the GiveMeSomeCredit rules accepted on kaggle.com
 python scripts/download_corpus.py      # the regulatory PDFs listed in data/corpus_manifest.csv
@@ -37,12 +47,41 @@ python scripts/improve_risk.py         # I13
 python scripts/appendix_factors.py     # A1-A5: the paper's unmeasured risk factors (~10 min)
 python scripts/extended_scorecard.py   # I14
 python scripts/explore_logit_benchmark.py  # exploratory: a logit with log inputs
+python scripts/explore_placebo_weights.py  # exploratory: random weights instead of the regulatory texts
 python scripts/reproduce_shap_figures.py   # SHAP values for our Figs. 6-8
 python scripts/make_paper_figures.py   # our versions of Figs. 1, 4, 6-8 and 9
 python scripts/make_report.py          # this README's results section and results/report/key_numbers.json
 python scripts/make_slides.py          # docs/presentation.pptx
 python scripts/make_speaker_script.py  # docs/speaker_script.pdf
 ```
+
+### Which script makes which result
+
+| Paper | Script | Output |
+|---|---|---|
+| Table 7 (AUC), Table 5 (proxies) | `reproduce_models.py` | `results/reproduction/models/` |
+| Figs. 6–8 (SHAP) | `reproduce_shap_figures.py`, `make_paper_figures.py` | `results/reproduction/models/shap_values_*.npz`, `results/report/figures/ours_shap_*.png` |
+| Tables 2, 3, 8, 10, Fig. 3 | `reproduce_nlp.py` | `results/reproduction/nlp/` |
+| Tables 4, 6, Fig. 5, errata | `reproduce_scorecard.py` | `results/reproduction/scorecard/`, `results/reproduction/errata.json` |
+| Fig. 9, Table 9, Fig. 4 | `extract_fig9_fig4.py`, `reproduce_extra.py` | `results/paper_extracted/`, `results/reproduction/extra.json` |
+| Fig. 1 | `extract_paper.py`, `data/fig1_sources.csv`, `make_paper_figures.py` | `results/paper_extracted/fig1_literature.csv`, `results/report/figures/paper_fig1_checked.png` |
+| Why our CART differs | `diagnose_cart.py` | `results/reproduction/models/cart_diagnostic.json` |
+| Why our word shares are half the paper's | `diagnose_nlp_levels.py` | `results/reproduction/nlp/stopword_diagnostic.json` |
+| Improvements I2–I6 (texts) | `improve_nlp.py` | `results/improvements/nlp/` |
+| I1, I7, I11, I12 (models) | `improve_models.py` | `results/improvements/models/` |
+| I8–I10 (size, timing, one explainer) | measured by `reproduce_models.py`, assembled by `make_report.py` | `results/reproduction/models/proxies.csv` |
+| I13 (rule-based scores, Monte Carlo) | `improve_risk.py` | `results/improvements/risk/` |
+| A1–A5, I14 (the appendix's risk factors) | `appendix_factors.py`, `extended_scorecard.py` | `results/improvements/appendix/` |
+| X1, X2 (exploratory: fair logit, placebo weights) | `explore_logit_benchmark.py`, `explore_placebo_weights.py` | `results/improvements/appendix/` |
+| README results, slides, cue cards | `make_report.py`, `make_slides.py`, `make_speaker_script.py` | `README.md`, `docs/` |
+
+### Conventions and units
+
+- **AUC** in percent; **gains** over the logit in AUC points (percentage points of AUC), never in percent of the logit's AUC. **SD of AUC** in AUC points.
+- **Word shares** (H̄) in percent of all words of a use's documents; **risk** = Σ H̄ × Z in "percent × score" (the paper's Table 6 scale), or divided by 5 Σ H̄ to lie between 0.2 (all scores 1) and 1 (all scores 5).
+- **Darkness scores** Z from 1 (transparent) to 5 (black box). **Times** in seconds, one thread, median of five runs after a warm-up.
+- **±** is one standard error: DeLong for AUC, 1,000 bootstrap replications (seed 0) otherwise. Our numbers and the paper's are never in the same table or panel; paired figures share their axis ranges.
+- **Rows:** 80% training (of which 20% validation for our own choices) and 20% locked test rows, stratified, seed 0 (`results/reproduction/models/split_indices.npz`).
 
 `data/fig1_sources.csv` holds the numbers we looked up in the sources behind the paper's Fig. 1 (open-access copies), each with the table or page it comes from.
 
@@ -314,6 +353,7 @@ Pre-registered in `docs/preregistration.md` before they were run.
 | I13 | Rule-based Z and Monte Carlo over all inputs | P(on the frontier, worst use): Lasso 0.00; CART 0.01; RF 0.00; XGBoost 1.00; MLP 0.00. P(highest gain): XGBoost 1.00. On the normalised scale, provisions is the least risky use for 0 of 5 models: the paper's ordering of uses comes from provisioning texts using fewer risk terms overall |
 | A1–A5 | The paper's remaining risk factors, measured as its appendix proposes | largest overfitting gap RF (+0.151); most sensitive to preprocessing Lasso; hardest to imitate with a surrogate RF (R² 0.78); most age-sensitive RF (3.4% of decisions flip) |
 | X1 | Exploratory (not pre-registered): a logit with log-transformed inputs as the benchmark | logit AUC 81.9 → 86.1 on validation rows; XGBoost's lead shrinks from 4.47 ± 0.43 (p < 0.001) to 0.27 ± 0.20 points (p = 0.174) |
+| X2 | Exploratory (not pre-registered): placebo, random weights instead of the regulatory texts | with the paper's scores and gains, over 10,000 random weight vectors: Lasso on the frontier in 100%, CART on the frontier in 75%, RF on the frontier in 0%, XGBoost on the frontier in 100%, MLP on the frontier in 0%; XGBoost beats RF and MLP for any weights, so the texts can only decide whether CART is also efficient |
 | I14 | Rule-based scorecard with the appendix factors | frontier: capital XGBoost; scoring CART, XGBoost; provisions CART, XGBoost |
 
 ### The paper's remaining risk factors (appendix, A1–A5) and the extended scorecard (I14)
@@ -332,6 +372,10 @@ The paper names 13 risk factors and measures 5. Its appendix proposes measures f
 A3's variants: no squared features, winsorising at the 1st/99th percentiles, log(1 + x), and median imputation that adds the 29,731 incomplete rows. A5 rejects the 10% highest predicted PDs and counts decisions that change when only age moves by ±10 years.
 
 **Exploratory, not pre-registered: is the paper's logit a fair benchmark?** A3 shows that log(1 + x) lifts the logit by about four points while leaving the tree ensembles unchanged. On the validation rows, logit AUC 81.9 → 86.1 on validation rows; XGBoost's lead shrinks from 4.47 ± 0.43 (p < 0.001) to 0.27 ± 0.20 points (p = 0.174). Most of the ML "gain" in the paper's setting comes from giving the logit raw, heavy-tailed ratios (`scripts/explore_logit_benchmark.py`).
+
+**Exploratory, not pre-registered: does the text-mining phase change the winner?** A placebo replaces the weights from the 36 regulatory texts by random ones: with the paper's scores and gains, over 10,000 random weight vectors: Lasso on the frontier in 100%, CART on the frontier in 75%, RF on the frontier in 0%, XGBoost on the frontier in 100%, MLP on the frontier in 0%; XGBoost beats RF and MLP for any weights, so the texts can only decide whether CART is also efficient (`scripts/explore_placebo_weights.py`). XGBoost's Z is no higher than RF's or the MLP's in any category and its gain is the largest, so no weighting can move it off the frontier.
+
+![Placebo weights](results/report/figures/placebo_weights.png)
 
 **I14, the rule-based scorecard with these factors:** risk-gain frontier per use: Capital: XGBoost; Credit scoring: CART, XGBoost; Provisions: CART, XGBoost.
 

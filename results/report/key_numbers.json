@@ -1647,6 +1647,11 @@
       "finding": "logit AUC 81.9 \u2192 86.1 on validation rows; XGBoost's lead shrinks from 4.47 \u00b1 0.43 (p < 0.001) to 0.27 \u00b1 0.20 points (p = 0.174)"
     },
     {
+      "id": "X2",
+      "what": "Exploratory (not pre-registered): placebo, random weights instead of the regulatory texts",
+      "finding": "with the paper's scores and gains, over 10,000 random weight vectors: Lasso on the frontier in 100%, CART on the frontier in 75%, RF on the frontier in 0%, XGBoost on the frontier in 100%, MLP on the frontier in 0%; XGBoost beats RF and MLP for any weights, so the texts can only decide whether CART is also efficient"
+    },
+    {
       "id": "I14",
       "what": "Rule-based scorecard with the appendix factors",
       "finding": "frontier: capital XGBoost; scoring CART, XGBoost; provisions CART, XGBoost"

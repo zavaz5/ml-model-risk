@@ -1,4 +1,8 @@
-"""Write docs/speaker_script.pdf: what to say on each slide, the formulas, and likely questions.
+"""Write docs/speaker_script.pdf: cue cards for each slide, the formulas, and likely questions with an owner.
+
+Graders of earlier talks asked speakers not to read: the notes are short cues, to be said in one's own words.
+They also marked teams down when one student answered every question, so each question names the speaker
+whose slides it is about (Speaker 1-5; the team fills in names).
 
 Slide numbers, titles and talking points are read from docs/presentation.pptx
 (run make_slides.py first); numbers come from results/report/key_numbers.json.
@@ -26,6 +30,7 @@ h2 { font-size: 12.5pt; color: #0F2C68; margin-top: 12pt; margin-bottom: 3pt; }
 p { margin-top: 2pt; margin-bottom: 4pt; }
 .meta { color: #595959; font-size: 9.5pt; }
 li { margin-bottom: 3pt; }
+.owner { color: #1656A6; font-weight: bold; }
 """
 
 
@@ -48,11 +53,62 @@ def main_slides(prs) -> list[tuple[int, str, str]]:
     return out
 
 
+OWNERS = {  # question → speaker whose slides it is about (see the cue cards)
+    "features": 2, "120,000": 2, "Lasso almost": 2, "DeLong": 2, "test set": 5, "training times": 2, "SHAP ranking": 3,
+    "word frequency": 4, "errata": 4, "risk-efficient": 3, "logistic regression": 4, "CART": 2, "three different": 3,
+    "risk factors": 5, "recommend": 1, "symbols": 1, "objective": 2, "settings": 2, "improvement": 5, "out of sample": 5,
+    "placebo": 4, "dimensionality": 2,
+}
+
+
+def owner(question: str) -> int:
+    return next(v for key, v in OWNERS.items() if key.lower() in question.lower())
+
+
+def new_questions(k: dict) -> list[tuple[str, str]]:
+    """Questions graders asked other teams this year, answered for our paper."""
+    a, meta, imp = k["models"]["auc"], k["models"]["meta"], k["improvements"]
+    cal = imp["I12"]["table"]["XGBoost"]
+    gaps = k["appendix"]["factors"]
+    return [
+        ("What do the symbols in the formula mean?",
+         "m is the model, j the use (capital, credit scoring, provisions), i the risk category (statistics, technology, conduct). "
+         "Z is the darkness score of model m in category i, from 1 (transparent) to 5 (black box). H-bar is the weight of "
+         "category i for use j: the share of the category's terms among all words of that use's regulatory texts, in percent."),
+        ("What is the training objective, and how does it differ from the evaluation and calibration objectives?",
+         "Training: log-loss for the logit, the Lasso (plus an L1 penalty), XGBoost and the MLP; Gini impurity at each split "
+         "for CART and RF. Evaluation in the paper: AUC, which only measures how well defaults are ranked. Calibration asks "
+         "whether a predicted 5% PD really defaults 5% of the time, which capital and provisions need; we measure it with the "
+         f"Brier score and the calibration slope (XGBoost: Brier {cal['brier']:.4f}, slope {cal['slope']:.2f})."),
+        ("Why did you choose those settings?",
+         "They are the paper's own (p. 17), chosen by the authors with five-fold cross-validation. We keep them because the "
+         "task is to reproduce; re-tuning would hide where the paper differs. Our only choice is the Lasso penalty, by "
+         f"cross-validated AUC on training rows (C = {meta['lasso_c']:g}). Improvements make their choices on validation rows."),
+        ("What exactly is an improvement, and why is it one?",
+         "Each one fixes a weakness of a specific result. Examples: the paper reports AUCs without testing the differences, so "
+         "we add a paired DeLong test; its expert scores cannot be recomputed, so we score by a fixed rule; its SHAP ranks come "
+         "from one fit, so we refit with five seeds; its literature figure mixes datasets and metrics, so we run one protocol "
+         "on three datasets."),
+        ("How did you test out of sample?",
+         f"All reported AUCs are on {meta['test']:,} test rows never used for fitting or choosing; our own choices use "
+         "validation rows inside the training data. Out of dataset: the same protocol on Taiwan and German credit data. Out of "
+         "time is impossible here: the Kaggle data have no dates, so it is our first next step."),
+        ("What does the placebo show?",
+         "Replacing the weights from the regulatory texts by random ones never moves XGBoost off the frontier, because its "
+         "scores are never above RF's or the MLP's and its gain is the largest. The text phase can only decide whether CART "
+         "is also efficient. Exploratory, not pre-registered."),
+        ("Is dimensionality a problem here?",
+         f"There are 20 inputs, but the models' sizes differ hugely: {a['Lasso']['params']:,} fitted parameters for the Lasso, "
+         f"{a['RF']['params']:,} for RF. RF fits its training rows {gaps['RF']['overfit_gap']:+.2f} AUC better than new rows: it "
+         "memorises, which is why every number we report is on unseen rows."),
+    ]
+
+
 def questions(k: dict) -> list[tuple[str, str]]:
     m, meta = k["models"], k["models"]["meta"]
     a = m["auc"]
     err = {e["id"]: e["what"] for e in k["errata"]}
-    return [
+    return new_questions(k) + [
         ("Why do you have 20 features when the paper has 22?",
          "The file has 10 borrower characteristics; with squares that is 20. Its eleventh column is an unnamed row index, which "
          "the paper probably counted as a characteristic. The paper's SHAP figures show 10 features, which supports this."),
@@ -124,15 +180,21 @@ def main() -> None:
     total = sum(minutes(n) for _, _, n in slides)
     if total > LIMIT_MIN:
         raise SystemExit(f"talk is {total} minutes, over {LIMIT_MIN}")
-    parts = ["<h1>Speaker script</h1>",
+    parts = ["<h1>Speaker cue cards</h1>",
              f"<p class='meta'>Alonso Robisco and Carbó Martínez (2022). Group 8. {len(slides)} main slides, "
-             f"about {total:g} minutes of talk, then 10 minutes of questions. Slide numbers as in docs/presentation.pptx.</p>"]
+             f"{total:g} minutes of talk, then 10 minutes of questions. Slide numbers as in docs/presentation.pptx.</p>",
+             "<p><b>How to use these cards.</b> Say each cue in your own words; do not read the slides or this page. The slides "
+             "carry the numbers, so point at them instead of reciting them. Rehearse once with a timer. Speakers 1–5 split the "
+             "talk as marked; each answers the questions about their own slides (listed at the end), so all five take part.</p>"]
     for number, title, notes in slides:
-        parts.append(f"<h2>Slide {number}. {html.escape(title)}</h2><p>{html.escape(notes)}</p>")
+        header, *lines = notes.split("\n")
+        items = "".join(f"<li>{html.escape(x.lstrip('• '))}</li>" for x in lines)
+        parts.append(f"<h2>Slide {number}. {html.escape(title)}</h2><p class='meta'>{html.escape(header)}</p><ul>{items}</ul>")
     parts.append("<h2>Formulas, in words</h2><ul>")
     parts += [f"<li><b>{html.escape(t)}.</b> {f}</li>" for t, f in FORMULAS]
-    parts.append("</ul><h2>Likely questions</h2><ul>")
-    parts += [f"<li><b>{html.escape(q)}</b> {html.escape(ans)}</li>" for q, ans in questions(k)]
+    parts.append("</ul><h2>Likely questions, and who answers</h2><ul>")
+    parts += [f"<li><span class='owner'>Speaker {owner(q)}.</span> <b>{html.escape(q)}</b> {html.escape(ans)}</li>"
+              for q, ans in questions(k)]
     parts.append("</ul>")
     story = pymupdf.Story(html="".join(parts), user_css=CSS)
     writer = pymupdf.DocumentWriter(str(OUT))

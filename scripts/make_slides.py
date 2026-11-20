@@ -54,16 +54,16 @@ WHITE = RGBColor(0xFF, 0xFF, 0xFF)
 MAIN_ORDER = [
     None,
     "Problem: is machine learning's extra accuracy worth its model risk?",
-    "Method: a two-phase model-risk scorecard",
-    "Method: our reproduction, and what is fitted, chosen and evaluated",
-    "Results 1: prediction and the model-risk proxies (Tables 7 and 5)",
-    "Results 2: weights from regulatory texts (Table 2, Figs. 3 and 9, Table 3)",
-    "Results 3: the sentiment check and the worked example (Tables 8–10 and 4)",
-    "Results 4: darkness scores and risk against reward (Fig. 4, Table 6, Fig. 5)",
-    "Results 5: what drives the predictions (Figs. 6–8)",
-    "Results 6: the literature figure (Fig. 1)",
-    "Critique: assumptions, missing baselines, what would break it",
-    "How could these results be overfit, and how was it checked?",
+    "Method: model risk = text weight × darkness score",
+    "Method: what we fitted, chose and evaluated",
+    "Results 1: XGBoost predicts best in both; CART differs by tree settings",
+    "Results 2: every ordering of the text weights holds; the level is half",
+    "Results 3: the sentiment claim fails; the worked example is exact",
+    "Results 4: XGBoost gives the most gain per unit of risk in both",
+    "Results 5: late payments drive every model; finer ranks are noise",
+    "Results 6: most literature points match their sources; the largest does not",
+    "Critique: the regulatory texts cannot change the winner",
+    "How could these results be overfit, and how did the authors and we check?",
     "Next steps: with three more months",
     "FINAL",
 ]
@@ -508,7 +508,8 @@ def result_slides(prs, k: dict, fig: dict) -> None:
                             f"{P.TABLE5['training_seconds'][mm]:.2f}", f"{P.TABLE5['shap_seconds'][mm]:,}") for mm in MODELS5],
                           columns=["Model", "SD of AUC", "Hyper.", "Transp.", "Train s", "SHAP s"])
     ours5 = pd.DataFrame([(mm, f"{px[mm]['auc_sd']:.4f}", P.TABLE5["n_hyperparameters"][mm], P.TABLE5["transparency"][mm],
-                           f"{px[mm]['fit_s']:.2f}", f"{px[mm]['shap_s']:.1f}") for mm in MODELS5],
+                           f"{px[mm]['fit_s']:.2f}", f"{px[mm]['shap_s']:.1f}" if px[mm]['shap_s'] >= 1 else f"{px[mm]['shap_s']:.2f}")
+                          for mm in MODELS5],
                          columns=["Model", "SD of AUC", "Hyper.", "Transp.", "Train s", "SHAP s"])
     machine = {(-1, 4): ORANGE, (-1, 5): ORANGE}
     cpu = m["meta"]["environment"]["cpu"]
@@ -572,7 +573,14 @@ def result_slides(prs, k: dict, fig: dict) -> None:
 
 
 # ---------------------------------------------------------------- the talk, in the order of the seminar's lecture 1
-ROW_H, ROW_GAP, ROWS_BOTTOM = 0.78, 0.06, 7.22
+# Lessons from the graders' comments on earlier talks: little text per slide, every symbol of the formula decoded,
+# units on every number, each improvement says why it is one, and the speaker notes are cues, not a script.
+ROW_H, ROW_GAP, ROWS_BOTTOM = 0.74, 0.07, 7.22
+
+
+def cues(header: str, *lines: str) -> str:
+    """Speaker notes as cue cards: a header with the time, then short cues, so the speaker talks instead of reading."""
+    return "\n".join([header] + [f"• {line}" for line in lines])
 
 
 def result_rows(slide, rows, top) -> None:
@@ -581,10 +589,10 @@ def result_rows(slide, rows, top) -> None:
     Boxes of text, not a table, so that the paper's numbers and ours never share a table (the instructor's rule)."""
     for i, (label, compared, same, improvement) in enumerate(rows):
         y = top + i * (ROW_H + ROW_GAP)
-        text(slide, (0.64, y + 0.04, 1.45, ROW_H), [(label, {"bullet": False, "bold": True, "color": NAVY, "size": 10.5})])
-        note_box(slide, (2.12, y, 6.4, ROW_H), [compared], fill=GREEN_FILL if same else ORANGE_FILL,
-                 edge=GREEN if same else ORANGE, size=9.5)
-        note_box(slide, (8.6, y, 4.44, ROW_H), [f"**Our improvement:** {improvement}"], fill=BLUE_FILL, edge=BLUE, size=9.5)
+        text(slide, (0.64, y + 0.06, 1.5, ROW_H), [(label, {"bullet": False, "bold": True, "color": NAVY, "size": 11})])
+        note_box(slide, (2.17, y, 5.85, ROW_H), [compared], fill=GREEN_FILL if same else ORANGE_FILL,
+                 edge=GREEN if same else ORANGE, size=11)
+        note_box(slide, (8.1, y, 4.94, ROW_H), [f"**Improvement:** {improvement}"], fill=BLUE_FILL, edge=BLUE, size=11)
 
 
 def grouped_result_slide(prs, title, notes, paper, ours, rows, paper_label, ours_label, stacked=False):
@@ -593,19 +601,19 @@ def grouped_result_slide(prs, title, notes, paper, ours, rows, paper_label, ours
     top = ROWS_BOTTOM - len(rows) * ROW_H - (len(rows) - 1) * ROW_GAP
     if stacked:  # the three SHAP figures: the paper's row above ours
         h = (top - 0.1 - 2.0 - 2 * 0.28) / 2
-        heading(s, (0.4, 1.98, 8.0, 0.28), paper_label, 10.5)
+        heading(s, (0.4, 1.98, 8.0, 0.28), paper_label, 11)
         place(s, paper, (0.4, 2.26, 12.5, h))
-        heading(s, (0.4, 2.3 + h, 8.0, 0.28), ours_label, 10.5)
+        heading(s, (0.4, 2.3 + h, 8.0, 0.28), ours_label, 11)
         place(s, ours, (0.4, 2.58 + h, 12.5, h))
     else:
         if not isinstance(paper, (Path, list)) and not isinstance(ours, (Path, list)):  # two short tables: rows follow them
             frame = paper[0] if isinstance(paper, tuple) else paper
-            top = min(top, 2.32 + 0.36 * (len(frame) + 1) + 0.35)
+            top = min(top, 2.32 + 0.36 * (len(frame) + 1) + 0.45)
         h = top - 0.1 - 2.32
         heading(s, (0.64, 1.98, 6.0, 0.3), paper_label, 11)
         heading(s, (6.85, 1.98, 6.2, 0.3), ours_label, 11)
-        place(s, paper, (0.64, 2.32, 6.0, h), size=10)
-        place(s, ours, (6.85, 2.32, 6.2, h), size=10)
+        place(s, paper, (0.64, 2.32, 6.0, h), size=11)
+        place(s, ours, (6.85, 2.32, 6.2, h), size=11)
     result_rows(s, rows, top)
     return s
 
@@ -618,241 +626,269 @@ def lecture_slides(prs, k: dict, fig: dict) -> None:
     cats = [("statistics", "Statistics"), ("technology", "Technology"), ("conduct", "Conduct")]
     lb = json.loads((ROOT / "results" / "improvements" / "appendix" / "logit_benchmark.json").read_text())
     fair = lb["xgb_minus_logit_log1p"]
+    placebo = json.loads((ROOT / "results" / "improvements" / "appendix" / "placebo_weights.json").read_text())
+    gaps = k["appendix"]["factors"]
+    titles = iter(MAIN_ORDER[1:-1])
 
-    # Problem
-    s = slide_with_title(prs, "Problem: is machine learning's extra accuracy worth its model risk?", (
-        "Problem, ~2 min. One sentence: banks get more accurate default predictions from machine learning, but supervisors see "
-        "new model risks, and nobody had put a number on that risk, so models could not be compared on accuracy per unit of "
-        "risk. Why it matters: these models set banks' capital, the EU AI Act calls credit scoring high-risk, and uncertainty "
-        "about the supervisor's view slows adoption. The picture is the paper's own motivation: studies find gains over a logit "
-        "of up to 20 points as models grow more complex. Our task for this paper: reproduce every result it lists and propose "
-        "an improvement for each."))
-    text(s, (0.64, 2.2, 5.9, 4.9), [
-        ("**Machine learning predicts defaults better than a logit, but supervisors see new model risks; the paper asks how "
-         "to price that risk so that models can be ranked on accuracy per unit of risk.**", {"bullet": False, "size": 17, "space": 16}),
-        "**Why it matters:** these models set banks' capital; the EU AI Act calls credit scoring high-risk; uncertainty "
-        "about the supervisor's view slows adoption.",
-        "**Paper:** Alonso Robisco and Carbó Martínez (Banco de España), Financial Innovation, 2022.",
-        "**Our task:** reproduce every result it lists and propose an improvement for each.",
-    ], size=14, space=10)
-    heading(s, (6.85, 2.05, 6.2, 0.3), "Paper, Fig. 1: gains over a logit grow with complexity", 11)
+    # Problem: one sentence, one picture, why it matters
+    s = slide_with_title(prs, next(titles), cues(
+        "Speaker 1 · Problem, ~2 min",
+        "Banks get better default predictions from ML; supervisors see new risks (unstable, opaque, slow models).",
+        "Nobody had put a number on that risk, so models could not be ranked on accuracy per unit of risk.",
+        "Picture: the paper's survey of gains over a logit, by model complexity: large but uneven.",
+        "Our task: reproduce every result of the paper and improve each one.",
+        "→ Next: how the paper puts a number on model risk."))
+    text(s, (0.64, 2.3, 5.9, 4.6), [
+        ("**Machine learning predicts defaults better than a logit, but supervisors see new model risks. How should that "
+         "risk be priced, so that models can be ranked on accuracy per unit of risk?**", {"bullet": False, "size": 18, "space": 18}),
+        "**Why it matters:** these models set banks' capital and approve loans; supervisors must sign them off.",
+        "**Our task:** reproduce every result of the paper and improve each one.",
+    ], size=15, space=12)
+    heading(s, (6.85, 2.05, 6.2, 0.3), "Paper, Fig. 1: gain over a logit vs model complexity", 11)
     picture(s, crop_paper("fig1"), (6.85, 2.4, 6.2, 3.6))
 
-    # Method 1: the idea, one equation
-    eq = equation(r"\mathrm{Risk}_{m,j}=\sum_{i=1}^{3}\bar H_{i,j}\,Z_{i,m}", BUILD / "eq_risk.png")
-    s = slide_with_title(prs, "Method: a two-phase model-risk scorecard", (
-        "Method, ~1.5 min. Phase 1: each model gets a darkness score Z from 1 to 5 in three risk categories, from five measured "
-        "proxies and the authors' judgement. Phase 2: each category's weight for a use (capital, credit scoring, provisions) is "
-        "the share of its terms among all words of that use's regulatory texts. A model's risk for a use is the weighted sum of "
-        "its scores, set against its AUC gain over a logit. The answer on Kaggle data: XGBoost gives the most gain for its risk."))
-    text(s, (0.64, 2.25, 6.3, 4.6), [
-        "**13 risk factors** from the Basel validation process for internal models, in 3 categories: statistics, technology, market conduct.",
-        "**Phase 1:** five proxies per model (stability, hyperparameters, transparency, training time, SHAP time) → darkness Z from 1 to 5.",
-        "**Phase 2:** weight of a category for a use = share of its terms among all words of the use's regulatory texts.",
-        "**Output:** risk against the AUC gain over a logit, for Lasso, CART, random forest, XGBoost and a neural network.",
-    ], size=15, space=10)
-    box_shape(s, (7.3, 2.45, 2.65, 1.2), "Phase 1: darkness Z per model and category", BLUE, 12)
-    arrow_right(s, 10.0, 2.88)
-    box_shape(s, (10.45, 2.45, 2.55, 1.2), "Phase 2: weight H̄ per use, from texts", BLUE, 12)
-    picture(s, eq, (7.6, 4.0, 5.1, 0.9))
-    box_shape(s, (7.3, 5.15, 5.7, 0.9), "Risk vs AUC gain over the logit → rank models", NAVY, 13)
+    # Method 1: the idea and the one equation, every symbol decoded, with a worked number
+    eq = equation(r"\mathrm{Risk}_{m,j}=\sum_{i=1}^{3}\bar H_{i,j}\,Z_{i,m}", BUILD / "eq_risk.png", size=26)
+    s = slide_with_title(prs, next(titles), cues(
+        "Speaker 1 · Method, ~1.5 min",
+        "Read the formula left to right with the legend: model m, use j, category i.",
+        "Z: how dark a model is in a category, 1 to 5, from five measured proxies plus the authors' judgement (phase 1).",
+        "H-bar: how much the regulator's texts for that use talk about the category, as a share of all words (phase 2).",
+        f"Worked number on the right: XGBoost for credit scoring = {P.TABLE6_RISK['scoring']['XGBoost']:.1f}; "
+        "then plotted against its AUC gain.",
+        "→ Next: what we fitted, chose and evaluated."))
+    picture(s, eq, (0.64, 2.15, 5.2, 0.95))
+    legend = pd.DataFrame([
+        ("m", "model", "Lasso, CART, RF, XGBoost, MLP (neural net)"),
+        ("j", "use of the model", "capital, credit scoring, provisions"),
+        ("i", "risk category", "statistics, technology, market conduct"),
+        ("Z", "darkness of model m in category i (phase 1)", "1 = transparent … 5 = black box"),
+        ("H̄", "weight: category i's terms in use j's regulatory texts (phase 2)", "% of all words"),
+        ("Risk", "supervisory model risk of model m for use j", "% × score; 0.2–1 if divided by 5·ΣH̄"),
+    ], columns=["Symbol", "Meaning", "Values, units"])
+    table(s, legend, (0.64, 3.3, 7.3, 3.1), widths=[0.9, 3.6, 2.8], size=12)
+    xgb_terms = [(P.TABLE2["scoring"][c], P.TABLE6_Z[c]["XGBoost"]) for c, _ in cats]
+    box_shape(s, (8.35, 2.2, 4.7, 0.62), "Worked example (paper, Tables 2 and 6)", NAVY, 13)
+    text(s, (8.35, 2.95, 4.7, 2.0), [
+        ("XGBoost, credit scoring:", {"bullet": False, "bold": True, "size": 14, "color": NAVY}),
+        (" + ".join(f"{h:.2f}×{z}" for h, z in xgb_terms) + f" = {P.TABLE6_RISK['scoring']['XGBoost']:.1f}",
+         {"bullet": False, "size": 15}),
+        (f"Lasso {P.TABLE6_RISK['scoring']['Lasso']:.1f} (all Z = 1) · MLP {P.TABLE6_RISK['scoring']['MLP']:.1f}",
+         {"bullet": False, "size": 13, "color": MUTED}),
+        (f"Its gain over the logit: +{P.TABLE7_AUC['XGBoost'] - P.TABLE7_AUC['Logit']:.1f} AUC points",
+         {"bullet": False, "size": 14}),
+    ], size=14, space=6)
+    box_shape(s, (8.35, 4.85, 4.7, 1.0), "Risk vs AUC gain over the logit (points) → most gain per unit of risk wins", BLUE, 13)
 
-    # Method 2: our reproduction
-    s = slide_with_title(prs, "Method: our reproduction, and what is fitted, chosen and evaluated", (
-        "Method, ~1.5 min. Our own code, written from scratch in Python. What is fitted, chosen and evaluated, as the instructor "
-        "asked. The data match the paper's 120,000 loans; the regulatory corpus is 35 of its 36 documents. Improvements were "
-        "pre-registered, make their choices on validation rows only, and the test split is locked."))
+    # Method 2: our reproduction: objectives, settings, rows
+    s = slide_with_title(prs, next(titles), cues(
+        "Speaker 2 · Method, ~1.5 min",
+        "Training objective: log-loss or Gini. Evaluation: AUC, a ranking measure. They are not the same thing.",
+        "Settings are the paper's own (p. 17, chosen by its 5-fold CV); we do not re-tune, so differences are not ours.",
+        "Out of sample: the 20% test rows are locked; our own choices use validation rows inside the training data.",
+        f"Data match: {meta['rows']:,} complete loans vs the paper's {P.DATA['loans']:,}.",
+        "→ Next: results, the paper's version left, ours right."))
     obj = pd.DataFrame([
-        ("Six classifiers", "Own loss (log-loss or Gini), 80% training rows", "Paper's hyperparameters", "AUC on 20% test rows, DeLong ±"),
-        ("Lasso penalty", "–", "5-fold CV AUC on training rows", "–"),
-        ("Five proxies", "100 refits on 60–100% subsamples", "–", "Spread of test AUC; seconds"),
-        ("Darkness scores Z", "–", "Paper: judgement. Ours: a rule", "–"),
-        ("Weights H̄", "Nothing: word shares", "Paper's dictionary (Table 11)",
-         f"{manifest_found()} of the paper's {len(pd.read_csv(ROOT / 'data' / 'corpus_manifest.csv'))} documents"),
-    ], columns=["Step", "Fitted", "Chosen", "Evaluated"])
-    table(s, obj, (0.64, 2.2, 12.2, 2.75), widths=[2.2, 3.9, 3.3, 2.8], size=11)
-    text(s, (0.64, 5.15, 12.2, 2.0), [
-        f"**Data:** Give Me Some Credit (Kaggle). {meta['rows_raw']:,} rows; the {meta['rows']:,} complete cases match the "
-        f"paper's 120,000; {m['n_features']} features (10 characteristics and their squares); stratified 80/20 split.",
-        f"**Coverage:** all {len(k['verdicts'])} numbered results of the paper (Tables 2–10, Figs. 1 and 3–9) and the "
-        f"{fig1_points()} literature points of Fig. 1, on the next six slides; each also has its own slide in the appendix.",
-        "**Rigour:** code from scratch; improvements pre-registered; choices on validation rows only; test split locked.",
-    ], size=13, space=6)
+        ("Six classifiers", "log-loss (logit, Lasso + L1, XGBoost, MLP); Gini impurity (CART, RF)",
+         "paper's settings (p. 17); Lasso penalty by 5-fold CV AUC", f"AUC, % (DeLong ±), {meta['test']:,} test rows"),
+        ("Darkness Z", "–", "paper: judgement · ours: a fixed rule", "–"),
+        ("Weights H̄", "nothing: word counts", "paper's dictionary (Table 11)",
+         f"{manifest_found()} of {len(pd.read_csv(ROOT / 'data' / 'corpus_manifest.csv'))} documents"),
+    ], columns=["Step", "Fitted: objective", "Chosen: criterion", "Evaluated: metric, rows"])
+    table(s, obj, (0.64, 2.2, 12.4, 2.3), widths=[1.7, 4.4, 3.5, 2.8], size=12)
+    text(s, (0.64, 4.85, 12.4, 2.3), [
+        "**Why the paper's settings:** to reproduce, not to win; re-tuning would hide where the paper differs.",
+        "**Training ≠ evaluation:** models minimise log-loss, the paper scores ranking (AUC); capital and provisions need "
+        "calibrated PDs, so we add calibration (appendix).",
+        f"**Data:** Give Me Some Credit, {meta['rows']:,} loans (paper: {P.DATA['loans']:,}), {100 * meta['default_rate']:.1f}% defaults, "
+        f"{m['n_features']} features; stratified 80/20 split, test rows locked.",
+    ], size=14, space=10)
 
     # Results 1: Tables 7 and 5
     def models_table(auc, sd, fit, shap):
         return pd.DataFrame([(mm, auc(mm), "–" if mm == "Logit" else sd(mm), "–" if mm == "Logit" else fit(mm),
                               "–" if mm == "Logit" else shap(mm)) for mm in ["Logit"] + MODELS5],
-                            columns=["Model", "AUC %", "SD of AUC", "Train s", "SHAP s"])
-    paper1 = models_table(lambda mm: f"{P.TABLE7_AUC[mm]:.1f}", lambda mm: f"{P.TABLE5['stability_sd'][mm]:.3f}",
+                            columns=["Model", "AUC, %", "SD of AUC, pts", "Train, s", "SHAP, s"])
+    paper1 = models_table(lambda mm: f"{P.TABLE7_AUC[mm]:.1f}", lambda mm: f"{100 * P.TABLE5['stability_sd'][mm]:.1f}",
                           lambda mm: f"{P.TABLE5['training_seconds'][mm]:.2f}", lambda mm: f"{P.TABLE5['shap_seconds'][mm]:,}")
-    ours1 = models_table(lambda mm: f"{100 * a[mm]['auc']:.1f} ± {100 * a[mm]['se']:.1f}", lambda mm: f"{px[mm]['auc_sd']:.4f}",
-                         lambda mm: f"{px[mm]['fit_s']:.2f}", lambda mm: f"{px[mm]['shap_s']:.1f}" if px[mm]['shap_s'] >= 1 else f"{px[mm]['shap_s']:.2f}")
+    ours1 = models_table(lambda mm: f"{100 * a[mm]['auc']:.1f} ± {100 * a[mm]['se']:.1f}", lambda mm: f"{100 * px[mm]['auc_sd']:.2f}",
+                         lambda mm: f"{px[mm]['fit_s']:.2f}",
+                         lambda mm: f"{px[mm]['shap_s']:.1f}" if px[mm]['shap_s'] >= 1 else f"{px[mm]['shap_s']:.2f}")
     machine = {(-1, 3): ORANGE, (-1, 4): ORANGE}
     h = json.loads((ROOT / "results" / "reproduction" / "models" / "cart_diagnostic.json").read_text())["hypotheses"]
     small = [x["auc"] for key, x in h.items() if key.startswith("H2") and 8 <= x["leaves"] <= 12]
-    widths = [1.15, 1.4, 1.2, 1.05, 1.2]
-    grouped_result_slide(prs, "Results 1: prediction and the model-risk proxies (Tables 7 and 5)", (
-        "Results, ~1 min. Left the paper's Tables 7 and 5, right ours. AUC matches for five of six models and XGBoost is best. "
-        "CART: we fit the tree the paper describes; only a different tree gives its number, so the difference is in the tree's "
-        "settings. Times depend on the computer and the software (orange), which the paper does not report. Improvements: "
-        "paired tests, a fairer logit, one explainer for every model."),
+    widths = [1.15, 1.35, 1.35, 1.0, 1.15]
+    xg = a["XGBoost"]
+    grouped_result_slide(prs, next(titles), cues(
+        "Speaker 2 · Results, ~1 min",
+        "AUC: five of six models match; XGBoost best in both.",
+        "CART: we fit the depth-7 tree the paper describes; only a smaller tree (8–12 leaves) gives its 80.4.",
+        "Orange columns: times depend on the computer and software, which the paper does not report; not comparable.",
+        "Improvements: a paired test of every gain; model size as fitted parameters; one explainer for all models."),
         (paper1, machine, widths), (ours1, {**machine, (2, 1): ORANGE}, widths), [
-            ("Table 7: AUC", f"**Same for 5 of 6 models; XGBoost best. CART differs:** we fit the depth-7 tree described and get "
-             f"{100 * a['CART']['auc']:.1f}; its {P.TABLE7_AUC['CART']:.1f} comes only from a pruned tree of 8–12 leaves "
-             f"({100 * min(small):.1f}–{100 * max(small):.1f}) or depth 10: the tree's settings, not the method.", False,
-             f"paired DeLong test of every gain; a logit with log inputs is only {100 * fair['diff']:.2f} ± "
-             f"{100 * fair['se']:.2f} behind XGBoost (exploratory)."),
-            ("Table 5: stability", "**Same order:** Lasso and XGBoost most stable, CART and the neural network least. "
-             "Hyperparameter counts and transparency are definitions.", True,
-             f"both of the paper's stability definitions (spread of AUC, spread of predictions) under a paired bootstrap: the order "
-             f"holds in {100 * imp['I7']['claim_probability']['auc_sd']:.0f}% and {100 * imp['I7']['claim_probability']['pd_sd']:.0f}% of draws."),
-            ("Table 5: times", "**Differ only because of the computer and software** (orange), which the paper does not "
-             f"report; with comparable software the times agree (RF SHAP {px['RF']['shap_s']:.0f} s vs 60 s).", False,
-             f"one explainer for all: RF, not the neural network, is slowest to explain ({px['RF']['shap_common_s']:.0f} s vs "
+            ("Table 7 · AUC", f"**5 of 6 match.** CART {100 * a['CART']['auc']:.1f} vs {P.TABLE7_AUC['CART']:.1f}: the paper's "
+             f"tree must be smaller (8–12 leaves give {100 * min(small):.1f}–{100 * max(small):.1f}).", False,
+             f"paired DeLong test of each gain: XGBoost +{100 * xg['gain']:.1f} ± {100 * xg['gain_se']:.1f} points is real "
+             f"({pfmt(xg['gain_p'])})."),
+            ("Table 5 · stability", "**Same order:** Lasso and XGBoost most stable, CART and the MLP least.", True,
+             f"size as fitted parameters, not hyperparameter counts: Lasso {a['Lasso']['params']:,}, RF {a['RF']['params']:,}."),
+            ("Table 5 · times", "**Not comparable:** another computer and software; the paper reports neither.", False,
+             f"one explainer for all models: RF, not the MLP, is slowest ({px['RF']['shap_common_s']:.0f} s vs "
              f"{px['MLP']['shap_common_s']:.0f} s)."),
-        ], "Paper, Tables 7 and 5", "Ours (± DeLong s.e.; orange: machine-dependent)")
+        ], "Paper, Tables 7 and 5", "Ours (± DeLong s.e.; orange: not comparable)")
 
     # Results 2: weights
-    sw = json.loads((ROOT / "results" / "reproduction" / "nlp" / "stopword_diagnostic.json").read_text())
     p3, i4 = imp["I3"]["claim_probability"], imp["I4"]
+    fragile = sorted(100 * v for v in p3.values() if v < 0.95)
     r14 = k["extra"]["R14"]["spearman"]
-    grouped_result_slide(prs, "Results 2: weights from regulatory texts (Table 2, Figs. 3 and 9, Table 3)", (
-        "Results, ~0.8 min. Same axes left and right. Every ordering the paper draws holds; our level is about half because the "
-        "paper does not say what it divides by. Document by document the pattern is the same. The significance table agrees "
-        "except one cell the paper mismarks. Improvements: bootstrap over documents and a multiple-testing correction."),
+    rho = [r14[c]["rho"] for c, _ in cats]
+    grouped_result_slide(prs, next(titles), cues(
+        "Speaker 2 · Results, ~0.8 min",
+        "Same axes left and right. All four orderings the paper reads off Table 2 hold.",
+        "Our level is about half: the paper does not say what it divides by (without stop words we get close).",
+        "Document by document the same pattern; Table 3 agrees except one cell the paper mismarks.",
+        "Improvements: bootstrap over documents; a correction for testing nine differences at once."),
         fig["weights_paper"], fig["weights_ours"], [
-            ("Table 2, Fig. 3", "**All 4 orderings the same; the level is about half:** the paper does not state what it divides "
-             "by. Without stop words ours are " + " / ".join(f"{sw['table2_pct'][u]['total']:.1f}" for u, _ in uses)
-             + "% vs its " + " / ".join(f"{P.TABLE2[u]['total']:.1f}" for u, _ in uses) + "%.", False,
-             f"bootstrap over documents: technology → scoring holds in {100 * p3['technology_highest_for_scoring']:.0f}%, "
-             f"provisions lowest in {100 * p3['provisions_lowest_total']:.0f}% of draws."),
-            ("Fig. 9: by document", "**Same shapes and order of documents:** rank correlation with the paper "
-             + " / ".join(f"{r14[c]['rho']:.2f}" for c, _ in cats) + " (statistics / technology / conduct).", True,
-             "a bootstrap interval for each correlation: " + "; ".join(f"[{r14[c]['lo']:.2f}, {r14[c]['hi']:.2f}]" for c, _ in cats) + "."),
-            ("Table 3: tests", "**Same on 8 of 9 cells;** the 9th is the paper's own error: it marks p = 0.1097 as "
-             "significant at 10%.", False, f"after Holm's correction only {i4['holm_10pct']} of the 9 differences survive at 10%."),
-        ], "Paper's Fig. 3, redrawn from its Table 2", "Ours, same axes (± bootstrap s.e. over documents)")
+            ("Table 2 · Fig. 3", "**All 4 orderings same;** the level is half: the paper does not say what it divides by.", False,
+             f"bootstrap over documents: {len(fragile)} of 4 orderings hold in only "
+             + "–".join(f"{v:.0f}" for v in (fragile[0], fragile[-1])) + "% of draws."),
+            ("Fig. 9", f"**Same pattern** document by document: rank correlation {min(rho):.2f}–{max(rho):.2f}.", True,
+             f"bootstrap intervals: every correlation clearly positive (lower bounds ≥ {min(r14[c]['lo'] for c, _ in cats):.2f})."),
+            ("Table 3", "**8 of 9 cells agree;** the 9th is the paper's error (p = "
+             f"{P.TABLE3[('scoring', 'provisions')]['technology']:.2f} marked significant).", False,
+             f"9 tests at once, Holm correction: only {i4['holm_10pct']} of 9 differences survive at 10%."),
+        ], "Paper's Fig. 3, redrawn from its Table 2", "Ours, same axes (± bootstrap s.e.)")
 
     # Results 3: sentiment and the worked example
     ex = k["scorecard_checks"]["table4_example"]
     i5, i6 = imp["I5"], imp["I6"]
+    docs = {u: n["meta"]["documents"][u] for u, _ in uses}
 
     def senti(t10, t20, share, example, digits):
         return pd.DataFrame([(lab, f"{t10[u]['technology']:.2f}", f"{t10[u]['conduct']:.2f}", f"{t20[u]['technology']:.2f}",
-                              f"{t20[u]['conduct']:.2f}", f"{share[u]:.2f}%", f"{example[u]:.{digits}f}") for u, lab in uses],
-                            columns=["Use", "Tech. 10", "Cond. 10", "Tech. 20", "Cond. 20", "Negative", "Table 4"])
-    grouped_result_slide(prs, "Results 3: the sentiment check and the worked example (Tables 8–10 and 4)", (
-        "Results, ~0.8 min. Negative words within 10 and 20 words of technology and conduct terms, the share of negative words, "
-        "and the paper's worked example. The sentiment claim does not hold in our corpus, and the bootstrap shows it is noise. "
-        "The worked example is exact."),
+                              f"{t20[u]['conduct']:.2f}", f"{share[u]:.2f}", f"{example[u]:.{digits}f}") for u, lab in uses],
+                            columns=["Use", "Tech ±10", "Cond ±10", "Tech ±20", "Cond ±20", "Neg. %", "Risk"])
+    grouped_result_slide(prs, next(titles), cues(
+        "Speaker 3 · Results, ~0.8 min",
+        "Columns ±10 and ±20: negative words per mention of a technology or conduct term, within 10 or 20 words.",
+        "The paper says credit-scoring texts are the most negative; in our corpus they are not.",
+        f"With {min(docs.values())}–{max(docs.values())} documents per use these averages are noise: the bootstrap is "
+        "close to a coin toss.",
+        "Last column: the paper's worked example (Table 4), which we recompute exactly."),
         (senti(P.TABLE8_D10, P.TABLE9_D20, P.TABLE10_NEG_SHARE, P.TABLE4_RISKINESS, 3), None, None),
         (senti(n["neg_d10"], n["neg_d20"], n["neg_share"], ex, 4), None, None), [
-            ("Tables 8–10: sentiment", "**Differs:** credit-scoring texts are not the most negative around technology or "
-             "conduct terms, at 10 or 20 words. With 5–12 documents per use these averages are noise, and the paper does not "
-             "state its window or tokenisation.", False,
-             f"against each text's base rate, scoring is most negative in only {100 * i5['p_scoring_highest_technology']:.0f}% "
-             f"(technology) and {100 * i5['p_scoring_highest_conduct']:.0f}% (conduct) of bootstraps."),
-            ("Table 4: example", "**Same:** the paper's formula with its own weights gives "
-             + " / ".join(f"{ex[u]:.4f}" for u, _ in uses) + " (it truncates rather than rounds).", True,
-             "with our weights and their uncertainty: " + " / ".join(f"{i6[u]['est']:.3f} ± {i6[u]['se']:.3f}" for u, _ in uses) + "."),
-        ], "Paper, Tables 8–10 and 4", "Ours")
+            ("Tables 8–10", "**Differs:** scoring texts are not the most negative; "
+             f"{min(docs.values())}–{max(docs.values())} documents per use are too few.", False,
+             f"bootstrap against each text's base rate: the claim holds in {100 * i5['p_scoring_highest_technology']:.0f}% and "
+             f"{100 * i5['p_scoring_highest_conduct']:.0f}% of draws, a coin toss."),
+            ("Table 4", "**Exact:** " + " / ".join(f"{ex[u]:.4f}" for u, _ in uses) + " with the paper's weights.", True,
+             f"with our weights and their error: credit scoring is still the riskiest use in {100 * i6['p_scoring_riskiest']:.0f}% of draws."),
+        ], "Paper, Tables 8–10 and 4", "Ours (±10/±20: negative words per term mention; Risk: Table 4, 0.2–1)")
 
     # Results 4: scores and risk against reward
     pf = pd.DataFrame(imp["I13"]["table"]).pivot(index="model", columns="use", values="p_frontier")
-    grouped_result_slide(prs, "Results 4: darkness scores and risk against reward (Fig. 4, Table 6, Fig. 5)", (
-        "Results, ~0.8 min. Both on a normalised risk scale and the same axes. XGBoost gives the most gain for its risk, as in "
-        "the paper. Our CART sits higher because of its AUC. The paper's scores are judgement and come in three versions; we "
-        "replace them by a rule and add a Monte Carlo over every noisy input."),
+    grouped_result_slide(prs, next(titles), cues(
+        "Speaker 3 · Results, ~0.8 min",
+        "Both charts: risk on a 0.2–1 scale (1 = darkest), gain over the logit in AUC points, same axes.",
+        "XGBoost gives the most gain for its risk for every use, as in the paper; Table 6's arithmetic is exact.",
+        "Our CART sits higher only because its AUC is higher (Results 1).",
+        "The paper's scores are judgement, in three versions; we replace them by a rule and simulate every noisy input."),
         fig["rr_paper"], fig["rr_ours"], [
-            ("Table 6, Fig. 5", "**Same: XGBoost gives the most gain for its risk for every use;** Table 6's arithmetic is exact. "
-             "Our CART also reaches the frontier because its AUC is higher (Results 1).", True,
-             "Monte Carlo over every noisy input: XGBoost is on the frontier in "
-             + (f"every one of {imp['I13']['draws']:,} draws" if pf.loc["XGBoost"].min() == 1 else f"at least {100 * pf.loc['XGBoost'].min():.0f}% of draws")
-             + " for every use."),
-            ("Fig. 4: scores", "**Cannot be recomputed:** the scores are expert judgement, and the paper uses three versions "
-             "(RF statistics 2 in Fig. 4, 3 in Tables 5 and 6; neural network 4, 5 and 4).", False,
-             "scores by a fixed rule on the measured proxies, so anyone can recompute them (appendix)."),
-        ], "Paper's Fig. 5, redrawn from its Tables 6 and 7", "Ours, same axes: paper's scores × our weights; our gains")
+            ("Table 6 · Fig. 5", "**Same winner:** XGBoost gives the most gain per unit of risk, for every use.", True,
+             "Monte Carlo over every noisy input: XGBoost on the frontier in "
+             + (f"all {imp['I13']['draws']:,} draws." if pf.loc["XGBoost"].min() == 1 else f"{100 * pf.loc['XGBoost'].min():.0f}% of draws.")),
+            ("Fig. 4 · scores", "**Cannot be recomputed:** expert judgement, in three inconsistent versions.", False,
+             "scores by a fixed rule from the measured proxies: same winner, and anyone can recompute them."),
+        ], "Paper's Fig. 5, redrawn from its Tables 6 and 7", "Ours, same axes (paper's scores × our weights)")
 
     # Results 5: SHAP
     c = imp["I11"]["claims_seeds"]
-    grouped_result_slide(prs, "Results 5: what drives the predictions (Figs. 6–8)", (
-        "Results, ~0.8 min. The paper's SHAP plots on top, ours below, with the same x ranges. Late payments dominate everywhere "
-        "and XGBoost's top four match exactly; the finer ranking claims do not survive another fit."),
+    grouped_result_slide(prs, next(titles), cues(
+        "Speaker 3 · Results, ~0.8 min",
+        "SHAP: how much each characteristic moves a prediction; paper on top, ours below, same x ranges.",
+        "Late payments dominate every model; XGBoost's top four match exactly.",
+        "Middle ranks swap places when the model is refitted, so the paper's finer ranking claims are noise."),
         [crop_paper("fig6"), crop_paper("fig7"), crop_paper("fig8")],
         [FIGS / "ours_shap_RF.png", FIGS / "ours_shap_XGBoost.png", FIGS / "ours_shap_MLP.png"], [
-            ("Figs. 6–8: SHAP", "**Same top: late payments in the top three for every model; XGBoost's top four match. Differs "
-             "below:** revolving utilisation is first for our RF too, and age is not fourth everywhere; middle ranks swap "
-             "between fits.", False,
-             f"five seeds on one scale: \"late payments in the top three\" holds in {c['probability']['top3_late_payments']}–"
-             f"{c['default']['top3_late_payments']} of 5; the paper's two other ranking claims in "
-             f"{c['default']['revolving_first_only_xgb']} and {c['default']['age_fourth']} of 5."),
-        ], "Paper, Figs. 6–8 (RF, XGBoost in log-odds, neural network)", "Ours: same models, same x ranges", stacked=True)
+            ("Figs. 6–8", "**Top 3 same** (late payments); XGBoost's top 4 exact; **middle ranks swap** between fits.", False,
+             f"5 seeds on one scale: only \"late payments in the top 3\" survives "
+             f"({c['probability']['top3_late_payments']}–{c['default']['top3_late_payments']} of 5 seeds)."),
+        ], "Paper, Figs. 6–8: RF, XGBoost (log-odds), MLP (probability)", "Ours: same models, same x ranges", stacked=True)
 
     # Results 6: the literature figure
     lit = pd.read_csv(ROOT / "data" / "fig1_sources.csv")
     lit = lit[lit["status"] != "wrong_reference"]
+    match = int((lit["status"] == "matches").sum())
+    n_ks = int(lit.loc[lit["status"] == "matches", "metric"].fillna("").str.startswith("KS").sum())
     i1 = imp["I1"]["summary"]
-    grouped_result_slide(prs, "Results 6: the literature figure (Fig. 1)", (
-        "Results, ~0.8 min. We looked up all 20 points of the paper's literature figure in their sources. Twelve match; the "
-        "rest are other values or other metrics, and the largest is mis-cited. Our improvement compares models under one "
-        "protocol on three datasets instead."),
+    grouped_result_slide(prs, next(titles), cues(
+        "Speaker 4 · Results, ~0.8 min",
+        "We looked up every point of the paper's literature figure in its source.",
+        f"{match} of {len(lit)} match, but {n_ks} of those are another metric (KS); the largest gain is cited to the wrong paper.",
+        "Improvement: instead of mixing 20 studies, the same protocol on three public datasets.",
+        "→ Next: what this means for the paper's argument."),
         crop_paper("fig1"), FIGS / "paper_fig1_checked.png", [
-            ("Fig. 1: literature", f"**{int((lit['status'] == 'matches').sum())} of {len(lit)} points match their source;** "
-             f"{int(lit['metric'].fillna('').str.startswith('KS').sum())} of those are KS, not AUC; two sources report recall or "
-             "accuracy; the 20-point gain is cited to the wrong paper; a negative gain is drawn at 0.", False,
-             f"one protocol on three datasets: XGBoost best on Give Me Some Credit ({pfmt(i1['gmsc']['best_vs_runner_p'])}) and "
-             "Taiwan; on 1,000 German loans the trees lose to the logit."),
-        ], "Paper, Fig. 1", "Ours: each point looked up in its source (green = matches)")
+            ("Fig. 1", f"**{match} of {len(lit)} match** their source ({n_ks} of them KS, not AUC); "
+             f"{int((lit['status'] == 'differs').sum())} differ, {int((lit['status'] == 'different_metric').sum())} use other "
+             "metrics; the 20-point gain is mis-cited.", False,
+             f"same protocol on 3 datasets: XGBoost best on Give Me Some Credit ({pfmt(i1['gmsc']['best_vs_runner_p'])}); on "
+             "1,000 German loans the trees lose to the logit."),
+        ], "Paper, Fig. 1", "Ours: each point looked up in its source")
 
-    # Critique
-    s = slide_with_title(prs, "Critique: assumptions, missing baselines, what would break it", (
-        "Critique, ~1.5 min. Four weak points of the paper, each with the evidence from our work, then what is not reported."))
-    text(s, (0.64, 2.2, 12.2, 5.0), [
-        f"**Word counts as supervisors' preferences:** one word, \"model\", is {100 * imp['I3']['dominant_shares']['statistics|Model']:.0f}% "
-        "of all statistics mentions, and two of the four weight orderings depend on which documents are in the corpus.",
-        "**Expert darkness scores:** judgement that cannot be checked, in three versions; a rule on the measured proxies gives "
-        "the same winner and anyone can recompute it.",
-        f"**A weak baseline:** the logit gets raw, heavy-tailed ratios; with log inputs it reaches "
-        f"{100 * lb['auc']['Logit, log1p inputs']['auc']:.1f} AUC, {100 * fair['diff']:.2f} ± {100 * fair['se']:.2f} points "
-        f"behind XGBoost ({pfmt(fair['p'])}; validation rows, exploratory).",
-        "**What would break it:** few loans (on 1,000 German loans the trees lose to the logit), another fit (SHAP ranks), "
-        "another set of documents (the sentiment check, two of the weight orderings).",
-        "**Not reported:** what the word shares divide by, CART's settings, hardware, software and explainers; Fig. 1 mixes "
-        "metrics and mis-cites its largest point; no uncertainty on any result.",
-    ], size=14, space=10)
+    # Critique: a placebo chart and three short verdicts
+    r = placebo["results"]["paper"]
+    s = slide_with_title(prs, next(titles), cues(
+        "Speaker 4 · Critique, ~1.5 min",
+        f"Placebo: replace the weights from the regulatory texts by random ones, {placebo['draws']:,} times.",
+        "XGBoost stays on the frontier every time: its scores are never above RF's or the MLP's, and its gain is largest.",
+        "So the whole text-mining phase can only decide whether CART is also efficient; the winner comes from the scores and the AUC.",
+        "Contested: word counts as supervisors' preferences, expert scores. Missing: a fair logit, an out-of-time test.",
+        "→ Next: could any of this be overfit?"))
+    picture(s, FIGS / "placebo_weights.png", (0.5, 2.15, 6.6, 3.6))
+    text(s, (0.64, 5.85, 6.4, 1.0), [
+        (f"Paper's Table 6 scores and Table 7 gains; weights drawn at random {placebo['draws']:,} times. "
+         "Exploratory, not pre-registered.", {"bullet": False, "size": 11, "color": MUTED}),
+    ])
+    text(s, (7.35, 2.2, 5.7, 5.0), [
+        ("**Holds up:** XGBoost gives the most gain per unit of risk, whatever the weights.", {"size": 15}),
+        (f"**Contested:** word counts as what supervisors care about: one word, \"model\", is "
+         f"{100 * imp['I3']['dominant_shares']['statistics|Model']:.0f}% of statistics mentions; expert scores in three versions.", {"size": 15}),
+        (f"**Missing baseline:** a logit with log inputs is only {100 * fair['diff']:.2f} ± {100 * fair['se']:.2f} AUC points "
+         f"behind XGBoost (exploratory).", {"size": 15}),
+        ("**Would break it:** few loans: on 1,000 German loans the trees lose to the logit.", {"size": 15}),
+    ], size=15, space=12)
 
     # Overfitting: the slide the seminar asks for in every talk
-    gaps = k["appendix"]["factors"]
     others = max(abs(g["overfit_gap"]) for mm, g in gaps.items() if mm != "RF")
-    s = slide_with_title(prs, "How could these results be overfit, and how was it checked?", (
-        "Overfitting, ~1.5 min. The question the seminar asks of every talk. Four places where overfitting could enter, how "
-        "the authors checked, and how we checked."))
+    s = slide_with_title(prs, next(titles), cues(
+        "Speaker 5 · Overfitting, ~1.5 min",
+        "The question the seminar asks of every talk; one row per way the results could be overfit.",
+        f"RF fits its training rows {gaps['RF']['overfit_gap']:+.2f} AUC better than new rows: it memorises; that is why we only score unseen rows.",
+        "Out of sample: locked test rows; out of dataset: two more datasets; out of time: impossible here (no dates).",
+        "→ Next: what we would do with three more months."))
     of = pd.DataFrame([
-        ("A model memorises its training rows", "AUC on a 20% hold-out",
-         f"Same hold-out, locked. Training-vs-validation AUC gap: RF {gaps['RF']['overfit_gap']:+.2f} (it memorises), the "
-         f"others within ±{others:.2f}; every model is scored on unseen rows only"),
-        ("Hyperparameters chosen with the test rows", "5-fold cross-validation on the 80% training rows (p. 17)",
-         "The paper's values, not re-tuned; our own choices on validation rows only"),
-        ("The researcher's choices fit the story (dictionary, scores, documents)", "Not checked; scores are judgement",
-         "Pre-registered before running, with a change log; scores by a rule; bootstrap over documents"),
-        ("One lucky split, fit or set of tests", "One split; stability from subsample refits; 9 tests uncorrected",
-         "Paired DeLong tests; 5 seeds for SHAP; Holm and Benjamini–Hochberg corrections; the same protocol on 3 datasets"),
+        ("A model memorises its training rows", "20% hold-out",
+         f"same hold-out, locked; training − validation AUC: RF {gaps['RF']['overfit_gap']:+.2f}, others ≤ {others:.2f}"),
+        ("Settings tuned on the test rows", "5-fold CV on training rows", "paper's settings; our choices on validation rows only"),
+        ("A lucky split, fit or dataset", "one split, one dataset",
+         f"DeLong ±, {meta['retrains']} refits, {c['default']['seeds']} seeds; {len(i1) - 1} more datasets"),
+        ("Choices fitted to the story (words, scores, documents)", "not checked", "pre-registration; rule-based scores; bootstrap; placebo"),
+        ("Out of time", "not possible: no dates", "not possible: no dates → next steps"),
     ], columns=["How could the results be overfit?", "How the authors checked", "How we checked"])
-    table(s, of, (0.64, 2.3, 12.2, 3.9), widths=[3.4, 3.6, 5.2], size=12)
+    table(s, of, (0.64, 2.3, 12.4, 4.2), widths=[3.9, 3.0, 5.5], size=13)
 
     # Next steps
-    s = slide_with_title(prs, "Next steps: with three more months", (
-        "Next steps, ~2 min. What we would do next and why each matters for the paper's question."))
-    text(s, (0.64, 2.2, 12.2, 5.0), [
-        "**Out-of-time validation** on data with loan dates (e.g. Lending Club vintages) instead of a random split.",
-        "**Use-specific performance:** calibration for capital and provisions, the cost of errors for scoring; a supervisor's "
-        "loss function to turn the ranking into an approval rule.",
-        "**An industry-standard benchmark:** logistic regression on weight-of-evidence binned inputs.",
-        "**Better text measures:** topic models or embeddings, checked against supervisors' actual decisions, instead of word counts.",
-        "**The three risk factors we could not measure** (third-party providers, cyber-attacks, privacy) with a bank's own data.",
-    ], size=15, space=12)
+    s = slide_with_title(prs, next(titles), cues(
+        "Speaker 5 · Next steps, ~2 min",
+        "Each step answers a gap from the critique or the overfitting slide.",
+        "Out-of-time data; metrics per use; a fair benchmark; better text measures; the factors we could not measure."))
+    text(s, (0.64, 2.25, 12.2, 4.8), [
+        "**Out-of-time test** on loans with dates (e.g. Lending Club vintages).",
+        "**A metric per use:** calibration for capital and provisions, the cost of errors for credit scoring.",
+        "**A fair benchmark:** logistic regression on weight-of-evidence inputs, the industry standard.",
+        "**Better text measures:** topic models or embeddings, checked against real supervisory decisions.",
+        "**The 3 factors we could not measure** (third parties, cyber, privacy), with a bank's own data.",
+    ], size=17, space=16)
 
     prs.slides.add_slide(layout(prs, "Final_1"))
 
@@ -885,8 +921,9 @@ def build() -> None:
                                   ("Nazarov · Doroshenko · Burlakov · Daunov · Sergeev", {"bullet": False, "size": 14, "color": MUTED})])
     s.notes_slide.notes_text_frame.text = (
         "Timing, 15 minutes in the seminar's order: problem 2 · method 3 · results and our reproduction 5 · critique and "
-        "overfitting 3 · next steps 2. Then 10 minutes of questions. Our task for this paper: reproduce every result it lists "
-        "and propose an improvement for each; every result also has its own slide in the appendix.")
+        "overfitting 3 · next steps 2. Then 10 minutes of questions. Speakers: 1 slides 2–3 · 2 slides 4–6 · 3 slides 7–9 · "
+        "4 slides 10–11 · 5 slides 12–13; each answers the questions on their slides. Our task: reproduce every result of "
+        "the paper and improve each; every result also has its own slide in the appendix.")
 
     lecture_slides(prs, k, fig)  # main talk, ending with the Final slide
     result_slides(prs, k, fig)   # appendix: one slide per result of the paper

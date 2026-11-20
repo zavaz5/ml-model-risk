@@ -16,12 +16,13 @@ Start every session by reading [docs/HANDOFF.md](docs/HANDOFF.md).
 8. **Timing hygiene:** time single-threaded, on an otherwise idle machine, never while parallel jobs run; warm up first; report median and interquartile range; say what was timed.
 9. **Code we can defend:** small functions, docstrings that say why, tests in `tests/`, `pytest -q` green before any commit. Libraries: numpy, pandas, scipy, scikit-learn, xgboost, shap, matplotlib, python-pptx, PyMuPDF, pytest, certifi.
 10. **Git:** commit at milestones; push only after the user confirms. No author names and no Co-Authored-By lines (the team adds names itself). Never commit downloaded data (Kaggle's licence forbids redistribution; regulatory PDFs are third-party): `data/raw/` is ignored, `data/corpus_manifest.csv` records sources and hashes.
-11. **The deck follows the seminar's lecture 1:** 15 minutes of talk (problem 2, method 3, results and our reproduction 5, critique 3 including the required slide "how could these results be overfit, and how did the authors and we check?", next steps 2), then 10 minutes of questions. Results slides put the authors' figure next to ours on the same axes and cover every result of the paper, each with our improvement; one slide per result goes to the appendix. At most one equation per slide. English throughout, HSE template.
+11. **The deck follows the seminar's lecture 1:** 15 minutes of talk (problem 2, method 3, results and our reproduction 5, critique 3 including the required slide "how could these results be overfit, and how did the authors and we check?", next steps 2), then 10 minutes of questions. Results slides put the authors' figure next to ours on the same axes and cover every result of the paper, each with our improvement; one slide per result goes to the appendix. At most one equation per slide. English throughout, HSE template. Graders' comments this year (docs/review_checklist.md): little text per slide, every symbol decoded, units everywhere, each improvement says why it is one, speaker notes are cues (not sentences), and every likely question names the speaker who answers it.
 
 ## Pipeline (order matters)
 
 ```bash
 source .venv/bin/activate
+python scripts/run_all.py            # quick: tests + every output from committed results + consistency checks
 pytest -q
 python scripts/download_data.py      # Kaggle GMSC (accept the competition rules first), lexicon, OpenML
 python scripts/extract_paper.py      # Table 11 dictionary, Fig. 1 / Fig. 5 values from the PDF
@@ -30,7 +31,7 @@ python scripts/reproduce_nlp.py      # Tables 2, 3, 8-10, Fig. 3 (needs data/raw
 python scripts/extract_fig9_fig4.py && python scripts/reproduce_scorecard.py && python scripts/reproduce_extra.py
 python scripts/improve_nlp.py && python scripts/improve_models.py && python scripts/improve_risk.py   # I1-I13
 python scripts/appendix_factors.py && python scripts/extended_scorecard.py   # A1-A5, I14
-python scripts/explore_logit_benchmark.py   # exploratory, not pre-registered
+python scripts/explore_logit_benchmark.py && python scripts/explore_placebo_weights.py   # exploratory X1, X2, not pre-registered
 python scripts/reproduce_shap_figures.py && python scripts/make_paper_figures.py   # our versions of Figs. 1, 4, 6-8, 9
 python scripts/make_report.py        # README results section
 python scripts/make_slides.py        # docs/presentation.pptx (export the PDF with PowerPoint, see HANDOFF)
